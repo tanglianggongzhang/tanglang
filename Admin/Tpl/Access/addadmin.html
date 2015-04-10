@@ -9,9 +9,9 @@
 	<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
         <include file="Common:comHead" />
         
-<link href="/Public/css/main.css" rel="stylesheet" />
-<link href="/Public/css/doubleDate.css" rel="stylesheet" />
-<link href="/Public/css/theme.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet" />
     </head>
     <body>
         <div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
@@ -24,6 +24,17 @@
                 <tr>
                     <td width="120">登录名称：</td>
                     <td><input <if condition="ACTION_NAME eq 'editAdmin'"> disabled="disabled"</if> name="a_name" id="a_name" type="text" class="required" size="40" value="{$info.a_name}" /></td>
+                </tr>
+                <tr>
+                    <td width="120">所在省市：</td>
+                    <td>
+                        <select id="areaid_pro" name="areaid_pro">
+                            <option value="">请选择省</option>
+                        </select>
+                        <select id="areaid_city" name="areaid_city">
+                            <option value="">请选择市</option>
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td>密码：</td>

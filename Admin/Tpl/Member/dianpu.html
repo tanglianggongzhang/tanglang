@@ -11,12 +11,12 @@ and open the template in the editor.
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
 <meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
-<script src="/Public/js/tabqh.js"></script>
-<script src="/Public/js/Tab.js"></script>
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
 <include file="Common:comHead" />
-<link href="/Public/css/main.css" rel="stylesheet" />
-<link href="/Public/css/doubleDate.css" rel="stylesheet" />
-<link href="/Public/css/theme.css" rel="stylesheet">
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
@@ -44,9 +44,9 @@ function close_win(){
 .fontb{ display:block; float:right; margin-right:56px;}
 .theme-signin li{width:252px}
 </style>
-<script src="/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
 
-<script type="text/javascript" src="/Public/js/doubleDate2.0.js"></script>
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
 <script type="text/javascript">
 $(function(){
 	$('.doubledate').kuiDate({
@@ -142,7 +142,7 @@ $(function(){
 
 <!--查看-->
 <div class="yc_ck" style="display:none;">
-<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="/Public/images/gb.jpg" /></a>
+<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
             <h3>查看用户信息</h3>
           </div>
           <div class="theme-popbod dform" style="height:431px; overflow:scroll;">

@@ -9,13 +9,13 @@
 	<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
         <include file="Common:comHead" />
         
-<link href="/Public/css/main.css" rel="stylesheet" />
-<link href="/Public/css/doubleDate.css" rel="stylesheet" />
-<link href="/Public/css/theme.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet" />
 
 
-<script src="/Public/uploadimg/jquery.uploadify.min.js" type="text/javascript"></script>
-<link rel="stylesheet" type="text/css" href="/Public/uploadimg/uploadify.css">
+<script src="__ROOT__/Public/uploadimg/jquery.uploadify.min.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="__ROOT__/Public/uploadimg/uploadify.css">
 
 
     </head>
@@ -186,7 +186,7 @@
 <script>
             $(function() {
 			$('#file_upload').uploadify({
-				'swf'      : '/Public/uploadimg/uploadify.swf',
+				'swf'      : '__ROOT__/Public/uploadimg/uploadify.swf',
 				'uploader' : '{:U("Member/scimg")}',
 				'auto':true, //自动上传
 				'buttonClass':'submit',//给上传按钮一个样式名称
