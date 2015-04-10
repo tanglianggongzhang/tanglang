@@ -1,0 +1,18 @@
+[ 2015-03-29T13:45:26+08:00 ] 123.121.29.9 /manager.php/user/index
+INFO: [ route_check ] --START--
+INFO: CheckRoute Behavior ::run [ RunTime:0.000488s ]
+INFO: [ route_check ] --END-- [ RunTime:0.000549s ]
+INFO: [ app_begin ] --START--
+INFO: ReadHtmlCache Behavior ::run [ RunTime:0.000293s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000334s ]
+ERR: 无法加载模块:user
+
+[ 2015-03-29T13:45:26+08:00 ] 123.121.29.9 /manager.php/user/index
+INFO: [ route_check ] --START--
+INFO: CheckRoute Behavior ::run [ RunTime:0.000506s ]
+INFO: [ route_check ] --END-- [ RunTime:0.000567s ]
+INFO: [ app_begin ] --START--
+INFO: ReadHtmlCache Behavior ::run [ RunTime:0.000293s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000334s ]
+ERR: 无法加载模块:user
+
