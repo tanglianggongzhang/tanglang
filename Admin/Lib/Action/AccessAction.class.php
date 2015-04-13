@@ -171,7 +171,12 @@ class AccessAction extends CommonAction {
             parent::_initalize();
             $systemConfig = $this->systemConfig;
             $this->assign("systemConfig", $systemConfig);
-
+            //省市
+            $cmod=new CityModel();
+            $city_list=$cmod->citylist();
+            #print_r($city_list);exit;
+            $this->assign("city_list",$city_list);
+            
             $this->assign("info", $this->getRoleListOption(array('role_id' => 0)));
             $this->display();
         }
@@ -261,6 +266,14 @@ class AccessAction extends CommonAction {
                 $this->error($msginfo['info']);
             }
         } else {
+            
+            //省市
+            $cmod=new CityModel();
+            $city_list=$cmod->citylist();
+            #print_r($city_list);exit;
+            $this->assign("city_list",$city_list);
+            
+            
             $M = M("Admin");
             $aid = (int) $_GET['aid'];
             $pre = C("DB_PREFIX");
@@ -279,6 +292,7 @@ class AccessAction extends CommonAction {
             $this->assign("info", $this->getRoleListOption($info));
             $aimod = new Admininfo1Model();
             $ainfo = $aimod->getinfo($aid, 0);
+            
             $this->assign("ainfo", $ainfo);
 
             $this->display("addadmin");
@@ -295,6 +309,10 @@ class AccessAction extends CommonAction {
         $aid=$_GET['aid'];
         $amod=new Admininfo1Model();
         $inf=$amod->getinfo($aid,1);
+        $citymod=new CityModel();
+        $inf['province']=$citymod->getproname($inf['cityid']);
+        $inf['city']=$citymod->getname($inf['cityid']);
+        
         $this->assign("info",$inf);
         
         $this->display();
