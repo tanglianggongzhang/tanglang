@@ -28,11 +28,11 @@
                 <tr>
                     <td width="120">所在省市：</td>
                     <td>
-                        <select id="areaid_pro" name="areaid_pro">
+                        <select id="areaid" name="areaid">
                             <option value="">请选择省</option>
-                        </select>
-                        <select id="areaid_city" name="areaid_city">
-                            <option value="">请选择市</option>
+                            <volist id="vo" name="city_list">
+                                <option value="{$vo.region_id}" <if condition="$vo[region_id]==$ainfo[cityid]">selected</if> >{$vo.fullname}</option>
+                            </volist>
                         </select>
                     </td>
                 </tr>
