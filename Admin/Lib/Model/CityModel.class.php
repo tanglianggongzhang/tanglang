@@ -18,7 +18,7 @@ class CityModel extends Model {
     public function citylist() {
         import("ORG.Util.Category");
         $cat = new Category('Area', array('region_id', 'parent_id', 'region_name', 'fullname'));
-        $temp = $cat->getList();               //获取分类结构
+        $temp = $cat->getList("", 0,"region_id asc");               //获取分类结构
         $level = array("0" => "国家", "1" => "省/直辖市", "2" => "市","3"=>"区/县");
         $list=array();
         foreach ($temp as $k => $v) {
@@ -55,5 +55,14 @@ class CityModel extends Model {
         $list=$mod->where("region_id=".$id." and agency_id=1")->field("region_name")->find();
         return $list['region_name'];
     }
-
+    /**
+     * 根据城市ID
+     * 获取省份名称
+     */
+    public function getproname($cid){
+        $mod=M("Area");
+        $find=$mod->where("region_id=".$cid." and agency_id=1")->field("parent_id")->find();
+        $inf=$mod->where("region_id=".$find['parent_id']." and agency_id=1")->field("region_name")->find();
+        return $inf['region_name'];
+    }
 }
