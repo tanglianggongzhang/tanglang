@@ -45,7 +45,7 @@ class CommonAction extends Action {
                     }
                     // 提示错误信息
 //                     echo L('_VALID_ACCESS_');
-                    $this->error(L('_VALID_ACCESS_'),U('Index/login'));
+                    $this->error(L('_VALID_ACCESS_'),U('Index/Index'));
                 }
             }
         }
@@ -132,7 +132,7 @@ class CommonAction extends Action {
             }
         }else{
             //非超级管理员
-            $list=$nodemod->get_user_node($leve);
+            $list=$nodemod->get_user_node($leve,$_SESSION['my_info']['a_id']);
             foreach($list as $k=>$v){
                 if($leve==1)
                     $list[$k]['url']= U($v['name']."/index");
