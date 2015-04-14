@@ -49,7 +49,6 @@ class PublicModel extends Model {
                 //获取管理员的角色
                 $role_list=M("RoleUser")->where("user_id=".$info['a_id'])->find();
                 $_SESSION['my_info']['role']=$role_list['role_id'];
-                
                 return array('status' => 1, 'info' => "登录成功", 'url' => U("Index/index"));
             } else {
                 return array('status' => 0, 'info' => "账号或密码错误");
