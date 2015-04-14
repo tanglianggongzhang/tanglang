@@ -77,7 +77,7 @@ $(function(){
         <input type="text" name="start_date" value="{$start_date}" readonly class="doubledate ipticon"/>
         <label>-</label>
         <input type="text" name="end_date" readonly value="{$end_date}" class="doubledate ipticon"/>
-        
+        <if condition="$_SESSION['my_info']['role']!=2">
         <label>所属省份</label>
         <select name="province" id="province_s" class="choose" onChange="getcity('province_s','city_s')">
           <option value="" >请选择</option>
@@ -94,6 +94,10 @@ $(function(){
                     <option value="{$city}" selected="selected">{$cityname}</option>
                     </if>
         </select>
+        </if>
+        
+        
+        
         <input name="sub" type="submit"  value="查询" class="sub1" />
         
         
