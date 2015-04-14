@@ -46,7 +46,9 @@ class PublicModel extends Model {
                 //修改最后登录的时间和IP地址
                 
                 $M->where("a_id=".$info['a_id'])->save(array("last_login"=>time(),"last_ip"=>$_SERVER['REMOTE_ADDR']));
-                
+                //获取管理员的角色
+                $role_list=M("RoleUser")->where("user_id=".$info['a_id'])->find();
+                $_SESSION['my_info']['role']=$role_list['role_id'];
                 
                 return array('status' => 1, 'info' => "登录成功", 'url' => U("Index/index"));
             } else {
