@@ -20,11 +20,7 @@ and open the template in the editor.
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
-		
-		$(".theme-popover").html($(".yc_add").html());
-		
-		$('.theme-popover-mask').fadeIn(100);
-		$('.theme-popover').slideDown(200);
+		window.location.href="{:U('Member/addpt')}";
 	})
 	
 		
@@ -121,7 +117,9 @@ $(function(){
           <td width="135">{$vo.movphone}</td>
           <td width="100">{$vo.sex}</td>
           <td width="100">普通会员</td>
-          <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a><a aid="{$vo.a_id}" class="edituser" style="cursor:pointer">编辑</a><a name="{$vo.truename}" link="{:U('Member/del',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
+          <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a>
+              <a aid="{$vo.a_id}" href="{:U('Member/editpt',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a>
+              <a name="{$vo.truename}" link="{:U('Member/del',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
         </tr>
         </volist>
       </table>
@@ -239,6 +237,14 @@ $(function(){
                   <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;昵称</label>
                   
                   <font id="nickname_1" class="ipt fontb"></font>
+                </li>
+                <li>
+                    <label>头像</label>
+                    <font id="logo_img" class=""></font>
+                </li>
+                <li>
+                    <label>地址</label>
+                    <font id="address_1" class="ipt fontb"></font>
                 </li>
                 <li style="height:30px;">
                   <label>真实姓名</label>
@@ -501,7 +507,9 @@ $(".chakan").click(function(){
 			document.getElementById("telphone_1").innerHTML=msg.telphone_1;	
 			document.getElementById("year_1").innerHTML=msg.year_1;
 			document.getElementById("city_1").innerHTML=msg.city_1;
-
+                        document.getElementById("logo_img").innerHTML="<img src='__ROOT__/avatar/"+msg.img+"_60.jpg'/>";
+                        document.getElementById("address_1").innerHTML=msg.address_1;
+                        
 			
 			
 			}
