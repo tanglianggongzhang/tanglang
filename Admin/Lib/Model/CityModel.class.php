@@ -40,6 +40,14 @@ class CityModel extends Model {
         return $list;
     }
     /**
+     * 根据城市ID获取省份id
+     */
+    public function getprovinceid($cid){
+        $mod=M("Area");
+        $list=$mod->where("region_id=".$cid)->find();
+        return $list['parent_id'];
+    }
+    /**
      * 获取province 下的所有city
      */
     public function getcity($id){
