@@ -147,6 +147,13 @@ class CommonAction extends Action {
         else
             return false;
     }
+    /**
+     * 上传文件
+     * @param type $path
+     * @param type $thwidth
+     * @param type $thheight
+     * @return type
+     */
     public function upload($path='./Uploads/product/',$thwidth,$thheight){
         import('ORG.Net.UploadFile');
         $upload = new UploadFile();// 实例化上传类
@@ -164,5 +171,21 @@ class CommonAction extends Action {
         }else{// 上传成功 获取上传文件信息
             return $info =  $upload->getUploadFileInfo();
         }
+    }
+    /**
+     * 根据key值返回 
+     * 性别
+     */
+    function get_sex($key){
+        $sex_arr=array("1"=>"男","2"=>"女");
+        return $sex_arr[$key];
+    }
+    /**
+     * 根据key值返回
+     * 状态
+     */
+    function get_status($key){
+        $status_arr=array("0"=>"未审核","1"=>"已审核");
+        return $status_arr[$key];
     }
 }
