@@ -158,7 +158,7 @@
 	BORDER-LEFT-WIDTH: 0px; CURSOR: pointer; HEIGHT: 24px; FONT-FAMILY: "΢���ź�"; BORDER-RIGHT-WIDTH: 0px; WIDTH: 85px; BACKGROUND: #ef4f4f; BORDER-BOTTOM-WIDTH: 0px; COLOR: #fff; MARGIN-LEFT: 15px; LINE-HEIGHT: 22px; BORDER-TOP-WIDTH: 0px
 }
 .center_t {
-	FONT-SIZE: 12px; WIDTH: 1010px; FLOAT: left; MARGIN-LEFT: 20px; TEXT-INDENT: 4px
+	FONT-SIZE: 12px; WIDTH: 1010px; FLOAT: left; MARGIN-LEFT: 0px; TEXT-INDENT: 4px
 }
 .center_t TD {
 	PADDING-BOTTOM: 6px; PADDING-TOP: 6px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px
@@ -170,7 +170,7 @@
 	BORDER-RIGHT-STYLE: none
 }
 .center_t A {
-	COLOR: #000; PADDING-RIGHT: 12px
+	COLOR: #000; PADDING-RIGHT: 2px
 }
 .center_t_t {
 	FONT-SIZE: 12px; BACKGROUND: #ebebeb; LINE-HEIGHT: 18px
@@ -188,7 +188,7 @@
 	COLOR: #fff
 }
 .paging {
-	FONT-SIZE: 12px; WIDTH: 100%; FLOAT: left; MARGIN: 15px 0px 0px 35px
+	FONT-SIZE: 12px;  FLOAT: left; MARGIN: 15px 0px 0px 35px
 }
 .paging_l {
 	FLOAT: left
