@@ -11,24 +11,24 @@ and open the template in the editor.
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="<?php echo ($systemConfig["SITE_INFO"]["description_cms"]); ?>" />
 <meta name="keywords" content="<?php echo ($systemConfig["SITE_INFO"]["keyword_cms"]); ?>" />
-<script src="/Public/js/tabqh.js"></script>
-<script src="/Public/js/Tab.js"></script>
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
 
 
-<link href="/Public/css/common.css" rel="stylesheet" type="text/css" />
+<link href="__ROOT__/Public/css/common.css" rel="stylesheet" type="text/css" />
 
 
 
 <script src="__ROOT__/Public/js/jquery.js"></script>
 
-<script src="/Public/js/jquery.validate.js"></script>
+<script src="__ROOT__/Public/js/jquery.validate.js"></script>
 
 <link rel="stylesheet" type="text/css" href="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/themes/icon.css">
 <script type="text/javascript" src="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/jquery.easyui.min.js"></script>
-<link href="/Public/css/main.css" rel="stylesheet" />
-<link href="/Public/css/doubleDate.css" rel="stylesheet" />
-<link href="/Public/css/theme.css" rel="stylesheet">
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
@@ -55,9 +55,9 @@ function close_win(){
 <style>
 .fontb{ display:block; float:right; margin-right:56px;}
 </style>
-<script src="/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
 
-<script type="text/javascript" src="/Public/js/doubleDate2.0.js"></script>
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
 <script type="text/javascript">
 $(function(){
 	$('.doubledate').kuiDate({
@@ -70,14 +70,14 @@ $(function(){
 
 <body>
 <div class="wrap"> <div class="header">
-  <div class="logo"><img src="/Public/images/logo.jpg" /></div>
+  <div class="logo"><img src="__ROOT__/Public/images/logo.jpg" /></div>
   <div class="headet_r">
     <div class="header_r_t">
       <div class="header_r_t_l">></div>
-      <a href="<?php echo U('MyInfo/index');?>"><img src="/Public/images/ico1.png" />管理员</a> <a href="<?php echo U('Index/logout');?>"><img src="/Public/images/ico3.png" />退出</a> </div>
+      <a href="<?php echo U('MyInfo/index');?>"><img src="__ROOT__/Public/images/ico1.png" />管理员</a> <a href="<?php echo U('Index/logout');?>"><img src="__ROOT__/Public/images/ico3.png" />退出</a> </div>
     <div class="conter_scroll_w">
       <div class="conter_scroll_bot">
-        <div class="rollBox"> <img onmousedown="ISL_GoDown()" onmouseup="ISL_StopDown()" onmouseout="ISL_StopDown()"  class="img3" src="/Public/images/s_left.png" />
+        <div class="rollBox"> <img onmousedown="ISL_GoDown()" onmouseup="ISL_StopDown()" onmouseout="ISL_StopDown()"  class="img3" src="__ROOT__/Public/images/s_left.png" />
           <div class="Cont" id="ISL_Cont">
             <div class="ScrCont">
               <div id="List1"> 
@@ -86,7 +86,7 @@ $(function(){
                         <?php else: ?>
                         <div class="pic"><?php endif; ?>
                       <a href="<?php echo ($vo["url"]); ?>">
-                    <p><img src="/Public/images/menuico1.png" /></p>
+                    <p><img src="__ROOT__/Public/images/menuico1.png" /></p>
                     <?php echo ($vo["title"]); ?>
                       </a> </div><?php endforeach; endif; else: echo "" ;endif; ?>
                 <!--
@@ -127,9 +127,9 @@ $(function(){
               <div id="List2"></div>
             </div>
           </div>
-          <img  onmousedown="ISL_GoUp()" onmouseup="ISL_StopUp()" onmouseout="ISL_StopUp()"  class="img4" src="/Public/images/s_right.png" /> </div>
+          <img  onmousedown="ISL_GoUp()" onmouseup="ISL_StopUp()" onmouseout="ISL_StopUp()"  class="img4" src="__ROOT__/Public/images/s_right.png" /> </div>
       </div>
-      <script src="/Public/js/rollBox.js" type="text/javascript"></script> 
+      <script src="__ROOT__/Public/js/rollBox.js" type="text/javascript"></script> 
     </div>
   </div>
 </div>
@@ -141,7 +141,7 @@ $(function(){
                     <?php if(is_array($nodelist2)): $i = 0; $__LIST__ = $nodelist2;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i; if($funname==$vo[name]): ?><li class="li1"> 
                                <?php else: ?>
                                <li><?php endif; ?>
-		    <img src="/Public/images/sideico_1.png" class="img1" /><img src="/Public/images/sideico.png" class="img1 img2" />
+		    <img src="__ROOT__/Public/images/sideico_1.png" class="img1" /><img src="__ROOT__/Public/images/sideico.png" class="img1 img2" />
                         <a href="<?php echo ($vo["url"]); ?>"><?php echo ($vo["title"]); ?></a>
                     </li><?php endforeach; endif; else: echo "" ;endif; ?>
 
@@ -205,7 +205,7 @@ $(function(){
 </div>
 <!--添加-->
 <div class="yc_add" style="display:none">
-<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="/Public/images/gb.jpg" /></a>
+<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
             <h3>添加新用户</h3>
           </div>
           <div class="theme-popbod dform">
@@ -303,7 +303,7 @@ $(function(){
 </style>
 <!--查看-->
 <div class="yc_ck" style="display:none;">
-<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="/Public/images/gb.jpg" /></a>
+<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
             <h3>查看日记</h3>
           </div>
           <div class="theme-popbod dforms">
@@ -314,7 +314,7 @@ $(function(){
 </div>
 <!--编辑-->
 <div class="yc_edit" style="display:none">
-<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="/Public/images/gb.jpg" /></a>
+<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
             <h3>编辑用户</h3>
           </div>
           <div class="theme-popbod dform">

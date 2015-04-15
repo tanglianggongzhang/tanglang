@@ -16,5 +16,4 @@ class Admininfo1Model extends Model {
     }
     
 }
-
 ?>

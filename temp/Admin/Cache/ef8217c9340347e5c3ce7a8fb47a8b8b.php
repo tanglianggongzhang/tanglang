@@ -9,31 +9,31 @@
 <meta name="keywords" content="<?php echo ($systemConfig["SITE_INFO"]["keyword_cms"]); ?>" />
 
 
-<link href="/Public/css/common.css" rel="stylesheet" type="text/css" />
+<link href="__ROOT__/Public/css/common.css" rel="stylesheet" type="text/css" />
 
 
 
 <script src="__ROOT__/Public/js/jquery.js"></script>
 
-<script src="/Public/js/jquery.validate.js"></script>
+<script src="__ROOT__/Public/js/jquery.validate.js"></script>
 
 <link rel="stylesheet" type="text/css" href="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/themes/icon.css">
 <script type="text/javascript" src="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/jquery.easyui.min.js"></script>
-<link href="/Public/css/main.css" rel="stylesheet" />
-<link href="/Public/css/doubleDate.css" rel="stylesheet" />
-<link href="/Public/css/theme.css" rel="stylesheet">
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
 </head>
 <body>
 <div class="wrap"> <div class="header">
-  <div class="logo"><img src="/Public/images/logo.jpg" /></div>
+  <div class="logo"><img src="__ROOT__/Public/images/logo.jpg" /></div>
   <div class="headet_r">
     <div class="header_r_t">
       <div class="header_r_t_l">></div>
-      <a href="<?php echo U('MyInfo/index');?>"><img src="/Public/images/ico1.png" />管理员</a> <a href="<?php echo U('Index/logout');?>"><img src="/Public/images/ico3.png" />退出</a> </div>
+      <a href="<?php echo U('MyInfo/index');?>"><img src="__ROOT__/Public/images/ico1.png" />管理员</a> <a href="<?php echo U('Index/logout');?>"><img src="__ROOT__/Public/images/ico3.png" />退出</a> </div>
     <div class="conter_scroll_w">
       <div class="conter_scroll_bot">
-        <div class="rollBox"> <img onmousedown="ISL_GoDown()" onmouseup="ISL_StopDown()" onmouseout="ISL_StopDown()"  class="img3" src="/Public/images/s_left.png" />
+        <div class="rollBox"> <img onmousedown="ISL_GoDown()" onmouseup="ISL_StopDown()" onmouseout="ISL_StopDown()"  class="img3" src="__ROOT__/Public/images/s_left.png" />
           <div class="Cont" id="ISL_Cont">
             <div class="ScrCont">
               <div id="List1"> 
@@ -42,7 +42,7 @@
                         <?php else: ?>
                         <div class="pic"><?php endif; ?>
                       <a href="<?php echo ($vo["url"]); ?>">
-                    <p><img src="/Public/images/menuico1.png" /></p>
+                    <p><img src="__ROOT__/Public/images/menuico1.png" /></p>
                     <?php echo ($vo["title"]); ?>
                       </a> </div><?php endforeach; endif; else: echo "" ;endif; ?>
                 <!--
@@ -83,9 +83,9 @@
               <div id="List2"></div>
             </div>
           </div>
-          <img  onmousedown="ISL_GoUp()" onmouseup="ISL_StopUp()" onmouseout="ISL_StopUp()"  class="img4" src="/Public/images/s_right.png" /> </div>
+          <img  onmousedown="ISL_GoUp()" onmouseup="ISL_StopUp()" onmouseout="ISL_StopUp()"  class="img4" src="__ROOT__/Public/images/s_right.png" /> </div>
       </div>
-      <script src="/Public/js/rollBox.js" type="text/javascript"></script> 
+      <script src="__ROOT__/Public/js/rollBox.js" type="text/javascript"></script> 
     </div>
   </div>
 </div>
@@ -95,7 +95,7 @@
                     <?php if(is_array($nodelist2)): $i = 0; $__LIST__ = $nodelist2;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i; if($funname==$vo[name]): ?><li class="li1"> 
                                <?php else: ?>
                                <li><?php endif; ?>
-		    <img src="/Public/images/sideico_1.png" class="img1" /><img src="/Public/images/sideico.png" class="img1 img2" />
+		    <img src="__ROOT__/Public/images/sideico_1.png" class="img1" /><img src="__ROOT__/Public/images/sideico.png" class="img1 img2" />
                         <a href="<?php echo ($vo["url"]); ?>"><?php echo ($vo["title"]); ?></a>
                     </li><?php endforeach; endif; else: echo "" ;endif; ?>
 

@@ -13,18 +13,18 @@ and open the template in the editor.
         <meta name="keywords" content="<?php echo ($systemConfig["SITE_INFO"]["keyword_cms"]); ?>" />
         
 
-<link href="/Public/css/common.css" rel="stylesheet" type="text/css" />
+<link href="__ROOT__/Public/css/common.css" rel="stylesheet" type="text/css" />
 
 
 
 <script src="__ROOT__/Public/js/jquery.js"></script>
 
-<script src="/Public/js/jquery.validate.js"></script>
+<script src="__ROOT__/Public/js/jquery.validate.js"></script>
 
 <link rel="stylesheet" type="text/css" href="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/themes/icon.css">
 <script type="text/javascript" src="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/jquery.easyui.min.js"></script>
-        <link href="/Public/css/login.css" rel="stylesheet" type="text/css" />
+        <link href="__ROOT__/Public/css/login.css" rel="stylesheet" type="text/css" />
 
     </head>
     

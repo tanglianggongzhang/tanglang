@@ -11,32 +11,28 @@ and open the template in the editor.
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="<?php echo ($systemConfig["SITE_INFO"]["description_cms"]); ?>" />
 <meta name="keywords" content="<?php echo ($systemConfig["SITE_INFO"]["keyword_cms"]); ?>" />
-<script src="/Public/js/tabqh.js"></script>
-<script src="/Public/js/Tab.js"></script>
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
 
 
-<link href="/Public/css/common.css" rel="stylesheet" type="text/css" />
+<link href="__ROOT__/Public/css/common.css" rel="stylesheet" type="text/css" />
 
 
 
 <script src="__ROOT__/Public/js/jquery.js"></script>
 
-<script src="/Public/js/jquery.validate.js"></script>
+<script src="__ROOT__/Public/js/jquery.validate.js"></script>
 
 <link rel="stylesheet" type="text/css" href="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/themes/icon.css">
 <script type="text/javascript" src="<?php echo ($systemConfig["WEB_ROOT"]); ?>/Public/easyui/jquery.easyui.min.js"></script>
-<link href="/Public/css/main.css" rel="stylesheet" />
-<link href="/Public/css/doubleDate.css" rel="stylesheet" />
-<link href="/Public/css/theme.css" rel="stylesheet">
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
-		
-		$(".theme-popover").html($(".yc_add").html());
-		
-		$('.theme-popover-mask').fadeIn(100);
-		$('.theme-popover').slideDown(200);
+		window.location.href="<?php echo U('Member/addgz');?>";
 	})
 	
 		
@@ -53,11 +49,14 @@ function close_win(){
 
 </script>
 <style>
-.fontb{ display:block; float:right; margin-right:56px;}
+.fontb {
+	display: block;
+	float: right;
+	margin-right: 56px;
+}
 </style>
-<script src="/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
-
-<script type="text/javascript" src="/Public/js/doubleDate2.0.js"></script>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
 <script type="text/javascript">
 $(function(){
 	$('.doubledate').kuiDate({
@@ -70,14 +69,14 @@ $(function(){
 
 <body>
 <div class="wrap"> <div class="header">
-  <div class="logo"><img src="/Public/images/logo.jpg" /></div>
+  <div class="logo"><img src="__ROOT__/Public/images/logo.jpg" /></div>
   <div class="headet_r">
     <div class="header_r_t">
       <div class="header_r_t_l">></div>
-      <a href="<?php echo U('MyInfo/index');?>"><img src="/Public/images/ico1.png" />管理员</a> <a href="<?php echo U('Index/logout');?>"><img src="/Public/images/ico3.png" />退出</a> </div>
+      <a href="<?php echo U('MyInfo/index');?>"><img src="__ROOT__/Public/images/ico1.png" />管理员</a> <a href="<?php echo U('Index/logout');?>"><img src="__ROOT__/Public/images/ico3.png" />退出</a> </div>
     <div class="conter_scroll_w">
       <div class="conter_scroll_bot">
-        <div class="rollBox"> <img onmousedown="ISL_GoDown()" onmouseup="ISL_StopDown()" onmouseout="ISL_StopDown()"  class="img3" src="/Public/images/s_left.png" />
+        <div class="rollBox"> <img onmousedown="ISL_GoDown()" onmouseup="ISL_StopDown()" onmouseout="ISL_StopDown()"  class="img3" src="__ROOT__/Public/images/s_left.png" />
           <div class="Cont" id="ISL_Cont">
             <div class="ScrCont">
               <div id="List1"> 
@@ -86,7 +85,7 @@ $(function(){
                         <?php else: ?>
                         <div class="pic"><?php endif; ?>
                       <a href="<?php echo ($vo["url"]); ?>">
-                    <p><img src="/Public/images/menuico1.png" /></p>
+                    <p><img src="__ROOT__/Public/images/menuico1.png" /></p>
                     <?php echo ($vo["title"]); ?>
                       </a> </div><?php endforeach; endif; else: echo "" ;endif; ?>
                 <!--
@@ -127,9 +126,9 @@ $(function(){
               <div id="List2"></div>
             </div>
           </div>
-          <img  onmousedown="ISL_GoUp()" onmouseup="ISL_StopUp()" onmouseout="ISL_StopUp()"  class="img4" src="/Public/images/s_right.png" /> </div>
+          <img  onmousedown="ISL_GoUp()" onmouseup="ISL_StopUp()" onmouseout="ISL_StopUp()"  class="img4" src="__ROOT__/Public/images/s_right.png" /> </div>
       </div>
-      <script src="/Public/js/rollBox.js" type="text/javascript"></script> 
+      <script src="__ROOT__/Public/js/rollBox.js" type="text/javascript"></script> 
     </div>
   </div>
 </div>
@@ -141,7 +140,7 @@ $(function(){
                     <?php if(is_array($nodelist2)): $i = 0; $__LIST__ = $nodelist2;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i; if($funname==$vo[name]): ?><li class="li1"> 
                                <?php else: ?>
                                <li><?php endif; ?>
-		    <img src="/Public/images/sideico_1.png" class="img1" /><img src="/Public/images/sideico.png" class="img1 img2" />
+		    <img src="__ROOT__/Public/images/sideico_1.png" class="img1" /><img src="__ROOT__/Public/images/sideico.png" class="img1 img2" />
                         <a href="<?php echo ($vo["url"]); ?>"><?php echo ($vo["title"]); ?></a>
                     </li><?php endforeach; endif; else: echo "" ;endif; ?>
 
@@ -152,61 +151,79 @@ $(function(){
   <div class="center_r">
     <div class="center">
       <div class="center_r_t">您的位置：明星工长列表</div>
-      <div class="center_r_z">
-      <form method="get" name="search_form" id="search_form" action=""  >
-        <label>关键字</label>
-        <input type="text" class="input1" name="keys"  <?php if($keys==''): ?>value="请输入关键字" <?php else: ?> value="<?php echo ($keys); ?>"<?php endif; ?> />
-        <label>日期</label>
-        <input type="text" name="start_date" value="<?php echo ($start_date); ?>" readonly class="doubledate ipticon"/>
-        <label>-</label>
-        <input type="text" name="end_date" readonly value="<?php echo ($end_date); ?>" class="doubledate ipticon"/>
-        
-        <label>所属省份</label>
-        <select name="province" id="province_s" class="choose" onChange="getcity('province_s','city_s')">
-          <option value="" >请选择</option>
-          
-			<?php if(is_array($pro_list)): $i = 0; $__LIST__ = $pro_list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo["region_id"]); ?>" <?php if($vo[region_id]==$province): ?>selected<?php endif; ?>><?php echo ($vo["region_name"]); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
-          
-        </select>
-        <label>所属城市</label>
-        <select name="city" id="city_s" class="choose">
-          <option value="" >请选择</option>
-          <?php if(!empty($city)): ?><option value="<?php echo ($city); ?>" selected="selected"><?php echo ($cityname); ?></option><?php endif; ?>
-        </select>
-        <input name="sub" type="submit"  value="查询" class="sub1" />
-        
-        
-        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加用户</a>
-        </form>
-        <div class="theme-popover">
-          
+      <div class="center1">
+        <div class="on_line">
+          <label class="over">工长会员</label>
+          <label><a href="<?php echo U('Member/foreman',array('is_sq'=>1,'status'=>0));?>">未通过申请 列表</a></label>
+          <label><a href="<?php echo U('Member/foreman',array('is_sq'=>1,'status'=>1));?>">已通过申请 列表</a></label>
         </div>
-        <div class="theme-popover-mask"></div>
-      </div>
-      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
-        <tr class="center_t_t">
-          <td class="td1" width="135">登录名</td>
-          <td width="135">公司</td>
-          <td width="135">入职日期</td>
-          <td width="135">城市</td>
-          <td width="135">收藏</td>
-          <td width="100">口碑值</td>
-          <td width="100">级别</td>
-          <td class="td2" width="135">操作</td>
-        </tr>
-        <?php if(is_array($list)): $i = 0; $__LIST__ = $list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr class="center_t_d">
-          <td class="td1" width="135"><?php echo ($vo["a_name"]); ?></td>
-          <td width="135"><?php echo ($vo["f_company"]); ?></td>
-          <td width="135"><?php echo ($vo["f_addtime"]); ?></td>
-          <td width="135"><?php echo ($vo["cityname"]); ?></td>
-          <td width="135"><?php echo ($vo["f_collect"]); ?></td>
-          <td width="100"><?php echo ($vo["f_koubei"]); ?></td>
-          <td width="100"><?php echo ($vo["f_jibie"]); ?></td>
-          <td width="135"><a aid="<?php echo ($vo["a_id"]); ?>" class='chakan' style="cursor:pointer;">查看</a><a aid="<?php echo ($vo["a_id"]); ?>" class="edituser" style="cursor:pointer">编辑</a><a name="<?php echo ($vo["a_name"]); ?>" link="<?php echo U('Member/del_foreman',array('aid'=>$vo[a_id]));?>" style="cursor:pointer" class="del">删除</a></td>
-        </tr><?php endforeach; endif; else: echo "" ;endif; ?>
-      </table>
-      <div class="paging">
-        <div class="paging_l"><?php echo ($page); ?></div>
+        <div class="center_r_z">
+          <form method="get" name="search_form" id="search_form" action=""  >
+            <label>关键字</label>
+            <input type="text" class="input1" name="keys"  
+          
+          
+          
+            <?php if($keys==''): ?>value="请输入关键字"
+              <?php else: ?>
+              value="<?php echo ($keys); ?>"<?php endif; ?>
+            />
+            <label>日期</label>
+            <input type="text" name="start_date" value="<?php echo ($start_date); ?>" readonly class="doubledate ipticon"/>
+            <label>-</label>
+            <input type="text" name="end_date" readonly value="<?php echo ($end_date); ?>" class="doubledate ipticon"/>
+            <?php if($_SESSION['my_info']['role']!=2): ?><label>所属省份</label>
+              <select name="province" id="province_s" class="choose" onChange="getcity('province_s','city_s')">
+                <option value="" >请选择</option>
+                <?php if(is_array($pro_list)): $i = 0; $__LIST__ = $pro_list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo["region_id"]); ?>" 
+                
+                
+                
+                  <?php if($vo[region_id]==$province): ?>selected<?php endif; ?>
+                  ><?php echo ($vo["region_name"]); ?>
+                
+                
+                
+                  </option><?php endforeach; endif; else: echo "" ;endif; ?>
+              </select>
+              <label>所属城市</label>
+              <select name="city" id="city_s" class="choose">
+                <option value="" >请选择</option>
+                <?php if(!empty($city)): ?><option value="<?php echo ($city); ?>" selected="selected"><?php echo ($cityname); ?></option><?php endif; ?>
+              </select><?php endif; ?>
+            <input name="sub" type="submit"  value="查询" class="sub1" />
+            <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加用户</a>
+          </form>
+          <div class="theme-popover"> </div>
+          <div class="theme-popover-mask"></div>
+        </div>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+          <tr class="center_t_t">
+            <td class="td1" width="135">登录名</td>
+            <td width="135">公司</td>
+            <td width="135">入职日期</td>
+            <td width="135">城市</td>
+            <td width="135">收藏</td>
+            <td width="100">口碑值</td>
+            <td width="100">级别</td>
+            <td class="td2" width="135">操作</td>
+          </tr>
+          <?php if(is_array($list)): $i = 0; $__LIST__ = $list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr class="center_t_d">
+              <td class="td1" width="135"><?php echo ($vo["a_name"]); ?></td>
+              <td width="135"><?php echo ($vo["f_company"]); ?></td>
+              <td width="135"><?php echo ($vo["f_addtime"]); ?></td>
+              <td width="135"><?php echo ($vo["cityname"]); ?></td>
+              <td width="135"><?php echo ($vo["f_collect"]); ?></td>
+              <td width="100"><?php echo ($vo["f_koubei"]); ?></td>
+              <td width="100"><?php echo ($vo["f_jibie"]); ?></td>
+              <td width="135"><a aid="<?php echo ($vo["a_id"]); ?>" class='chakan' style="cursor:pointer;">查看</a>
+                  <a aid="<?php echo ($vo["a_id"]); ?>" href="<?php echo U('Member/editgz',array('aid'=>$vo[a_id]));?>" style="cursor:pointer">编辑</a>
+                  <a name="<?php echo ($vo["a_name"]); ?>" link="<?php echo U('Member/del_foreman',array('aid'=>$vo[a_id]));?>" style="cursor:pointer" class="del">删除</a></td>
+            </tr><?php endforeach; endif; else: echo "" ;endif; ?>
+        </table>
+        <div class="paging">
+          <div class="paging_l"><?php echo ($page); ?></div>
+        </div>
       </div>
     </div>
     <div class="foot"> <ul>
@@ -218,316 +235,260 @@ $(function(){
 </div>
 <!--添加-->
 <div class="yc_add" style="display:none">
-<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="/Public/images/gb.jpg" /></a>
-            <h3>添加新用户</h3>
-          </div>
-          <div class="theme-popbod dform"  style="height:431px; overflow:scroll;">
-            <form class="theme-signin" name="loginform" action="" method="post">
-              <ol>
-                <li>
-                  <label>登录帐号</label>
-                  <input class="ipt" type="text" name="a_name" id="a_name" size="20" />
-                </li>
-                <li>
-                  <label>登录密码</label>
-                  <input class="ipt" type="password" size="20" name="pwd" id="pwd" />
-                </li>
-                <li>
-                  <label>确认密码</label>
-                  <input class="ipt" type="password"  size="20" name="cof_pwd" id="cof_pwd" />
-                </li>
-                
-                <li>
-                  <label>真实姓名</label>
-                  <input class="ipt" size="20" name="truename" id="truename" />
-                </li>
-                <li>
-                  <label> 性别</label>
-                  <select id="sex" name="sex">
-                  	<option value="1">男</option>
-                    <option value="2">女</option>
-                  </select>
-                </li>
-                
-                <li>
-                  <label> 公司名称</label>
-                  <input class="ipt" size="20" name="company" id="company" />
-                </li>
-                
-                <li>
-                  <label> 联系电话</label>
-                  <input class="ipt" size="20" name="telphone" id="telphone" />
-                </li>
-                <li>
-                  <label> 手机号</label>
-                  <input class="ipt" size="20" name="phone" id="phone" />
-                </li>
-                <li>
-                  <label> Email</label>
-                  <input class="ipt" size="20" name="email" id="email" />
-                </li>
-                <li>
-                  <label> QQ</label>
-                  <input class="ipt" size="20" name="qq" id="qq" />
-                </li>
-                
-                
-                <li>
-                  <label>生日</label>
-                  <select name="year" class="choose" id="year">
-                    
-                    <?php if(is_array($year)): $i = 0; $__LIST__ = $year;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo); ?>"><?php echo ($vo); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
-                    
-                  </select>
-                  <select name="month" onChange="getdays()" class="choose1" id="month" >
-                    <?php if(is_array($month)): $i = 0; $__LIST__ = $month;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo); ?>"><?php echo ($vo); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
-                  </select>
-                  <select name="day" class="choose1" id="day">
-                    <?php if(is_array($day)): $i = 0; $__LIST__ = $day;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo); ?>"><?php echo ($vo); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
-                  </select>
-                </li>
-                <li>
-                  <label>所在城市</label>
-                  <select id="proid" name="proid" onChange="getcity('proid','cityid')">
-                  	<option value="">请选择</option>
-                    <?php if(is_array($pro_list)): $i = 0; $__LIST__ = $pro_list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo["region_id"]); ?>"><?php echo ($vo["region_name"]); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
-                  </select>
-                  <select id="cityid" name="cityid">
-                  	<option value="">请选择</option>
-                  </select>
-                </li>
-                <li>
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;地址</label>
-                  <input class="ipt" size="20" name="address" id="address" />
-                </li>
-                
-                <li>
-                	<label>收藏数目</label>
-                    <input type="text" name="collect" class="ipt" size="10" id="collect" />
-                </li>
-                <li>
-                	<label>口碑值</label>
-                    <input type="text" name="koubei" class="ipt" size="10" id="koubei" />
-                </li>
-                <li>
-                	<label>级别</label>
-                    <input type="text" name="jibie" class="ipt" size="10" id="jibie" />
-                </li>
-                <li>
-                	<label>入职日期</label>
-                    <input type="text" name="adtime" id="addtime" value="" readonly class="doubledate ipticon"/>
-                </li>
-                <li>
-                  <input class="sub2" type="button" id="sub_add" onClick="add_user()" name="submit" value="完 成" />
-                </li>
-              </ol>
-            </form>
-          </div>
+  <div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
+    <h3>添加新用户</h3>
+  </div>
+  <div class="theme-popbod dform"  style="height:431px; overflow:scroll;">
+    <form class="theme-signin" name="loginform" action="" method="post">
+      <ol>
+        <li>
+          <label>登录帐号</label>
+          <input class="ipt" type="text" name="a_name" id="a_name" size="20" />
+        </li>
+        <li>
+          <label>登录密码</label>
+          <input class="ipt" type="password" size="20" name="pwd" id="pwd" />
+        </li>
+        <li>
+          <label>确认密码</label>
+          <input class="ipt" type="password"  size="20" name="cof_pwd" id="cof_pwd" />
+        </li>
+        <li>
+          <label>真实姓名</label>
+          <input class="ipt" size="20" name="truename" id="truename" />
+        </li>
+        <li>
+          <label> 性别</label>
+          <select id="sex" name="sex">
+            <option value="1">男</option>
+            <option value="2">女</option>
+          </select>
+        </li>
+        <li>
+          <label> 公司名称</label>
+          <input class="ipt" size="20" name="company" id="company" />
+        </li>
+        <li>
+          <label> 联系电话</label>
+          <input class="ipt" size="20" name="telphone" id="telphone" />
+        </li>
+        <li>
+          <label> 手机号</label>
+          <input class="ipt" size="20" name="phone" id="phone" />
+        </li>
+        <li>
+          <label> Email</label>
+          <input class="ipt" size="20" name="email" id="email" />
+        </li>
+        <li>
+          <label> QQ</label>
+          <input class="ipt" size="20" name="qq" id="qq" />
+        </li>
+        <li>
+          <label>生日</label>
+          <select name="year" class="choose" id="year">
+            <?php if(is_array($year)): $i = 0; $__LIST__ = $year;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo); ?>"><?php echo ($vo); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
+          </select>
+          <select name="month" onChange="getdays()" class="choose1" id="month" >
+            <?php if(is_array($month)): $i = 0; $__LIST__ = $month;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo); ?>"><?php echo ($vo); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
+          </select>
+          <select name="day" class="choose1" id="day">
+            <?php if(is_array($day)): $i = 0; $__LIST__ = $day;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo); ?>"><?php echo ($vo); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
+          </select>
+        </li>
+        <li>
+          <label>所在城市</label>
+          <select id="proid" name="proid" onChange="getcity('proid','cityid')">
+            <option value="">请选择</option>
+            <?php if(is_array($pro_list)): $i = 0; $__LIST__ = $pro_list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo["region_id"]); ?>"><?php echo ($vo["region_name"]); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
+          </select>
+          <select id="cityid" name="cityid">
+            <option value="">请选择</option>
+          </select>
+        </li>
+        <li>
+          <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;地址</label>
+          <input class="ipt" size="20" name="address" id="address" />
+        </li>
+        <li>
+          <label>收藏数目</label>
+          <input type="text" name="collect" class="ipt" size="10" id="collect" />
+        </li>
+        <li>
+          <label>口碑值</label>
+          <input type="text" name="koubei" class="ipt" size="10" id="koubei" />
+        </li>
+        <li>
+          <label>级别</label>
+          <input type="text" name="jibie" class="ipt" size="10" id="jibie" />
+        </li>
+        <li>
+          <label>入职日期</label>
+          <input type="text" name="adtime" id="addtime" value="" readonly class="doubledate ipticon"/>
+        </li>
+        <li>
+          <input class="sub2" type="button" id="sub_add" onClick="add_user()" name="submit" value="完 成" />
+        </li>
+      </ol>
+    </form>
+  </div>
 </div>
 <!--查看-->
 <div class="yc_ck" style="display:none;">
-<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="/Public/images/gb.jpg" /></a>
-            <h3>查看用户信息</h3>
-          </div>
-          <div class="theme-popbod dform" style="height:431px; overflow:scroll;">
-            
-              <ol>
-                <li style="height:30px;">
-                  <label>登录帐号</label>
-                  
-                  <font id="a_aname_1" class="ipt fontb"></font>
-                </li>
-                
-                <li style="height:30px;">
-                  <label>真实姓名</label>
-                  
-                  <font class="ipt fontb" id="truename_1"></font>
-                </li>
-                <li style="height:30px;">	
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;性别</label>
-                  
-                  <font class="ipt fontb" id="sex_1"></font>
-                </li>
-                <li style="height:30px;">	
-                  <label>公司名称</label>
-                  
-                  <font class="ipt fontb" id="company_1"></font>
-                </li>
-                <li style="height:30px;">	
-                  <label>联系电话</label>
-                  
-                  <font class="ipt fontb" id="telphone_1"></font>
-                </li>
-                <li style="height:30px;">	
-                  <label>手机号</label>
-                  
-                  <font class="ipt fontb" id="phone_1"></font>
-                </li>
-                
-                
-                
-                
-                
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮箱</label>
-                  
-                  <font class="ipt fontb" id="email_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ</label>
-                  
-                  <font class="ipt fontb" id="qq_1"></font>
-                </li>
-                
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;生日</label>
-                  <font class="ipt fontb" id="year_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>所在城市</label>
-                  
-                  <font class="ipt fontb" id="city_1"></font>
-                </li>
-                
-                <li style="height:30px;">
-                  <label>地址</label>
-                  
-                  <font class="ipt fontb" id="address_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>收藏数目</label>
-                  
-                  <font class="ipt fontb" id="collect_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>口碑值</label>
-                  
-                  <font class="ipt fontb" id="koubei_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>级别</label>
-                  
-                  <font class="ipt fontb" id="jibie_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>入职日期</label>
-                  
-                  <font class="ipt fontb" id="addtime_1"></font>
-                </li>
-                
-                
-                
-              </ol>
-            </form>
-          </div>
-
+  <div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
+    <h3>查看用户信息</h3>
+  </div>
+  <div class="theme-popbod dform" style="height:431px; overflow:scroll;">
+    <ol>
+      <li style="height:30px;">
+        <label>登录帐号</label>
+        <font id="a_aname_1" class="ipt fontb"></font> </li>
+      <li>
+          <label>logo</label>
+          <font id="logo_1">
+              
+          </font>
+      </li>
+      <li style="height:30px;">
+        <label>真实姓名</label>
+        <font class="ipt fontb" id="truename_1"></font> </li>
+      <li style="height:30px;">
+        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;性别</label>
+        <font class="ipt fontb" id="sex_1"></font> </li>
+      <li style="height:30px;">
+        <label>公司名称</label>
+        <font class="ipt fontb" id="company_1"></font> </li>
+      <li style="height:30px;">
+        <label>联系电话</label>
+        <font class="ipt fontb" id="telphone_1"></font> </li>
+      <li style="height:30px;">
+        <label>手机号</label>
+        <font class="ipt fontb" id="phone_1"></font> </li>
+      <li style="height:30px;">
+        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮箱</label>
+        <font class="ipt fontb" id="email_1"></font> </li>
+      <li style="height:30px;">
+        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ</label>
+        <font class="ipt fontb" id="qq_1"></font> </li>
+      <li style="height:30px;">
+        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;生日</label>
+        <font class="ipt fontb" id="year_1"></font> </li>
+      <li style="height:30px;">
+        <label>所在城市</label>
+        <font class="ipt fontb" id="city_1"></font> </li>
+      <li style="height:30px;">
+        <label>地址</label>
+        <font class="ipt fontb" id="address_1"></font> </li>
+      <li style="height:30px;">
+        <label>收藏数目</label>
+        <font class="ipt fontb" id="collect_1"></font> </li>
+      <li style="height:30px;">
+        <label>口碑值</label>
+        <font class="ipt fontb" id="koubei_1"></font> </li>
+      <li style="height:30px;">
+        <label>级别</label>
+        <font class="ipt fontb" id="jibie_1"></font> </li>
+      <li style="height:30px;">
+        <label>入职日期</label>
+        <font class="ipt fontb" id="addtime_1"></font> </li>
+    </ol>
+    </form>
+  </div>
 </div>
 <!--编辑-->
 <div class="yc_edit" style="display:none">
-<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="/Public/images/gb.jpg" /></a>
-            <h3>编辑用户</h3>
-          </div>
-          <div class="theme-popbod dform" style="height:431px; overflow:scroll;">
-            <form class="theme-signin" name="editform" action="" method="post">
-              <ol>
-                <li>
-                  <label>登录帐号</label>
-                  <input class="ipt" type="text" name="a_name_e" id="a_name_e" size="20" />
-                </li>
-                <li>
-                  <label>登录密码</label>
-                  <input class="ipt" type="password" size="20" name="pwd_e" id="pwd_e" />
-                </li>
-                <li>
-                  <label>确认密码</label>
-                  <input class="ipt" type="password"  size="20" name="cof_pwd_e" id="cof_pwd_e" />
-                </li>
-                <li>
-                  <label>真实姓名</label>
-                  <input class="ipt" size="20" name="truename_e" id="truename_e" />
-                </li>
-                <li>
-                  <label>性别</label>
-                  
-                  <select id="sex_e" name="sex_e">
-                    
-                  </select>
-                </li>
-                <li>
-                  <label>公司名称</label>
-                  <input class="ipt" name="company_e" id="company_e" size="20" />
-                </li>
-                <li>
-                  <label>联系电话</label>
-                  <input class="ipt" name="telphone_e" id="telphone_e" size="20" />
-                </li>
-                <li>
-                  <label>手机号</label>
-                  <input class="ipt" name="phone_e" id="phone_e" size="20" />
-                </li>
-                
-                <li>
-                  <label>邮箱</label>
-                  <input class="ipt" name="email_e" id="email_e" size="20" />
-                </li>
-                <li>
-                  <label>QQ</label>
-                  <input class="ipt" size="20" name="qq_e" id="qq_e" />
-                </li>
-                
-                <li>
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;生日</label>
-                  <select name="year_e" class="choose" id="year_e">
-                    
-                    
-                    
-                  </select>
-                  <select name="month_e" onChange="getdays()" class="choose1" id="month_e" >
-                   
-                  </select>
-                  <select name="day_e" class="choose1" id="day_e">
-                    
-                  </select>
-                </li>
-                <li>
-                  <label>所在城市</label>
-                  <select id="proid_e" name="proid_e" onChange="getcity('proid_e','cityid_e')">
-                  	<option value="">请选择</option>
-                    
-                  </select>
-                  <select id="cityid_e" name="cityid_e">
-                  	<option value="">请选择</option>
-                  </select>
-                </li>
-                
-                <li>
-                  <label>地址</label>
-                  <input class="ipt" size="20" name="address_e" id="address_e" />
-                </li>
-                <li>
-                  <label>收藏数目</label>
-                  <input class="ipt" size="10" name="collect_e" id="collect_e" />
-                </li>
-                <li>
-                  <label>口碑值</label>
-                  <input class="ipt" size="10" name="koubei_e" id="koubei_e" />
-                </li>
-                <li>
-                  <label>级别</label>
-                  <input class="ipt" size="10" name="jibie_e" id="jibie_e" />
-                </li>
-                <li>
-<label>入职日期</label>
-<input id="addtime_e" class="doubledate ipticon" type="text" readonly value="" name="addtime_e">
-</li>
-                
-                <li>
-                <input type="hidden" id="aid_e" name="aid_e" value="" />
-                  <input class="sub2" type="button" id="sub_add" onClick="edit_user()" name="submit" value="完 成" />
-                </li>
-              </ol>
-            </form>
-          </div>
+  <div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
+    <h3>编辑用户</h3>
+  </div>
+  <div class="theme-popbod dform" style="height:431px; overflow:scroll;">
+    <form class="theme-signin" name="editform" action="" method="post">
+      <ol>
+        <li>
+          <label>登录帐号</label>
+          <input class="ipt" type="text" name="a_name_e" id="a_name_e" size="20" />
+        </li>
+        <li>
+          <label>登录密码</label>
+          <input class="ipt" type="password" size="20" name="pwd_e" id="pwd_e" />
+        </li>
+        <li>
+          <label>确认密码</label>
+          <input class="ipt" type="password"  size="20" name="cof_pwd_e" id="cof_pwd_e" />
+        </li>
+        <li>
+          <label>真实姓名</label>
+          <input class="ipt" size="20" name="truename_e" id="truename_e" />
+        </li>
+        <li>
+          <label>性别</label>
+          <select id="sex_e" name="sex_e">
+          </select>
+        </li>
+        <li>
+          <label>公司名称</label>
+          <input class="ipt" name="company_e" id="company_e" size="20" />
+        </li>
+        <li>
+          <label>联系电话</label>
+          <input class="ipt" name="telphone_e" id="telphone_e" size="20" />
+        </li>
+        <li>
+          <label>手机号</label>
+          <input class="ipt" name="phone_e" id="phone_e" size="20" />
+        </li>
+        <li>
+          <label>邮箱</label>
+          <input class="ipt" name="email_e" id="email_e" size="20" />
+        </li>
+        <li>
+          <label>QQ</label>
+          <input class="ipt" size="20" name="qq_e" id="qq_e" />
+        </li>
+        <li>
+          <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;生日</label>
+          <select name="year_e" class="choose" id="year_e">
+          </select>
+          <select name="month_e" onChange="getdays()" class="choose1" id="month_e" >
+          </select>
+          <select name="day_e" class="choose1" id="day_e">
+          </select>
+        </li>
+        <li>
+          <label>所在城市</label>
+          <select id="proid_e" name="proid_e" onChange="getcity('proid_e','cityid_e')">
+            <option value="">请选择</option>
+          </select>
+          <select id="cityid_e" name="cityid_e">
+            <option value="">请选择</option>
+          </select>
+        </li>
+        <li>
+          <label>地址</label>
+          <input class="ipt" size="20" name="address_e" id="address_e" />
+        </li>
+        <li>
+          <label>收藏数目</label>
+          <input class="ipt" size="10" name="collect_e" id="collect_e" />
+        </li>
+        <li>
+          <label>口碑值</label>
+          <input class="ipt" size="10" name="koubei_e" id="koubei_e" />
+        </li>
+        <li>
+          <label>级别</label>
+          <input class="ipt" size="10" name="jibie_e" id="jibie_e" />
+        </li>
+        <li>
+          <label>入职日期</label>
+          <input id="addtime_e" class="doubledate ipticon" type="text" readonly value="" name="addtime_e">
+        </li>
+        <li>
+          <input type="hidden" id="aid_e" name="aid_e" value="" />
+          <input class="sub2" type="button" id="sub_add" onClick="edit_user()" name="submit" value="完 成" />
+        </li>
+      </ol>
+    </form>
+  </div>
 </div>
 <script>
 //删除
@@ -666,7 +627,7 @@ $(".chakan").click(function(){
 	
 	
 	$.ajax({
-		data:"aid="+aid,
+		data:"aid="+aid+"&",
 		type:"POST",
 		dataType:"JSON",
 		url:"<?php echo U('Member/getforeman');?>",
@@ -686,7 +647,7 @@ $(".chakan").click(function(){
 			
 			
 			
-			document.getElementById("sex_1").innerHTML=msg.f_sex;
+			document.getElementById("sex_1").innerHTML=msg.sex_1;   
 			document.getElementById("email_1").innerHTML=msg.f_email;
 			document.getElementById("qq_1").innerHTML=msg.f_qq;	
 			
@@ -694,6 +655,7 @@ $(".chakan").click(function(){
 			document.getElementById("address_1").innerHTML=msg.f_address;
 			document.getElementById("addtime_1").innerHTML=msg.f_addtime;
 			document.getElementById("city_1").innerHTML=msg.cityname;
+                        document.getElementById("logo_1").innerHTML="<img src='__ROOT__/avatar/"+msg.f_logo+"_60.jpg' />";
 			
 			}
 		})
