@@ -1159,6 +1159,7 @@ class MemberAction extends CommonAction {
             $a_name = trim($_POST['a_name']);
             $pwd = trim($_POST['pwd']);
             $confirm_pwd = trim($_POST['confirm_pwd']);
+            $status = $_POST['status'];
             if (empty($a_name)) {
                 $this->error("登录名称不能为空！");
                 exit;
@@ -1186,7 +1187,7 @@ class MemberAction extends CommonAction {
                 "a_name" => $a_name,
                 "a_pwd" => encrypt($pwd),
                 "a_type" => 3,
-                "status" => 1
+                "status" => $status
             );
             $dinfo = $_POST['dinfo'];
             $dinfo['company'] = trim($dinfo['company']);
@@ -1196,17 +1197,30 @@ class MemberAction extends CommonAction {
             $dinfo['kefu_phone'] = trim($dinfo['kefu_phone']);
             $dinfo['collect'] = trim($dinfo['collect']);
             $dinfo['koubei'] = trim($dinfo[koubei]);
+
+            if (empty($dinfo['collect']))
+                $dinfo['collect'] = 10;
+            if (empty($dinfo['koubei']))
+                $dinfo['koubei'] = 10;
+
             $dinfo['jibie'] = trim($dinfo[jibie]);
             $pro_id = trim($_POST['pro_id']);
             $city_id = trim($_POST['city_id']);
             $dinfo[dizhi] = trim($dinfo[dizhi]);
-            if (empty($pro_id)) {
-                $this->error("请选择省份！");
-                exit;
-            }
-            if (empty($city_id)) {
-                $this->error("请选择市！");
-                exit;
+            $logo = $_POST['picName'];
+            if ($_SESSION['my_info']['role'] != 2) {
+                if (empty($pro_id)) {
+                    $this->error("请选择省份！");
+                    exit;
+                }
+                if (empty($city_id)) {
+                    $this->error("请选择市！");
+                    exit;
+                }
+            } else {
+                $mod = new CityModel();
+                $city_id = $_SESSION['my_info']['cityid'];
+                $pro_id = $mod->getprovinceid($city_id);
             }
             $fjdata = array(
                 "company" => $dinfo['company'],
@@ -1221,6 +1235,7 @@ class MemberAction extends CommonAction {
                 "pro_id" => $pro_id,
                 "city_id" => $city_id,
                 "address" => $dinfo[dizhi],
+                "logo" => $logo
             );
             $res = $memmod->add_member($maindata, $fjdata);
             if ($res['status']) {
@@ -1298,9 +1313,16 @@ class MemberAction extends CommonAction {
             $dinfo[kefu_phone] = trim($_POST[dinfo][kefu_phone]);
             $dinfo[collect] = trim($_POST[dinfo][collect]);
             $dinfo[koubei] = trim($_POST[dinfo][koubei]);
+
             $dinfo[jibie] = trim($_POST[dinfo][jibie]);
-            $dinfo[pro_id] = trim($_POST[pro_id]);
-            $dinfo[city_id] = trim($_POST[city_id]);
+            if ($_SESSION['my_info']['role'] != 2) {
+                $dinfo[pro_id] = trim($_POST[pro_id]);
+                $dinfo[city_id] = trim($_POST[city_id]);
+            }else{
+                $dinfo['city_id']=$_SESSION['my_info']['cityid'];
+                $mod=new CityModel();
+                $dinfo['pro_id']=$mod->getprovinceid($dinfo['city_id']);
+            }
             $dinfo[address] = trim($_POST[dinfo][dizhi]);
             $mod2 = M("Dianpu");
             $res2 = $mod2->where("f_id=" . $aid)->save($dinfo);
