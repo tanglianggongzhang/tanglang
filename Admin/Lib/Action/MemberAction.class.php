@@ -1048,6 +1048,7 @@ class MemberAction extends CommonAction {
 
             $this->display();
         }
+        
     }
 
     /**
@@ -1468,8 +1469,156 @@ class MemberAction extends CommonAction {
      */
     public function shejishi() {
         parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        if ($_GET['is_sq'] == 1) {
+            $m = M("Shenqingview");
+            import("ORG.Util.Page");
+            $status = $_GET['status'];
+            $map = "status=" . $status . " and u_type=3";
 
-        $this->display();
+            $keys = trim($_GET['keys']);
+
+            $keys = ($keys == "请输入关键字") ? "" : $keys;
+
+            $start_date = trim($_GET['start_date']);
+            $this->assign("start_date", $start_date);
+
+            $end_date = trim($_GET['end_date']);
+            $this->assign("end_date", $end_date);
+
+            if (!empty($start_date)) {
+                $start_date = strtotime($start_date . "0:0:0");
+                $map.=" and UNIX_TIMESTAMP(addtime)>= " . $start_date;
+            }
+            if (!empty($end_date)) {
+                $end_date = strtotime($end_date . "23:59:59");
+                $map.=" and UNIX_TIMESTAMP(addtime)<= " . $end_date;
+            }
+            if ($_SESSION['my_info']['role'] != 2) {
+                //非地区管理员
+                $province = $_GET['province'];
+                $this->assign("province", $province);
+                $city = $_GET['city'];
+                if (!empty($province)) {
+                    $map.=" and province_id=" . $province;
+                }
+                if (!empty($city)) {
+                    $map.=" and city_id=" . $city;
+                }
+                $this->assign("city", $city);
+            } else {
+                if ($_SESSION['my_info']['cityid'])
+                    $map.=" and city_id=" . $_SESSION['my_info']['cityid'];
+                else {
+                    $this->error("该管理员没有分配城市顾没有权限查看此页！", U('Index/index'));
+                    exit;
+                }
+            }
+
+
+
+            if (!empty($keys)) {
+                $map.=" and (truename like '%" . $keys . "%' or nickname like '%" . $keys . "%')";
+            }
+
+            $cou = $m->where($map)->order("u_id desc")->count();
+            $page = new Page($cou, 12);
+            $showpage = $page->show();
+            $list = $m->where($map)->order("u_id desc")->select();
+            foreach ($list as $k => $v) {
+                $list[$k]['sex_f'] = $this->get_sex($v['sex']);
+                $list[$k]['status_f'] = $this->get_status($v['status']);
+            }
+            $this->assign("list", $list);
+
+            $this->assign("page", $showpage);
+
+            $citymod = new CityModel();
+            $pro_list = $citymod->getprovince(1);
+            $this->assign("pro_list", $pro_list);
+
+            $this->assign("keys", $keys);
+
+            $cityname = $citymod->getname($city);
+            $this->assign("cityname", $cityname);
+
+            $this->display("dpsqlist" . $status);
+            exit;
+        } else {
+            $m = M("Shejiview");
+            import("ORG.Util.Page");
+            $map = "1";
+            $keys = trim($_GET['keys']);
+
+            $keys = ($keys == "请输入关键字") ? "" : $keys;
+
+            $start_date = trim($_GET['start_date']);
+            $this->assign("start_date", $start_date);
+            $end_date = trim($_GET['end_date']);
+            $this->assign("end_date", $end_date);
+
+            if (!empty($start_date)) {
+                $start_date = strtotime($start_date . "0:0:0");
+                $map.=" and UNIX_TIMESTAMP(create_time)>= " . $start_date;
+            }
+            if (!empty($end_date)) {
+                $end_date = strtotime($end_date . "23:59:59");
+                $map.=" and UNIX_TIMESTAMP(create_time)<= " . $end_date;
+            }
+            //城市-------------------------------start
+            if ($_SESSION['my_info']['role'] != 2) {
+                //非地区管理员
+                $province = $_GET['province'];
+                $this->assign("province", $province);
+                $city = $_GET['city'];
+                if (!empty($province)) {
+                    $map.=" and pro_id=" . $province;
+                }
+                if (!empty($city)) {
+                    $map.=" and city_id=" . $city;
+                }
+                $this->assign("city", $city);
+            } else {
+                $map.=" and city_id=" . $_SESSION['my_info']['cityid'];
+            }
+            //城市------------------------end
+
+            if (!empty($keys)) {
+                $map.=" and (company like '%" . $keys . "%')";
+            }
+
+
+            $cou = $m->where($map)->order("a_id desc")->count();
+
+            $page = new Page($cou, 12);
+            $showpage = $page->show();
+            $list = $m->where($map)->order("a_id desc")->select();
+
+            $this->assign("list", $list);
+            $this->assign("page", $showpage);
+
+
+            $memmod = new MemberModel();
+            $year = $memmod->getyear();
+            $this->assign("year", $year);
+            $month = $memmod->getmonth();
+            $this->assign("month", $month);
+            $days = $memmod->getday($year[0], $month[0]);
+            $this->assign("day", $days);
+
+            $citymod = new CityModel();
+            $pro_list = $citymod->getprovince(1);
+            $this->assign("pro_list", $pro_list);
+
+            $this->assign("keys", $keys);
+
+            $cityname = $citymod->getname($city);
+            $this->assign("cityname", $cityname);
+
+            $this->display();
+        }
+        
+        
     }
 
     /**
@@ -1742,5 +1891,106 @@ class MemberAction extends CommonAction {
 
         $this->display("addgz");
     }
-
+    /**
+     * 添加设计师
+     */
+    public function addsjs(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $citymod = new CityModel();
+        $pro_list = $citymod->getprovince(1);
+        $this->assign("pro_list", $pro_list);
+        if(IS_POST){
+            $a_name=trim($_POST['a_name']);
+            $status=trim($_POST['status']);
+            $pwd=trim($_POST['pwd']);
+            $confirm_pwd=trim($_POST['confirm_pwd']);
+            $picName=trim($_POST['picName']);
+            $truename=$_POST['dinfo']['truename'];
+            $nickname=$_POST['dinfo']['nickname'];
+            $sex=$_POST['dinfo']['sex'];
+            $comname=$_POST['dinfo']['comname'];
+            $comphone=$_POST['dinfo']['comphone'];
+            $phonenum=$_POST['dinfo']['phonenum'];
+            $email=$_POST['dinfo']['email'];
+            $qq=$_POST['dinfo']['qq'];
+            $birthday=$_POST['dinfo']['birthday'];
+            $p_id=$_POST['dinfo']['p_id'];
+            $c_id=$_POST['dinfo']['c_id'];
+            $address=$_POST['dinfo']['address'];
+            $collect=$_POST['dinfo']['collect'];
+            $koubei=$_POST['dinfo']['koubei'];
+            if(empty($a_name)){
+                $this->error("登录名不能为空！");exit;
+            }
+            if(empty($pwd)){
+                $this->error("密码不能为空！");exit;
+            }
+            
+            if(empty($confirm_pwd)){
+                $this->error("确认密码不能为空！");exit;
+            }
+            if(empty($confirm_pwd)){
+                $this->error("确认密码不能为空！");exit;
+            }
+            if(empty($truename)){
+                $this->error("真实姓名不能为空！");exit;
+            }
+            if($pwd!=$confirm_pwd){
+                $this->error("两次输入的密码不能为空！");exit;
+            }
+            //登录名称是否存在
+            $memmod = new MemberModel();
+            if ($memmod->check_name($a_name) > 0) {
+                $this->error("登录名已经存在，请重新命名");
+                exit;
+            }
+            if ($_SESSION['my_info']['role'] != 2) {
+                if (empty($p_id)) {
+                    $this->error("请选择省份！");
+                    exit;
+                }
+                if (empty($c_id)) {
+                    $this->error("请选择市！");
+                    exit;
+                }
+            } else {
+                $mod = new CityModel();
+                $c_id = $_SESSION['my_info']['cityid'];
+                $p_id = $mod->getprovinceid($c_id);
+            }
+            
+            $maindata = array(
+                "a_name" => $a_name,
+                "a_pwd" => encrypt($pwd),
+                "a_type" => 4,
+                "status" => $status
+            );
+            $fjdata=array();
+            $fjdata['nickname']=$nickname;
+            $fjdata['logo']=$picName;
+            $fjdata['truename']=$truename;
+            $fjdata['sex']=$sex;
+            $fjdata['comname']=$comname;
+            $fjdata['comphone']=$comphone;
+            $fjdata['phonenum']=$phonenum;
+            $fjdata['collect']=$collect;
+            $fjdata['koubei']=$koubei;
+            $fjdata['email']=$email;
+            $fjdata['birthday']=$birthday;
+            $fjdata['address']=$address;
+            $fjdata['qq']=$qq;
+            $fjdata['p_id']=$p_id;
+            $fjdata['c_id']=$c_id;
+            
+            $res = $memmod->add_member($maindata, $fjdata);
+            if ($res['status']) {
+                $this->success($res['info']);
+            } else {
+                $this->error($res['info']);
+            }
+            exit;
+        }
+        $this->display();
+    }
 }
