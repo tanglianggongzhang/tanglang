@@ -877,7 +877,23 @@ class MemberAction extends CommonAction {
             $this->error("操作失败");
         }
     }
-
+    /**
+     * 删除
+     * 设计师
+     */
+    public function del_shejishi(){
+        $aid = $_GET['aid'];
+        $mod = M("Member");
+        $imod = M("Sheji");
+        $res = $mod->where(array("a_id" => $aid))->delete();
+        $res2 = $imod->where(array("f_id" => $aid))->delete();
+        if ($res && $res2) {
+            $this->success("操作成功");
+        } else {
+            $this->error("操作失败");
+        }
+    }
+    
     /**
      * 删除申请
      */
@@ -1412,6 +1428,7 @@ class MemberAction extends CommonAction {
                 "company" => $info['companyname'],
                 "lxrname" => $info['truename'],
                 "phone" => $info['movphone'],
+                "kefu_phone"=>$info['companyphone'],
                 "pro_id" => $info['province_id'],
                 "city_id" => $info['city_id']
             );
@@ -1419,6 +1436,17 @@ class MemberAction extends CommonAction {
             $res = $admod->add($data);
         } elseif ($type == 4) {
             //设计
+            $data=array(
+                "f_id"=>$info['u_id'],
+                "comname" => $info['companyname'],
+                "comphone"=>$info['companyphone'],
+                "truename" => $info['truename'],
+                "phonenum" => $info['movphone'],
+                "p_id" => $info['province_id'],
+                "c_id" => $info['city_id']
+            );
+            $sjmod=M("Sheji");
+            $res=$sjmod->add($data);
         }
         $res2 = $m->where("u_id=" . $aid)->save(array("status" => 1));
         $mmod = M("Member");
@@ -1452,6 +1480,8 @@ class MemberAction extends CommonAction {
             $res1 = $m->where("f_id=" . $aid)->delete();
         } elseif ($type == 4) {
             //设计师
+            $m=M("Sheji");
+            $res1=$m->where("f_id=".$aid)->delete();
         }
         $res2 = $m2->where("u_id=" . $aid)->save(array("status" => 0));
         $res3 = $m3->where("a_id=" . $aid)->save(array("a_type" => 1));
@@ -1473,7 +1503,7 @@ class MemberAction extends CommonAction {
             $m = M("Shenqingview");
             import("ORG.Util.Page");
             $status = $_GET['status'];
-            $map = "status=" . $status . " and u_type=3";
+            $map = "status=" . $status . " and u_type=4";
 
             $keys = trim($_GET['keys']);
 
@@ -1541,7 +1571,7 @@ class MemberAction extends CommonAction {
             $cityname = $citymod->getname($city);
             $this->assign("cityname", $cityname);
 
-            $this->display("dpsqlist" . $status);
+            $this->display("sjslist" . $status);
             exit;
         } else {
             $m = M("Shejiview");

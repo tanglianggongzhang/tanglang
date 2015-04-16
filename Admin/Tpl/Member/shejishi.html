@@ -66,8 +66,8 @@ $(function(){
       <div class="center1">
         <div class="on_line">
           <label class="over">设计师</label>
-          <label><a href="{:U('Member/foreman',array('is_sq'=>1,'status'=>0))}">未通过申请 列表</a></label>
-          <label><a href="{:U('Member/foreman',array('is_sq'=>1,'status'=>1))}">已通过申请 列表</a></label>
+          <label><a href="{:U('Member/shejishi',array('is_sq'=>1,'status'=>0))}">未通过申请 列表</a></label>
+          <label><a href="{:U('Member/shejishi',array('is_sq'=>1,'status'=>1))}">已通过申请 列表</a></label>
         </div>
         <div class="center_r_z">
           <form method="get" name="search_form" id="search_form" action=""  >
@@ -134,7 +134,7 @@ $(function(){
               <td width="135">{$vo.collect}</td>
               <td width="100">{$vo.koubei}</td>
               
-              <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a><a aid="{$vo.a_id}" href="{:U('Member/editsjs',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a><a name="{$vo.a_name}" link="{:U('Member/del_foreman',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
+              <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a><a aid="{$vo.a_id}" href="{:U('Member/editsjs',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a><a name="{$vo.a_name}" link="{:U('Member/del_shejishi',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
             </tr>
           </volist>
         </table>
