@@ -261,7 +261,7 @@ $(function(){
   </div>
   <div class="theme-popbod dform" style="height:431px; overflow:scroll;">
     <ol>
-        <li style="">
+        <li style="idlogo">
         <label>logo</label>
         <font id="logo_1"></font> </li>
       <li style="height:30px;">
@@ -579,8 +579,11 @@ $(".chakan").click(function(){
 			document.getElementById("addtime_1").innerHTML=msg.addtime;
 			document.getElementById("city_1").innerHTML=msg.cityname;
 			document.getElementById("nickname_1").innerHTML=msg.nickname;
+                        if(msg.logo!=''){
                         document.getElementById("logo_1").innerHTML="<img src='__ROOT__/avatar/"+msg.logo+"_60.jpg' />";
-                        
+                    }else{
+                        document.getElementById("idlogo").innerHTML=" ";
+                    }
                         
 			}
 		})
