@@ -185,7 +185,7 @@
 		<input type="hidden" id="w" name="w" />
 		<input type="hidden" id="h" name="h" />
 		<input type="hidden" id='img_src' name='src'/>
-                <input type="hidden" id='picName' value="{$info.f_logo}" name='picName'/>
+                <input type="hidden" id='picName' value="{$info.logo}" name='picName'/>
 		<div class="tcrop">头像预览</div>
 		<div class="crop crop100"><img id="crop-preview-100" src="" alt=""></div>
 		<div class="crop crop60"><img id="crop-preview-60" src="" alt=""></div>
@@ -223,20 +223,20 @@
                 <tr>
                     <td>真实姓名：</td>
                     <td>
-                       <input type="text" name="dinfo[truename]" size="40" id="truename" value="{$info.truename}" />
+                       <input type="text" name="truename" size="40" id="truename" value="{$info.truename}" />
                     </td>
                 </tr>
                 <tr>
                     <td>昵称：</td>
                     <td>
-                       <input type="text" name="dinfo[nickname]" size="40" id="nickname" value="{$info.nickname}" />
+                       <input type="text" name="nickname" size="40" id="nickname" value="{$info.nickname}" />
                     </td>
                 </tr>
                 <tr>
                     <td>性别：</td>
                     <td>
-                        <label><input type="radio" name="dinfo[sex]" id="sex" value="1" <if condition="$info[sex]==1">checked</if> />男</label>
-                        <label><input type="radio" name="dinfo[sex]" id="sex" value="2" <if condition="$info[sex]==2">checked</if> />女</label>
+                        <label><input type="radio" name="sex" id="sex" value="1" <if condition="$info[sex]==1">checked</if> />男</label>
+                        <label><input type="radio" name="sex" id="sex" value="2" <if condition="$info[sex]==2">checked</if> />女</label>
                         
                     </td>
                 </tr>
@@ -244,13 +244,13 @@
                 <tr>
                     <td>公司名称：</td>
                     <td>
-                       <input type="text" name="dinfo[comname]" size="40" id="comname" value="{$info.comname}" />
+                       <input type="text" name="comname" size="40" id="comname" value="{$info.comname}" />
                     </td>
                 </tr>
                 <tr>
                     <td>公司座机：</td>
                     <td>
-                       <input type="text" name="dinfo[comphone]" size="40" id="comphone" value="{$info.comphone}" />
+                       <input type="text" name="comphone" size="40" id="comphone" value="{$info.comphone}" />
                     </td>
                 </tr>
                 <tr>
@@ -258,18 +258,18 @@
                         
                        手机号： 
                     </td>
-                    <td><input type="text" name="dinfo[phonenum]" size="40" id="phonenum" value="{$info[phonenum]}" /></td>
+                    <td><input type="text" name="phonenum" size="40" id="phonenum" value="{$info[phonenum]}" /></td>
                 </tr>
                                  
                 
                 <tr>
                     <td>email：</td>
-                    <td><input type="text" name="dinfo[email]" size="40" id="email" value="{$info[email]}" /></td>
+                    <td><input type="text" name="email" size="40" id="email" value="{$info[email]}" /></td>
                 </tr>               
                 
                 <tr>
                     <td>qq：</td>
-                    <td><input type="text" name="dinfo[qq]" size="40" id="qq" value="{$info[qq]}" /></td>
+                    <td><input type="text" name="qq" size="40" id="qq" value="{$info[qq]}" /></td>
                 </tr>  
                
                 
@@ -277,7 +277,7 @@
                     <td>生日：</td>
                     <td>
 
-<input type="text" id="but" name="dinfo[birthday]" readonly value="{$info[birthday]}" />
+<input type="text" id="but" name="birthday" readonly value="{$info[birthday]}" />
             <div class="easyui-calendar" style="width:250px;height:250px; display:none" data-options="formatter:formatDay"></div>
             <script>
 		var d1 = Math.floor((Math.random()*30)+1);
@@ -338,16 +338,16 @@
                 <tr>
                     <td>省份/城市：</td>
                     <td>
-                        <select id="p_id" name="dinfo[p_id]" onchange="getcity('p_id','c_id')" >
+                        <select id="p_id" name="p_id" onchange="getcity('p_id','c_id')" >
                             <option value="">请选择省份</option>
                             <volist id="vo" name="pro_list">
-                            	<option value="{$vo.region_id}" <if condition="$info[f_p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
+                            	<option value="{$vo.region_id}" <if condition="$info[p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
                             </volist>
                         </select>
-                        <select id="c_id" name="dinfo[c_id]">
+                        <select id="c_id" name="c_id">
                             <option value="">请选择市</option>
-                            <if condition="!empty($info[f_c_id])">
-                            <option value="{$info.f_c_id}" selected="selected">{$info.cityname}</option>
+                            <if condition="!empty($info[c_id])">
+                            <option value="{$info.c_id}" selected="selected">{$info.cityname}</option>
                             </if>
                         </select>
                     </td>
@@ -356,16 +356,16 @@
                 
                 <tr>
                     <td>地址：</td>
-                    <td><input type="text" name="dinfo[address]" size="40" id="address" value="{$info[address]}" /></td>
+                    <td><input type="text" name="address" size="40" id="address" value="{$info[address]}" /></td>
                 </tr>
                 
                 <tr>
                     <td>收藏数目：</td>
-                    <td><input type="text" name="dinfo[collect]" size="10" id="collect" value="{$info[collect]}" /></td>
+                    <td><input type="text" name="collect" size="10" id="collect" value="{$info[collect]}" /></td>
                 </tr>
                 <tr>
                     <td>口碑：</td>
-                    <td><input type="text" name="dinfo[koubei]" size="10" id="koubei" value="{$info[koubei]}" /></td>
+                    <td><input type="text" name="koubei" size="10" id="koubei" value="{$info[koubei]}" /></td>
                 </tr>
                 <tr>
                     <td colspan="2"><input type="submit" class="btn submit" id="sub" name="sub" value="提交"/></td>

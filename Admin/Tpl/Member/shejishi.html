@@ -122,19 +122,19 @@ $(function(){
             <td width="135">城市</td>
             <td width="135">收藏</td>
             <td width="100">口碑值</td>
-            <td width="100">级别</td>
+            
             <td class="td2" width="135">操作</td>
           </tr>
           <volist id="vo" name="list">
             <tr class="center_t_d">
               <td class="td1" width="135">{$vo.a_name}</td>
-              <td width="135">{$vo.f_company}</td>
-              <td width="135">{$vo.f_addtime}</td>
+              <td width="135">{$vo.comname}</td>
+              <td width="135">{$vo.addtime}</td>
               <td width="135">{$vo.cityname}</td>
-              <td width="135">{$vo.f_collect}</td>
-              <td width="100">{$vo.f_koubei}</td>
-              <td width="100">{$vo.f_jibie}</td>
-              <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a><a aid="{$vo.a_id}" class="edituser" style="cursor:pointer">编辑</a><a name="{$vo.a_name}" link="{:U('Member/del_foreman',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
+              <td width="135">{$vo.collect}</td>
+              <td width="100">{$vo.koubei}</td>
+              
+              <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a><a aid="{$vo.a_id}" href="{:U('Member/editsjs',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a><a name="{$vo.a_name}" link="{:U('Member/del_foreman',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
             </tr>
           </volist>
         </table>
@@ -261,12 +261,20 @@ $(function(){
   </div>
   <div class="theme-popbod dform" style="height:431px; overflow:scroll;">
     <ol>
+        <li style="">
+        <label>logo</label>
+        <font id="logo_1"></font> </li>
       <li style="height:30px;">
         <label>登录帐号</label>
         <font id="a_aname_1" class="ipt fontb"></font> </li>
       <li style="height:30px;">
         <label>真实姓名</label>
         <font class="ipt fontb" id="truename_1"></font> </li>
+      <li style="height:30px;">
+        <label>昵称</label>
+        <font class="ipt fontb" id="nickname_1"></font> </li>
+      
+      
       <li style="height:30px;">
         <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;性别</label>
         <font class="ipt fontb" id="sex_1"></font> </li>
@@ -545,32 +553,35 @@ $(".chakan").click(function(){
 		data:"aid="+aid,
 		type:"POST",
 		dataType:"JSON",
-		url:"{:U('Member/getforeman')}",
+		url:"{:U('Member/getsjs')}",
 		cache:false,
 		success: function(msg){
 			msg=eval("("+msg+")");
 			
 			document.getElementById("a_aname_1").innerHTML=msg.a_name;
 			
-			document.getElementById("truename_1").innerHTML=msg.f_truename;
-			document.getElementById("company_1").innerHTML=msg.f_company;
-			document.getElementById("collect_1").innerHTML=msg.f_collect;
-			document.getElementById("koubei_1").innerHTML=msg.f_koubei;
-			document.getElementById("jibie_1").innerHTML=msg.f_jibie;
-			document.getElementById("telphone_1").innerHTML=msg.f_telphone;
-			document.getElementById("phone_1").innerHTML=msg.f_phone;
+			document.getElementById("truename_1").innerHTML=msg.truename;
+			document.getElementById("company_1").innerHTML=msg.comname;
+			document.getElementById("collect_1").innerHTML=msg.collect;
+			document.getElementById("koubei_1").innerHTML=msg.koubei;
+			document.getElementById("jibie_1").innerHTML=msg.jibie;
+			document.getElementById("telphone_1").innerHTML=msg.comphone;
+			document.getElementById("phone_1").innerHTML=msg.phonenum;
 			
 			
 			
-			document.getElementById("sex_1").innerHTML=msg.f_sex;
-			document.getElementById("email_1").innerHTML=msg.f_email;
-			document.getElementById("qq_1").innerHTML=msg.f_qq;	
+			document.getElementById("sex_1").innerHTML=msg.sex;
+			document.getElementById("email_1").innerHTML=msg.email;
+			document.getElementById("qq_1").innerHTML=msg.qq;	
 			
-			document.getElementById("year_1").innerHTML=msg.f_birthday;
-			document.getElementById("address_1").innerHTML=msg.f_address;
-			document.getElementById("addtime_1").innerHTML=msg.f_addtime;
+			document.getElementById("year_1").innerHTML=msg.birthday;
+			document.getElementById("address_1").innerHTML=msg.address;
+			document.getElementById("addtime_1").innerHTML=msg.addtime;
 			document.getElementById("city_1").innerHTML=msg.cityname;
-			
+			document.getElementById("nickname_1").innerHTML=msg.nickname;
+                        document.getElementById("logo_1").innerHTML="<img src='__ROOT__/avatar/"+msg.logo+"_60.jpg' />";
+                        
+                        
 			}
 		})
 	
