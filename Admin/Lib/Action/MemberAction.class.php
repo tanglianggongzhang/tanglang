@@ -182,11 +182,28 @@ class MemberAction extends CommonAction {
      * 获取城市
      */
     public function getcity() {
-        header("Content-Type:text/html; charset=utf-8");
+
         header('Content-Type:application/json; charset=utf-8');
         $pid = $_POST['fid'];
         $citymod = new CityModel();
         $pro_list = $citymod->getprovince($pid);
+        if ($pro_list)
+            echo json_encode(array("status" => 1, "data" => $pro_list));
+        else
+            echo json_encode(array("status" => 0, "data" => array()));
+    }
+
+    /**
+     * 获取地区
+     */
+    public function getqu() {
+
+        header('Content-Type:application/json; charset=utf-8');
+
+        $cid = $_POST['cid'];
+
+        $citymod = new CityModel();
+        $pro_list = $citymod->getqu($cid);
         if ($pro_list)
             echo json_encode(array("status" => 1, "data" => $pro_list));
         else
@@ -877,11 +894,12 @@ class MemberAction extends CommonAction {
             $this->error("操作失败");
         }
     }
+
     /**
      * 删除
      * 设计师
      */
-    public function del_shejishi(){
+    public function del_shejishi() {
         $aid = $_GET['aid'];
         $mod = M("Member");
         $imod = M("Sheji");
@@ -893,7 +911,7 @@ class MemberAction extends CommonAction {
             $this->error("操作失败");
         }
     }
-    
+
     /**
      * 删除申请
      */
@@ -1075,6 +1093,13 @@ class MemberAction extends CommonAction {
         $citymod = new CityModel();
         $pro_list = $citymod->getprovince(1);
         $this->assign("pro_list", $pro_list);
+        $cityid = $_SESSION['my_info']['cityid'];
+        $proid = $citymod->getprovinceid($cityid); 
+        //获取地区
+        $qulist=$citymod->getqu($cityid);
+       
+        $this->assign("qulist",$qulist);
+        
         if (IS_POST) {
             $a_name = trim($_POST['a_name']);
             $pwd = trim($_POST['pwd']);
@@ -1120,9 +1145,11 @@ class MemberAction extends CommonAction {
             if ($_SESSION['my_info']['role'] == 2) {
                 $cityid = $_SESSION['my_info']['cityid'];
                 $proid = $citymod->getprovinceid($cityid);
+                
             } else {
                 $cityid = $_POST['dinfo']['city_id'];
                 $proid = $_POST['dinfo']['province_id'];
+                
                 if (empty($proid)) {
                     $returnarr['status'] = 0;
                     $returnarr['info'] = "请选择省份";
@@ -1135,6 +1162,13 @@ class MemberAction extends CommonAction {
                     $this->error($returnarr['info']);
                     exit;
                 }
+            }
+            $qu_id = $_POST['dinfo']['qu_id'];
+            if (empty($qu_id)) {
+                $returnarr['status'] = 0;
+                $returnarr['info'] = "请选择城区";
+                $this->error($returnarr['info']);
+                exit;
             }
             $picName = $_POST['picName'];
             $address = trim($_POST['dinfo']['address']);
@@ -1149,6 +1183,8 @@ class MemberAction extends CommonAction {
                 "birthday" => $birthday,
                 "city_id" => $cityid,
                 "province_id" => $proid,
+                
+                "qu_id" => $qu_id,
                 "logo" => $picName,
                 "address" => $address
             );
@@ -1428,7 +1464,7 @@ class MemberAction extends CommonAction {
                 "company" => $info['companyname'],
                 "lxrname" => $info['truename'],
                 "phone" => $info['movphone'],
-                "kefu_phone"=>$info['companyphone'],
+                "kefu_phone" => $info['companyphone'],
                 "pro_id" => $info['province_id'],
                 "city_id" => $info['city_id']
             );
@@ -1436,17 +1472,17 @@ class MemberAction extends CommonAction {
             $res = $admod->add($data);
         } elseif ($type == 4) {
             //设计
-            $data=array(
-                "f_id"=>$info['u_id'],
+            $data = array(
+                "f_id" => $info['u_id'],
                 "comname" => $info['companyname'],
-                "comphone"=>$info['companyphone'],
+                "comphone" => $info['companyphone'],
                 "truename" => $info['truename'],
                 "phonenum" => $info['movphone'],
                 "p_id" => $info['province_id'],
                 "c_id" => $info['city_id']
             );
-            $sjmod=M("Sheji");
-            $res=$sjmod->add($data);
+            $sjmod = M("Sheji");
+            $res = $sjmod->add($data);
         }
         $res2 = $m->where("u_id=" . $aid)->save(array("status" => 1));
         $mmod = M("Member");
@@ -1480,8 +1516,8 @@ class MemberAction extends CommonAction {
             $res1 = $m->where("f_id=" . $aid)->delete();
         } elseif ($type == 4) {
             //设计师
-            $m=M("Sheji");
-            $res1=$m->where("f_id=".$aid)->delete();
+            $m = M("Sheji");
+            $res1 = $m->where("f_id=" . $aid)->delete();
         }
         $res2 = $m2->where("u_id=" . $aid)->save(array("status" => 0));
         $res3 = $m3->where("a_id=" . $aid)->save(array("a_type" => 1));
@@ -2136,10 +2172,10 @@ class MemberAction extends CommonAction {
                     $datafj['p_id'] = $p_id;
                 if ($c_id != $info['c_id'])
                     $datafj['c_id'] = $c_id;
-            }else{
-                $datafj['c_id']=$_SESSION['my_info']['cityid'];
-                $citymod=new CityModel();
-                $datafj['p_id']=$citymod->getprovinceid($datafj['c_id']);
+            }else {
+                $datafj['c_id'] = $_SESSION['my_info']['cityid'];
+                $citymod = new CityModel();
+                $datafj['p_id'] = $citymod->getprovinceid($datafj['c_id']);
             }
 
             $fjMod = M("Sheji");
@@ -2149,7 +2185,6 @@ class MemberAction extends CommonAction {
                 $this->error("修改失败！");
             } else {
                 $this->success("操作成功!", U("Member/shejishi"));
-                
             }
             exit;
         }

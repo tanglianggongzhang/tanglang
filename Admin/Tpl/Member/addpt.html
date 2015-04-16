@@ -322,12 +322,36 @@
                             	<option value="{$vo.region_id}" <if condition="$info[province_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
                             </volist>
                         </select>
-                        <select id="city_id" name="dinfo[city_id]">
+                        <select id="city_id" name="dinfo[city_id]" onchange="getdiqu('province_id','city_id','qu_id')">
                             <option value="">请选择市</option>
                             <if condition="!empty($info[city_id])">
                             <option value="{$info.city_id}" selected="selected">{$info.region_name}</option>
                             </if>
                         </select>
+                        
+                        <select id="qu_id" name="dinfo[qu_id]">
+                            <option value="">请选择区</option>
+                            <if condition="$info[qu_id]">
+                                <option value="{$info.qu_id}" selected="selected">{$info.qu_name}</option>
+                            </if>
+                        </select>
+                        
+                        
+                    </td>
+                </tr> 
+                    <else/>
+                    <tr>
+                    <td>地区：</td>
+                    <td>
+                        
+                        
+                        <select id="qu_id" name="dinfo[qu_id]">
+                            <option value="">请选择区</option>
+                            <volist id="vo" name="qulist">
+                            <option value="{$vo.region_id}" <if condition="$info[qu_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
+                            </volist>
+                        </select>
+                        
                     </td>
                 </tr> 
                 </if>
@@ -404,6 +428,37 @@
 					
 		});	
 	}
+        function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+		var cid=document.getElementById(cityid).value;
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
 	
 </script>
 
