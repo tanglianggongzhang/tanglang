@@ -18,34 +18,33 @@ class AccessAction extends CommonAction {
 
     public function nodeList() {
         parent::_initalize();
-        $systemConfig=  $this->systemConfig;
-        $this->assign("systemConfig",$systemConfig);
+        $systemConfig = $this->systemConfig;
+        $this->assign("systemConfig", $systemConfig);
         $this->assign("list", D("Access")->nodeList());
         $this->display();
     }
 
     public function roleList() {
         parent::_initalize();
-        $systemConfig=  $this->systemConfig;
-        $this->assign("systemConfig",$systemConfig);
-        
+        $systemConfig = $this->systemConfig;
+        $this->assign("systemConfig", $systemConfig);
+
         $this->assign("list", D("Access")->roleList());
         $this->display();
     }
 
     public function addRole() {
         parent::_initalize();
-        $systemConfig=$this->systemConfig;
-        $this->assign("systemConfig",$systemConfig);
-        
+        $systemConfig = $this->systemConfig;
+        $this->assign("systemConfig", $systemConfig);
+
         if (IS_POST) {
             $this->checkToken();
             #header('Content-Type:application/json; charset=utf-8');
-            $res=D("Access")->addRole();
-            if($res['status']){
-                $this->success($res['info'],$res['url']);
-            }
-            else{
+            $res = D("Access")->addRole();
+            if ($res['status']) {
+                $this->success($res['info'], $res['url']);
+            } else {
                 $this->error($res['info']);
             }
             exit;
@@ -57,14 +56,14 @@ class AccessAction extends CommonAction {
 
     public function editRole() {
         parent::_initalize();
-        $systemConfig=  $this->systemConfig;
-        $this->assign("systemConfig",$systemConfig);
+        $systemConfig = $this->systemConfig;
+        $this->assign("systemConfig", $systemConfig);
         if (IS_POST) {
             $this->checkToken();
-            $msg=D("Access")->editRole();
-            if($msg['status']){
-                $this->success($msg['info'],$msg['url']);
-            }else{
+            $msg = D("Access")->editRole();
+            if ($msg['status']) {
+                $this->success($msg['info'], $msg['url']);
+            } else {
                 $this->error($msg['info']);
             }
             exit;
@@ -105,15 +104,15 @@ class AccessAction extends CommonAction {
         parent::_initalize();
         $systemConfig = $this->systemConfig;
         $this->assign("systemConfig", $systemConfig);
-            
+
         if (IS_POST) {
             $this->checkToken();
             header('Content-Type:application/json; charset=utf-8');
             #echo json_encode();
-            $resmsg=D("Access")->editNode();
-            if($resmsg['status']){
+            $resmsg = D("Access")->editNode();
+            if ($resmsg['status']) {
                 $this->success($resmsg['info']);
-            }else{
+            } else {
                 $this->error($resmsg['info']);
             }
             exit;
@@ -130,17 +129,17 @@ class AccessAction extends CommonAction {
 
     public function addNode() {
         parent::_initalize();
-        
+
         $systemConfig = $this->systemConfig;
         $this->assign("systemConfig", $systemConfig);
-        
+
         if (IS_POST) {
             $this->checkToken();
             #header('Content-Type:application/json; charset=utf-8');
-            $msg=D("Access")->addNode();
-            if($msg['status']){
+            $msg = D("Access")->addNode();
+            if ($msg['status']) {
                 $this->success($msg['info']);
-            }else{
+            } else {
                 $this->error($msg['info']);
             }
             exit;
@@ -172,11 +171,13 @@ class AccessAction extends CommonAction {
             $systemConfig = $this->systemConfig;
             $this->assign("systemConfig", $systemConfig);
             //省市
-            $cmod=new CityModel();
-            $city_list=$cmod->citylist();
+            $cmod = new CityModel();
+            #$city_list=$cmod->citylist();
             #print_r($city_list);exit;
-            $this->assign("city_list",$city_list);
-            
+            $city_list = $cmod->getprovince(1);
+
+            $this->assign("pro_list", $city_list);
+
             $this->assign("info", $this->getRoleListOption(array('role_id' => 0)));
             $this->display();
         }
@@ -210,14 +211,14 @@ class AccessAction extends CommonAction {
     public function changeRole() {
         //header('Content-Type:application/json; charset=utf-8');
         parent::_initalize();
-        $systemConfig=$this->systemConfig;
-        $this->assign("systemConfig",$systemConfig);
+        $systemConfig = $this->systemConfig;
+        $this->assign("systemConfig", $systemConfig);
         if (IS_POST) {
             $this->checkToken();
-            $resrole=D("Access")->changeRole();
-            if($resrole['status']){
-                $this->success($resrole['info'],$resrole['url']);
-            }else{
+            $resrole = D("Access")->changeRole();
+            if ($resrole['status']) {
+                $this->success($resrole['info'], $resrole['url']);
+            } else {
                 $this->error($resrole['info']);
             }
             exit;
@@ -266,14 +267,15 @@ class AccessAction extends CommonAction {
                 $this->error($msginfo['info']);
             }
         } else {
-            
+
             //省市
-            $cmod=new CityModel();
-            $city_list=$cmod->citylist();
+            $cmod = new CityModel();
+            #$city_list=$cmod->citylist();
             #print_r($city_list);exit;
-            $this->assign("city_list",$city_list);
-            
-            
+            $city_list = $cmod->getprovince(1);
+            $this->assign("pro_list", $city_list);
+
+
             $M = M("Admin");
             $aid = (int) $_GET['aid'];
             $pre = C("DB_PREFIX");
@@ -292,32 +294,43 @@ class AccessAction extends CommonAction {
             $this->assign("info", $this->getRoleListOption($info));
             $aimod = new Admininfo1Model();
             $ainfo = $aimod->getinfo($aid, 0);
-            
-            $this->assign("ainfo", $ainfo);
 
+            $this->assign("ainfo", $ainfo);
+            //如果市不为空获取市的名称
+            
+            if ($ainfo['cityid'] != '') {
+                $cityname = $cmod->getname($ainfo['cityid']);
+                $this->assign("cityname", $cityname);
+                
+            }
+            //如果区不为空获取区的名称
+            if ($ainfo['quid'] != '') {
+                $quname = $cmod->getname($ainfo['quid']);
+                $this->assign("quname", $quname);
+            }
             $this->display("addadmin");
         }
     }
-    
+
     /**
      * 查看详情
      */
-    public function ins(){
+    public function ins() {
         parent::_initalize();
         $systemConfig = $this->systemConfig;
         $this->assign("systemConfig", $systemConfig);
-        $aid=$_GET['aid'];
-        $amod=new Admininfo1Model();
-        $inf=$amod->getinfo($aid,1);
-        $citymod=new CityModel();
-        $inf['province']=$citymod->getproname($inf['cityid']);
-        $inf['city']=$citymod->getname($inf['cityid']);
-        
-        $this->assign("info",$inf);
-        
+        $aid = $_GET['aid'];
+        $amod = new Admininfo1Model();
+        $inf = $amod->getinfo($aid, 1);
+        $citymod = new CityModel();
+        $inf['province'] = $citymod->getproname($inf['cityid']);
+        $inf['city'] = $citymod->getname($inf['cityid']);
+
+        $this->assign("info", $inf);
+
         $this->display();
     }
-    
+
     private function getRole($info = array()) {
         import("ORG.Util.Category");
         $cat = new Category('Role', array('id', 'pid', 'name', 'fullname'));
@@ -362,6 +375,5 @@ class AccessAction extends CommonAction {
         $info['pidOption'] = $option;
         return $info;
     }
-    
 
 }
