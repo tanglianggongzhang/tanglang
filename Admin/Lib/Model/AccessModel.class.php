@@ -86,7 +86,9 @@ class AccessModel extends Model {
         $datas['a_pwd']=  encrypt($pwd);
         $datas['a_pwd_md5']=$pwd;
         $datas['remark']=$_POST['remark'];
-        $datas['cityid']=$_POST['areaid'];
+        $datas['proid']=$_POST['proid'];
+        $datas['cityid']=$_POST['cityid'];
+        $datas['quid']=$_POST['quid'];
         
         if ($M->add($datas)) {
             $id=$M->getLastInsID();
@@ -130,7 +132,9 @@ class AccessModel extends Model {
         $aimod=M("AdminInfo");
         $datas['status']=$_POST['status'];
         $datas['remark']=trim($_POST['remark']);
-        $datas['areaid']=$_POST['areaid'];
+        $datas['proid']=$_POST['proid'];
+        $datas['cityid']=$_POST['cityid'];
+        $datas['quid']=$_POST['quid'];
         
         $res1=$M->where("a_id=".$user_id)->save($datas);
         
