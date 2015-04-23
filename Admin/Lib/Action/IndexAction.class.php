@@ -141,10 +141,42 @@ class IndexAction extends CommonAction {
         parent::_initalize();
         $systemConfig=$this->systemConfig;
         $this->assign("systemConfig",$systemConfig);
+        $id=$_GET['id'];
         
         $cmod=new CityModel();
-        $list=$cmod->citylist();
+        $list=$cmod->citylist($id);
         $this->assign("list",$list);
+        $sjid=$cmod->getprovinceid($id);
+        if(!empty($sjid))
+            $this->assign ("shilieb","<a href='".U('Index/city',array('id'=>$sjid))."' class='a1'>返回上级</a>");
+        $this->assign("c_id",$id);
+        $this->display();
+    }
+    /**
+     * 设置地区
+     */
+    public function setcitydq(){
+        if(IS_POST){
+            $id=$_POST['id'];//省id
+            $diqu=$_POST['diqu'];
+            //获取市的id
+            $m=new CityModel();
+            $pidstr=$m->getsqid($id);
+            #修改地区
+            $res=$m->updatedq($pidstr, $diqu);
+            if($res){
+                $this->success("操作成功",U("Index/city"));
+            }else{
+                $this->error("操作失败");
+            }
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        $this->assign("id",$id);
+        $cof = include WEB_ROOT . 'Common/config2.php';
+        $this->assign("diqu",$cof['diqu']);
         
         $this->display();
     }
@@ -165,6 +197,21 @@ class IndexAction extends CommonAction {
             $msg=array("status"=>0,"info"=>"操作失败!");
         echo json_encode($msg);
     }
-    
+    /**
+     * 推荐城市
+     */
+    public function opTjStatus(){
+        $id=$_GET['id'];
+        $status=$_GET['status'];
+        $status=$status==0?1:0;
+        $res=M("Area")->where(array("region_id"=>$id))->save(array("is_tj"=>$status));
+        header("Content-Type:text/html; charset=utf-8");
+        header('Content-Type:application/json; charset=utf-8');
+        if($res)
+            $msg=array("status"=>1,"info"=>"操作成功!");
+        else
+            $msg=array("status"=>0,"info"=>"操作失败!");
+        echo json_encode($msg);
+    }
     
 }

@@ -17,33 +17,45 @@
         <div class="wrap"> <include file="Common:head" /> <include file="Common:left" /> 
             <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：<a href="{:U('Access/index')}" class="a1">管理首页</a>>>城市列表</div>
+      <div class="center_r_t">您的位置：<a href="{:U('Index/city')}" class="a1">省列表</a>>>{$shilieb}</div>
       <div class="center_t">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
                         <thead>
                             <tr class="center_t_t">
                                 <td>序号</td>
-                                <td>节点结构  <b title="单击分类隐藏/显示该分类下在子类">[i]</b></td>
-                                <td>节点ID</td>
                                 <td>名称</td>
                                 <td>显示名</td>
                                 
-                                <td>类型</td>
+                                <td>类型/所属地区</td>
                                 <td>状态</td>
+                                <td>是否推荐</td>
                                 <td width="150">操作</td>
                             </tr>
                         </thead>
                         <volist name="list" id="vo" key="k">
                             <tr align="center" id="{$vo.region_id}" pid="{$vo.parent_id}" class="center_t_d">
                                 <td>{$k}</td>
-                                <td align="left" class="tree" style="cursor: pointer;">{$vo.fullname}</td>
-                                <td>{$vo.region_id}</td>
+                               
                                 <td>{$vo.region_name}</td>
                                 <td>{$vo.region_name}</td>
                                
-                                <td>{$vo.level}</td>
+                                <td>{$vo.level}/{$vo.diquf}</td>
                                 <td>{$vo.statusTxt}</td>
-                                <td><a href="javascript:void(0);" class="opStatus" val="{$vo.agency_id}">{$vo.chStatusTxt}</a></td>
+                                <td>{$vo.tjTxt}</td>
+                                
+                                <td>
+                                    <a href="javascript:void(0);" class="opStatus" val="{$vo.agency_id}">{$vo.chStatusTxt}</a>
+                                    <a href="javascript:void(0);" class="opTj" val="{$vo.is_tj}">{$vo.chtjTxt}</a>
+                                    <if condition="$vo[level]=='省/直辖市'">
+                                    <a href="{:U('Index/city',array('id'=>$vo[region_id]))}">查看市</a>
+                                    <a href="{:U('Index/setcitydq',array('id'=>$vo[region_id]))}">设置所属地区</a>
+                                    </if>
+                                    <if condition="$vo[level]=='市'">
+                                        <a href="{:U('Index/city',array('id'=>$vo[region_id]))}">查看区</a>
+                                    </if>
+                                    
+                                    
+                                </td>
                             </tr>
                         </volist>
                     </table>          
@@ -78,7 +90,32 @@
                                 alert(msg.info);
 								var  istatus;
 								istatus=status==1?0:1;
-                               $(obj).attr("val",istatus).html(status==1?"启用":"禁用").parents("td").prev().html(status==1?"禁用":"启用");
+                               $(obj).attr("val",istatus).html(status==1?"启用":"禁用").parents("td").prev().prev().html(status==1?"禁用":"启用");
+							   
+                            }else{
+                                alert(msg.info);
+                            }				
+							
+			}
+                    });
+                    
+                });
+                //快捷操作推荐
+                $(".opTj").click(function(){
+                    var obj=$(this);
+                    var id=$(this).parents("tr").attr("id");
+                    var status=$(this).attr("val");
+                    $.ajax({
+                        data:"id="+id+"&status="+status,
+                        url:"__URL__/opTjStatus",
+			dataType:"json",
+			type:"GET",
+			success: function(msg){
+                            if(msg.status==1){
+                                alert(msg.info);
+				var  istatus;
+				istatus=status==1?0:1;
+                               $(obj).attr("val",istatus).html(status==1?"推荐":"普通").parents("td").prev().html(status==1?"普通":"推荐");
 							   
                             }else{
                                 alert(msg.info);
