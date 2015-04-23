@@ -262,7 +262,7 @@ class AccessAction extends CommonAction {
             header('Content-Type:application/json; charset=utf-8');
             $msginfo = D("Access")->editAdmin();
             if ($msginfo['status']) {
-                $this->success($msginfo['info']);
+                $this->success($msginfo['info'],U('Access/index'));
             } else {
                 $this->error($msginfo['info']);
             }
@@ -301,12 +301,14 @@ class AccessAction extends CommonAction {
             if ($ainfo['cityid'] != '') {
                 $cityname = $cmod->getname($ainfo['cityid']);
                 $this->assign("cityname", $cityname);
+                $this->assign("cityid", $ainfo['cityid']);
                 
             }
             //如果区不为空获取区的名称
             if ($ainfo['quid'] != '') {
                 $quname = $cmod->getname($ainfo['quid']);
                 $this->assign("quname", $quname);
+                $this->assign("quid", $ainfo['quid']);
             }
             $this->display("addadmin");
         }

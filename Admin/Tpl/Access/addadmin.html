@@ -42,6 +42,9 @@
                         </select>
                         <select id="quid" name="quid" >
                             <option value="">请选择区</option>
+                            <if condition="$quname">
+                                <option value="{$quid}" selected>{$quname}</option>
+                            </if>
                         </select>
                         
                     </td>

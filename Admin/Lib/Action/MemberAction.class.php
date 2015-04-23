@@ -49,7 +49,7 @@ class MemberAction extends CommonAction {
 
         $cityname = $citymod->getname($city);
         $this->assign("cityname", $cityname);
-        $map = 1;
+        $map = "a_type=1 ";
         if (!empty($start_date)) {
             $start_date = strtotime($start_date . "0:0:0");
             $map.=" and UNIX_TIMESTAMP(create_time)>= " . $start_date;
@@ -64,7 +64,7 @@ class MemberAction extends CommonAction {
                 $map.=" and province_id=" . $province;
             }
             if (!empty($city)) {
-                $map.="and city_id=" . $city;
+                $map.=" and city_id=" . $city;
             }
         } else {
             $map .= " and city_id=" . $_SESSION['my_info']['cityid'];
@@ -1763,7 +1763,7 @@ class MemberAction extends CommonAction {
         $m = M("Putongmember");
         $info = $m->where("a_id=" . $aid)->find();
         $this->assign("info", $info);
-
+        
         $citymod = new CityModel();
         $pro_list = $citymod->getprovince(1);
         $this->assign("pro_list", $pro_list);
@@ -1822,6 +1822,7 @@ class MemberAction extends CommonAction {
                 $datai['province_id'] = $province_id;
             if ($city_id != $info['city_id'])
                 $datai['city_id'] = $city_id;
+            
             if ($address != $info['address'])
                 $datai['address'] = $address;
             $m2 = M("Webmember");

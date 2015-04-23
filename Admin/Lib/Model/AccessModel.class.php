@@ -23,10 +23,20 @@ class AccessModel extends Model {
         foreach ($list as $k => $v) {
             $list[$k]['statusTxt'] = $v['status'] == 1 ? "启用" : "禁用";
             $list[$k]['chStatusTxt'] = $v['status'] == 0 ? "启用" : "禁用";
+            //上级名称
+            if(empty($v['pid']))
+                $list[$k]['pname']=="无";
+            else
+                $list[$k]['pname']=$this->getnamebyid($v['pid']);
+            
         }
         return $list;
     }
-
+    public function getnamebyid($id){
+        $M=M("Role");
+        $info=$M->where("id=".$id)->field("name")->find();
+        return $info['name'];
+    }
     public function opStatus($op = 'Node') {
         $M = M("$op");
         $datas['id'] = (int) $_GET["id"];
@@ -139,6 +149,7 @@ class AccessModel extends Model {
         $res1=$M->where("a_id=".$user_id)->save($datas);
         
         if ($res1) {  
+            
             return $roleStatus == TRUE ? array('status' => 1, 'info' => "成功更新") : array('status' => 1, 'info' => "成功更新");
         } else {
             $res=$aimod->where("a_id=".$user_id)->save($_POST[adminfo]);

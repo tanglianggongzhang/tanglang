@@ -325,14 +325,14 @@
                         <select id="city_id" name="dinfo[city_id]" onchange="getdiqu('province_id','city_id','qu_id')">
                             <option value="">请选择市</option>
                             <if condition="!empty($info[city_id])">
-                            <option value="{$info.city_id}" selected="selected">{$info.region_name}</option>
+                            <option value="{$info.city_id}" selected="selected">{$info.cityname}</option>
                             </if>
                         </select>
                         
                         <select id="qu_id" name="dinfo[qu_id]">
                             <option value="">请选择区</option>
                             <if condition="$info[qu_id]">
-                                <option value="{$info.qu_id}" selected="selected">{$info.qu_name}</option>
+                                <option value="{$info.qu_id}" selected="selected">{$info.quname}</option>
                             </if>
                         </select>
                         

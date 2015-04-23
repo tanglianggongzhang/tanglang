@@ -22,7 +22,7 @@
           <thead>
             <tr class="center_t_t">
               <td>序号</td>
-              <td>组ID</td>
+              <td>上级管理员</td>
               <td>组名</td>
               <td>描述</td>
               <td>状态</td>
@@ -32,7 +32,7 @@
           <volist name="list" id="vo" key="k">
             <tr align="center" id="{$vo.id}" class="center_t_d">
               <td>{$k}</td>
-              <td>{$vo.id}</td>
+              <td>{$vo.pname}</td>
               <td>{$vo.name}</td>
               <td align="left">{$vo.remark}</td>
               <td>{$vo.statusTxt}</td>

@@ -226,6 +226,10 @@ $(function(){
           <div class="theme-popbod dform">
             
               <ol>
+                  <li>
+                    <label>头像</label>
+                    <font id="logo_img" class=""></font>
+                </li>
                 <li style="height:30px;">
                   <label>登录帐号</label>
                   
@@ -238,11 +242,8 @@ $(function(){
                   
                   <font id="nickname_1" class="ipt fontb"></font>
                 </li>
-                <li>
-                    <label>头像</label>
-                    <font id="logo_img" class=""></font>
-                </li>
-                <li>
+                
+                <li style="height:30px">
                     <label>地址</label>
                     <font id="address_1" class="ipt fontb"></font>
                 </li>
@@ -506,8 +507,12 @@ $(".chakan").click(function(){
 			document.getElementById("qq_1").innerHTML=msg.qq_1;	
 			document.getElementById("telphone_1").innerHTML=msg.telphone_1;	
 			document.getElementById("year_1").innerHTML=msg.year_1;
+                        
 			document.getElementById("city_1").innerHTML=msg.city_1;
+                        
+        if(msg.img!='')
                         document.getElementById("logo_img").innerHTML="<img src='__ROOT__/avatar/"+msg.img+"_60.jpg'/>";
+                    
                         document.getElementById("address_1").innerHTML=msg.address_1;
                         
 			
