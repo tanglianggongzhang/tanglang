@@ -114,9 +114,9 @@ $(function(){
 <script>
 //删除
     $(".del").click(function(){
-        var n=$(".del").attr("name");
+        var n=$(this).attr("name");
         if(confirm("您确定要删除["+n+"]吗？")){
-            window.location.href=$(".del").attr("link");
+            window.location.href=$(this).attr("link");
         }
     });
 	//获取城市
