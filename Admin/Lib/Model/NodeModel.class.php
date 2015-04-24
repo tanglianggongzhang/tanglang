@@ -6,7 +6,7 @@ class NodeModel extends Model {
      */
     public function get_node($pid=0){
         $where="pid=".$pid." and  status=1 and is_menu=1";
-        $list=$this->where($where)->order("sort asc")->select();
+        $list=$this->where($where)->order("sort desc")->select();
         
         #echo $this->getLastSql();
         
@@ -22,7 +22,7 @@ class NodeModel extends Model {
             $where.="and user_id=".$userid;
         
         $mod=M("Quanxianview");
-        $list=$mod->where($where)->order("sort asc")->select();
+        $list=$mod->where($where)->order("sort desc")->select();
        # echo $mod->getLastSql();
         return $list;
     }

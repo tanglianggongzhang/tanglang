@@ -5,7 +5,7 @@ class AccessModel extends Model {
     public function nodeList() {
         import("ORG.Util.Category");
         $cat = new Category('Node', array('id', 'pid', 'title', 'fullname'));
-        $temp = $cat->getList();               //获取分类结构
+        $temp = $cat->getList(NULL,  0, "sort desc");               //获取分类结构
         $level = array("1" => "项目（GROUP_NAME）", "2" => "模块(MODEL_NAME)", "3" => "操作（ACTION_NAME）");
         foreach ($temp as $k => $v) {
             $temp[$k]['statusTxt'] = $v['status'] == 1 ? "启用" : "禁用";
