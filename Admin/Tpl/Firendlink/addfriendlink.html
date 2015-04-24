@@ -53,6 +53,7 @@
                     <label><input type="radio" name="is_tj" id="is_tj" value="0" <if condition="$info[is_tj]==0">checked</if> />普通</label>
                 </td>
             </tr>
+              <if condition="$is_qx==0">
             <tr align="left"  class="center_t_d">
                 <td width="20%" align="right">省</td>
                 <td align="left">
@@ -74,7 +75,7 @@
                     </select>
                 </td>
             </tr>
-               
+              </if> 
             <tr align="left"  class="center_t_d">
               <td colspan="2"><input type="hidden" id="id" name="id" value="{$info.id}" />   
                 <input type="submit" class="btn submit" value="提交" id="sub" name="sub" /></td>

@@ -45,33 +45,31 @@ class CommonAction extends Action {
                     }
                     // 提示错误信息
 //                     echo L('_VALID_ACCESS_');
-                    $this->error(L('_VALID_ACCESS_'),U('Index/Index'));
+                    $this->error(L('_VALID_ACCESS_'), U('Index/Index'));
                 }
             }
         }
         //节点
-        $nodelist=  $this->get_menu(1);
-        if($nodelist){
+        $nodelist = $this->get_menu(1);
+        if ($nodelist) {
             //获取二级菜单
-            $mod=M("Node");
-            $nodeid=$mod->where("name='".$this->getActionName()."'")->field("id")->find();
+            $mod = M("Node");
+            $nodeid = $mod->where("name='" . $this->getActionName() . "'")->field("id")->find();
             #echo $mod->getLastSql();
-            
-            $nodelist2=$this->get_menu($nodeid['id']);
-            
-            
-            $this->assign("nodelist2",$nodelist2);
+
+            $nodelist2 = $this->get_menu($nodeid['id']);
+
+
+            $this->assign("nodelist2", $nodelist2);
         }
-        $this->assign("nodelist",$nodelist);
-        
-        
-        $actname=$this->getActionName();
-        $actname=  strtolower($actname);
-        $this->assign("actname",$actname);
-        
-        $this->assign("funname",ACTION_NAME);
-         
-        
+        $this->assign("nodelist", $nodelist);
+
+
+        $actname = $this->getActionName();
+        $actname = strtolower($actname);
+        $this->assign("actname", $actname);
+
+        $this->assign("funname", ACTION_NAME);
     }
 
     /**
@@ -115,38 +113,39 @@ class CommonAction extends Action {
             unset($_POST[C("TOKEN_NAME")]);
         }
     }
+
     /**
      * 获取菜单
      */
-    public function get_menu($leve){
-        $nodemod=new NodeModel();
-        if($_SESSION[C('ADMIN_AUTH_KEY')]){
+    public function get_menu($leve) {
+        $nodemod = new NodeModel();
+        if ($_SESSION[C('ADMIN_AUTH_KEY')]) {
             //超级管理员
-            $list=$nodemod->get_node($leve);
-            foreach($list as $k=>$v){
-                if($leve==1)
-                    $list[$k]['url']= U($v['name']."/index");
+            $list = $nodemod->get_node($leve);
+            foreach ($list as $k => $v) {
+                if ($leve == 1)
+                    $list[$k]['url'] = U($v['name'] . "/index");
                 else
-                    $list[$k]['url']= U($this->getActionName()."/".strtolower ($v['name']));
-                $list[$k]['name']=  strtolower($v['name']);
+                    $list[$k]['url'] = U($this->getActionName() . "/" . strtolower($v['name']));
+                $list[$k]['name'] = strtolower($v['name']);
             }
-        }else{
+        }else {
             //非超级管理员
-            $list=$nodemod->get_user_node($leve,$_SESSION['my_info']['a_id']);
-            foreach($list as $k=>$v){
-                if($leve==1)
-                    $list[$k]['url']= U($v['name']."/index");
+            $list = $nodemod->get_user_node($leve, $_SESSION['my_info']['a_id']);
+            foreach ($list as $k => $v) {
+                if ($leve == 1)
+                    $list[$k]['url'] = U($v['name'] . "/index");
                 else
-                    $list[$k]['url']= U($this->getActionName()."/".strtolower ($v['name']));
-                $list[$k]['name']=  strtolower($v['name']);
+                    $list[$k]['url'] = U($this->getActionName() . "/" . strtolower($v['name']));
+                $list[$k]['name'] = strtolower($v['name']);
             }
-            
         }
-        if($list)
-        return $list;
+        if ($list)
+            return $list;
         else
             return false;
     }
+
     /**
      * 上传文件
      * @param type $path
@@ -154,38 +153,62 @@ class CommonAction extends Action {
      * @param type $thheight
      * @return type
      */
-    public function upload($path='./Uploads/product/',$thwidth,$thheight){
+    public function upload($path = './Uploads/product/', $thwidth, $thheight) {
         import('ORG.Net.UploadFile');
-        $upload = new UploadFile();// 实例化上传类
-        $upload->maxSize  = 1024*1024*1024*30 ;// 设置附件上传大小
-        $upload->allowExts  = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
-        $upload->savePath =  $path;// 设置附件上传目录
-        $upload->saveRule=uniqid();
-        $upload->thumb=true;
-        $upload->thumbRemoveOrigin=false;
+        $upload = new UploadFile(); // 实例化上传类
+        $upload->maxSize = 1024 * 1024 * 1024 * 30; // 设置附件上传大小
+        $upload->allowExts = array('jpg', 'gif', 'png', 'jpeg'); // 设置附件上传类型
+        $upload->savePath = $path; // 设置附件上传目录
+        $upload->saveRule = uniqid();
+        $upload->thumb = true;
+        $upload->thumbRemoveOrigin = false;
         #$upload->thumbMaxWidth=$thwidth;
-       # $upload->thumbMaxHeight=$thheight;
-        
-        if(!$upload->upload()) {// 上传错误提示错误信息
-            echo json_encode(array('status' => 0, 'info' =>$upload->getErrorMsg()));
-        }else{// 上传成功 获取上传文件信息
-            return $info =  $upload->getUploadFileInfo();
+        # $upload->thumbMaxHeight=$thheight;
+
+        if (!$upload->upload()) {// 上传错误提示错误信息
+            echo json_encode(array('status' => 0, 'info' => $upload->getErrorMsg()));
+        } else {// 上传成功 获取上传文件信息
+            return $info = $upload->getUploadFileInfo();
         }
     }
+
     /**
      * 根据key值返回 
      * 性别
      */
-    function get_sex($key){
-        $sex_arr=array("1"=>"男","2"=>"女");
+    function get_sex($key) {
+        $sex_arr = array("1" => "男", "2" => "女");
         return $sex_arr[$key];
     }
+
     /**
      * 根据key值返回
      * 状态
      */
-    function get_status($key){
-        $status_arr=array("0"=>"未审核","1"=>"已审核");
+    function get_status($key) {
+        $status_arr = array("0" => "未审核", "1" => "已审核");
         return $status_arr[$key];
     }
+
+    /**
+     * 城市权限判断
+     * @param int $roleid 角色id
+     * @return int $re
+     * 1=是城市管理员
+     * 0=不是城市管理员
+     */
+    public function getqx($roleid) {
+        if ($roleid == 2) {
+            return 1;
+        } else {
+            $m = M("Role");
+            $info = $m->where("id=" . $roleid)->find();
+            if($info["pid"]==2){
+                return 1;
+            }else{
+                return 0;
+            }
+        }
+    }
+
 }

@@ -26,9 +26,20 @@ class FirendlinkAction extends CommonAction {
         $where = "1";
         if (!empty($keys))
             $where .= " and Firendlink.name like '%" . $keys . "%'";
-        if ($_SESSION['my_info']['role'] == 1) {
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $this->assign("is_qx", $is_qx);
+
+        if ($is_qx == 0) {
+            //非地区管理员
             $p_id = $_GET['p_id'];
             $c_id = $_GET['c_id'];
+            //省
+            $mcity = new CityModel();
+            $plist = $mcity->getprovince(1);
+            $this->assign("plist", $plist);
+            $this->assign("p_id", $p_id);
+            $this->assign("c_id", $c_id);
+            $this->assign("c_name", $mcity->getname($c_id));
         } else {
             $p_id = $_SESSION['my_info']['proid'];
             $c_id = $_SESSION['my_info']['cityid'];
@@ -49,17 +60,13 @@ class FirendlinkAction extends CommonAction {
         }
 
         $this->assign("list", $list);
-        //省
-        $mcity = new CityModel();
-        $plist = $mcity->getprovince(1);
-        $this->assign("plist", $plist);
+
 
         $this->assign("page", $showpage);
         $this->assign("keys", $keys);
         $this->assign("keys", $keys);
-        $this->assign("p_id", $p_id);
-        $this->assign("c_id", $c_id);
-        $this->assign("c_name", $mcity->getname($c_id));
+
+
         $this->display();
     }
 
@@ -71,8 +78,8 @@ class FirendlinkAction extends CommonAction {
         if (IS_POST) {
             $p_id = $_POST['p_id'];
             $c_id = $_POST['c_id'];
-            if ($_SESSION['my_info']['role'] == 1) {
-                //超级管理员
+            if ($this->getqx($_SESSION['my_info']['role']) == 0) {
+                //非地区管理员
                 if (empty($p_id)) {
                     $this->error("请选择省");
                     exit;
@@ -137,10 +144,12 @@ class FirendlinkAction extends CommonAction {
             exit;
         }
         #读取省
-        $mcity = new CityModel();
-        $plist = $mcity->getprovince(1);
-        $this->assign("plist", $plist);
-
+        if ($this->getqx($_SESSION['my_info']['role']) == 0) {
+            $mcity = new CityModel();
+            $plist = $mcity->getprovince(1);
+            $this->assign("plist", $plist);
+        }
+        $this->assign("is_qx", $this->getqx($_SESSION['my_info']['role']));
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
         $this->display();
@@ -166,21 +175,28 @@ class FirendlinkAction extends CommonAction {
                 else
                     $logo = "";
             }
-            $link=  trim($_POST['link']);
-            $orders=  trim($_POST['orders']);
-            $is_tj=$_POST['is_tj'];
-            $p_id=$_POST['p_id'];
-            $c_id=$_POST['c_id'];
-            $data=array(
-                "name"=>$name,
-                "logo"=>$logo,
-                "link"=>$link,
-                "orders"=>$orders,
-                "is_tj"=>$is_tj,
-                "p_id"=>$p_id,
-                "c_id"=>$c_id,
-                "addtime"=>  time()
-            );
+            $link = trim($_POST['link']);
+            $orders = trim($_POST['orders']);
+            $is_tj = $_POST['is_tj'];
+            $p_id = $_POST['p_id'];
+            $c_id = $_POST['c_id'];
+
+            $data = array();
+            if (!empty($name))
+                $data['name'] = $name;
+            if (!empty($logo))
+                $data['logo'] = $logo;
+            if (!empty($link))
+                $data['link'] = $link;
+            if (!empty($orders))
+                $data['orders'] = $orders;
+            if (!empty($is_tj))
+                $data['is_tj'] = $is_tj;
+            if (!empty($p_id))
+                $data['p_id'] = $p_id;
+            if (!empty($c_id))
+                $data['c_id'] = $c_id;
+
             $res = $m->where("id=" . $id)->save($data);
             if ($res)
                 $this->success("操作成功！", U("Firendlink/index"));
@@ -195,14 +211,16 @@ class FirendlinkAction extends CommonAction {
         $info = $m->where("id=" . $id)->find();
 
         $this->assign("info", $info);
-
-        #读取省
-        $mcity = new CityModel();
-        $plist = $mcity->getprovince(1);
-        $this->assign("plist", $plist);
-        $this->assign("c_id", $info['c_id']);
-        $this->assign("c_name", $mcity->getname($info['c_id']));
-
+        if ($this->getqx($_SESSION['my_info']['role']) == 0) {
+            #读取省
+            $mcity = new CityModel();
+            $plist = $mcity->getprovince(1);
+            $this->assign("plist", $plist);
+            $this->assign("c_id", $info['c_id']);
+            $this->assign("c_name", $mcity->getname($info['c_id']));
+        }
+        $this->assign("is_qx", $this->getqx($_SESSION['my_info']['role']));
+        
         $this->display("addfriendlink");
     }
 
