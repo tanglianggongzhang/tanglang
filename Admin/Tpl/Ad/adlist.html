@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
 <head>
-<title>友情链接-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<title>广告列表-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
@@ -20,7 +20,7 @@ and open the template in the editor.
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
-		window.location.href="{:U('Firendlink/addfriendlink')}";
+		window.location.href="{:U('Ad/addad')}";
 	})
 	
 		
@@ -59,12 +59,12 @@ $(function(){
   <!--左边end-->
   <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：友情链接</div>
+      <div class="center_r_t">您的位置：广告列表</div>
       <div class="center_r_z">
       <form method="get" name="search_form" id="search_form" action=""  >
         <label>关键字</label>
         <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
-        <if condition="$is_qx==0">
+       <if condition="$is_qx==0">
         <label>省</label>
         <select id="p_id" name="p_id" onchange="getcity('p_id','c_id')">
                         <option value="">请选择省</option>
@@ -81,11 +81,12 @@ $(function(){
         </select>
         </if>
         
+        
         <input name="sub" type="submit"  value="查询" class="sub1" />
         <if condition="$keys!=''||$p_id!=''||$c_id!=''">
-            <a href="{:U('Firendlink/index')}">取消查询</a>
+            <a href="{:U('Ad/adlist')}">取消查询</a>
         </if>
-        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加友情链接</a>
+        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加广告</a>
         </form>
         <div class="theme-popover">
           
@@ -95,25 +96,25 @@ $(function(){
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
         <tr class="center_t_t">
           <td class="td1" width="135">编号</td>
-          <td width="135">友情链接名称</td>
+          <td width="135">广告名称</td>
           <td width="135">添加时间</td>
-          <td width="135">排序</td>
-          
+          <td width="135">位置</td>
           <td width="135">添加人</td>
-          <td width="135">城市</td>
+          <td width="135">所属城市</td>
           <td class="td2" width="135">操作</td>
         </tr>
         <volist id="vo" name="list">
         <tr class="center_t_d">
           <td class="td1" width="135">{$vo.id}</td>
-          <td width="135"><a href="{$vo.link}" target="_blank">{$vo.name}</a></td>
+          <td width="135"><a href="{$vo.link}" target="_blank">{$vo.title}</a></td>
           <td width="135">{$vo.addtimef}</td>
-           <td width="135">{$vo.orders}</td>
-          <td width="135">{$vo.adduname}</td>
+           <td width="135">{$vo.weizhiname}</td>
+          <td width="135">{$vo.a_name}</td>
           <td width="135">{$vo.p_name}/{$vo.c_name}</td>
           <td width="135">
-              <a aid="{$vo.a_id}" href="{:U('Firendlink/editfirendlink',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
-              <a name="{$vo.name}" link="{:U('Firendlink/del',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a></td>
+              <a aid="{$vo.a_id}" href="{:U('Ad/editad',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
+              <a aid="{$vo.a_id}" href="{$systemConfig.SITE_INFO.url}{$vo.img}" target="_blank" style="cursor:pointer">查看广告图片</a>
+          </td>
         </tr>
         </volist>
       </table>
