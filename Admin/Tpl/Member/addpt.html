@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
     <head>
-        <title>添加/编辑-普通会员-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+        <title>添加/编辑-客户-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
@@ -142,7 +142,7 @@
         <div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
   <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：<a href="{:U('Member/index')}" class="a1">普通会员</a>>>>编辑/添加 普通会员信息</div>
+      <div class="center_r_t">您的位置：<a href="{:U('Member/index')}" class="a1">客户</a>>>>编辑/添加 客户信息</div>
       <div class="center_t">
           <form action="" id="form1" name="form1" method="post">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab center_t">
@@ -167,8 +167,8 @@
                 </tr>
                 
                 <tr>
-                    <td>昵称：</td>
-                    <td><input type="text" name="dinfo[nickname]" size="40" id="nickname" value="{$info.nickname}" /></td>
+                    <td>姓名：</td>
+                    <td><input type="text" name="dinfo[truename]" size="40" id="truename" value="{$info.truename}" /></td>
                 </tr>
                 <tr>
                     <td>头像上传：</td>
@@ -219,12 +219,7 @@
                         
                     </td>
                 </tr>
-                <tr>
-                    <td>真实姓名：</td>
-                    <td>
-                       <input type="text" name="dinfo[truename]" size="40" id="truename" value="{$info.truename}" />
-                    </td>
-                </tr>
+                
                 
                 <tr>
                     <td>性别：</td>

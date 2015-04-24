@@ -74,12 +74,12 @@ class MemberAction extends CommonAction {
             $map.=" and (nickname like '%" . $keys . "%' or truename like '%" . $keys . "%' )";
         }
         import("ORG.Util.Page");
-        $pumod = M("Putongmember");
+        $pumod = M("Kehu");
         $count = $pumod->where($map)->count();
         # echo $pumod->getLastSql();
         $page = new Page($count, 12);
         $showpage = $page->show();
-        $list = $pumod->where($map)->order("a_id desc")->select();
+        $list = $pumod->where($map)->order("a_id desc")->limit($page->firstRow.",".$page->listRows)->select();
         foreach ($list as $k => $v) {
             if (!empty($vo['last_login']))
                 $list[$k]['last_login'] = date("Y-m-d", $vo['last_login']);

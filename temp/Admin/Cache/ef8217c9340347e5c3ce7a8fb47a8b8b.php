@@ -110,7 +110,7 @@
           <thead>
             <tr class="center_t_t">
               <td>序号</td>
-              <td>组ID</td>
+              <td>上级管理员</td>
               <td>组名</td>
               <td>描述</td>
               <td>状态</td>
@@ -119,7 +119,7 @@
           </thead>
           <?php if(is_array($list)): $k = 0; $__LIST__ = $list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($k % 2 );++$k;?><tr align="center" id="<?php echo ($vo["id"]); ?>" class="center_t_d">
               <td><?php echo ($k); ?></td>
-              <td><?php echo ($vo["id"]); ?></td>
+              <td><?php echo ($vo["pname"]); ?></td>
               <td><?php echo ($vo["name"]); ?></td>
               <td align="left"><?php echo ($vo["remark"]); ?></td>
               <td><?php echo ($vo["statusTxt"]); ?></td>

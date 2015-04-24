@@ -116,10 +116,19 @@
                 <tr>
                     <td width="120">所在省市：</td>
                     <td>
-                        <select id="areaid" name="areaid">
+                        <select id="proid" name="proid" onchange="getcity('proid','cityid')">
                             <option value="">请选择省</option>
-                            <?php if(is_array($city_list)): $i = 0; $__LIST__ = $city_list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo["region_id"]); ?>" <?php if($vo[region_id]==$ainfo[cityid]): ?>selected<?php endif; ?> ><?php echo ($vo["fullname"]); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
+                            <?php if(is_array($pro_list)): $i = 0; $__LIST__ = $pro_list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><option value="<?php echo ($vo["region_id"]); ?>" <?php if($vo[region_id]==$ainfo[proid]): ?>selected<?php endif; ?> ><?php echo ($vo["region_name"]); ?></option><?php endforeach; endif; else: echo "" ;endif; ?>
                         </select>
+                        <select id="cityid" name="cityid" onchange="getdiqu('proid','cityid','quid')">
+                            <option value="">请选择市</option>
+                            <?php if($cityname): ?><option value="<?php echo ($cityid); ?>" selected><?php echo ($cityname); ?></option><?php endif; ?>
+                        </select>
+                        <select id="quid" name="quid" >
+                            <option value="">请选择区</option>
+                            <?php if($quname): ?><option value="<?php echo ($quid); ?>" selected><?php echo ($quname); ?></option><?php endif; ?>
+                        </select>
+                        
                     </td>
                 </tr>
                 <tr>
@@ -294,4 +303,68 @@
         
 		
     })
+    function getcity(proid,cityid){
+	//	 alert(proid+","+cityid);
+//		var pid=$("#"+proid).val();
+		var pid=document.getElementById(proid).value;
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"<?php echo U('Member/getcity');?>",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+cityid).append(citystr);
+					
+				}
+				
+			}
+					
+		});	
+	}
+        function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+		var cid=document.getElementById(cityid).value;
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"<?php echo U('Member/getqu');?>",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
 </script>

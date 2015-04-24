@@ -119,6 +119,7 @@ and open the template in the editor.
     <td class="td1" >AID</td>
     <td >账号</td>
     <td >城市</td>
+    <td >角色</td>
     <td >状态</td>
     
     <td >备注</td>
@@ -130,6 +131,8 @@ and open the template in the editor.
     <td class="td1"><?php echo ($vo["a_id"]); ?></td>
     <td ><?php echo ($vo["a_name"]); ?></td>
     <td><?php echo ($vo["region_name"]); ?></td>
+    <td><?php echo ($vo["role_name"]); ?></td>
+    
     <td ><?php echo ($vo["statusTxt"]); ?></td>
     <td><?php echo ($vo["remark"]); ?></td>
     <td><?php echo ($vo["create_time"]); ?></td>

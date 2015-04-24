@@ -105,32 +105,40 @@
  
             <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：<a href="<?php echo U('Access/index');?>" class="a1">管理首页</a>>>城市列表</div>
+      <div class="center_r_t">您的位置：<a href="<?php echo U('Index/city');?>" class="a1">省列表</a>>><?php echo ($shilieb); ?></div>
       <div class="center_t">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
                         <thead>
                             <tr class="center_t_t">
                                 <td>序号</td>
-                                <td>节点结构  <b title="单击分类隐藏/显示该分类下在子类">[i]</b></td>
-                                <td>节点ID</td>
                                 <td>名称</td>
                                 <td>显示名</td>
                                 
-                                <td>类型</td>
+                                <td>类型/所属地区</td>
                                 <td>状态</td>
+                                <td>是否推荐</td>
                                 <td width="150">操作</td>
                             </tr>
                         </thead>
                         <?php if(is_array($list)): $k = 0; $__LIST__ = $list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($k % 2 );++$k;?><tr align="center" id="<?php echo ($vo["region_id"]); ?>" pid="<?php echo ($vo["parent_id"]); ?>" class="center_t_d">
                                 <td><?php echo ($k); ?></td>
-                                <td align="left" class="tree" style="cursor: pointer;"><?php echo ($vo["fullname"]); ?></td>
-                                <td><?php echo ($vo["region_id"]); ?></td>
+                               
                                 <td><?php echo ($vo["region_name"]); ?></td>
                                 <td><?php echo ($vo["region_name"]); ?></td>
                                
-                                <td><?php echo ($vo["level"]); ?></td>
+                                <td><?php echo ($vo["level"]); ?>/<?php echo ($vo["diquf"]); ?></td>
                                 <td><?php echo ($vo["statusTxt"]); ?></td>
-                                <td><a href="javascript:void(0);" class="opStatus" val="<?php echo ($vo["agency_id"]); ?>"><?php echo ($vo["chStatusTxt"]); ?></a></td>
+                                <td><?php echo ($vo["tjTxt"]); ?></td>
+                                
+                                <td>
+                                    <a href="javascript:void(0);" class="opStatus" val="<?php echo ($vo["agency_id"]); ?>"><?php echo ($vo["chStatusTxt"]); ?></a>
+                                    <a href="javascript:void(0);" class="opTj" val="<?php echo ($vo["is_tj"]); ?>"><?php echo ($vo["chtjTxt"]); ?></a>
+                                    <?php if($vo[level]=='省/直辖市'): ?><a href="<?php echo U('Index/city',array('id'=>$vo[region_id]));?>">查看市</a>
+                                    <a href="<?php echo U('Index/setcitydq',array('id'=>$vo[region_id]));?>">设置所属地区</a><?php endif; ?>
+                                    <?php if($vo[level]=='市'): ?><a href="<?php echo U('Index/city',array('id'=>$vo[region_id]));?>">查看区</a><?php endif; ?>
+                                    
+                                    
+                                </td>
                             </tr><?php endforeach; endif; else: echo "" ;endif; ?>
                     </table>          
           
@@ -168,7 +176,32 @@
                                 alert(msg.info);
 								var  istatus;
 								istatus=status==1?0:1;
-                               $(obj).attr("val",istatus).html(status==1?"启用":"禁用").parents("td").prev().html(status==1?"禁用":"启用");
+                               $(obj).attr("val",istatus).html(status==1?"启用":"禁用").parents("td").prev().prev().html(status==1?"禁用":"启用");
+							   
+                            }else{
+                                alert(msg.info);
+                            }				
+							
+			}
+                    });
+                    
+                });
+                //快捷操作推荐
+                $(".opTj").click(function(){
+                    var obj=$(this);
+                    var id=$(this).parents("tr").attr("id");
+                    var status=$(this).attr("val");
+                    $.ajax({
+                        data:"id="+id+"&status="+status,
+                        url:"__URL__/opTjStatus",
+			dataType:"json",
+			type:"GET",
+			success: function(msg){
+                            if(msg.status==1){
+                                alert(msg.info);
+				var  istatus;
+				istatus=status==1?0:1;
+                               $(obj).attr("val",istatus).html(status==1?"推荐":"普通").parents("td").prev().html(status==1?"普通":"推荐");
 							   
                             }else{
                                 alert(msg.info);

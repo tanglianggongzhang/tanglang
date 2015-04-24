@@ -236,6 +236,10 @@ $(function(){
   </div>
   <div class="theme-popbod dform" style="height:431px; overflow:scroll;">
     <ol>
+        <li>
+        <label>logo</label>
+        <font id="logo"></font> </li>
+        
       <li style="height:30px;">
         <label>登录帐号</label>
         <font id="a_aname_1" class="ipt fontb"></font> </li>
@@ -375,6 +379,8 @@ $(".chakan").click(function(){
 			document.getElementById("jibie_1").innerHTML=msg.jibie;	
 			
 			document.getElementById("createtime_1").innerHTML=msg.create_time;
+                        if(msg.logo!='')
+			document.getElementById("logo").innerHTML="<img src=__ROOT__/avatar/"+msg.logo+"_60.jpg />";
 			
 			}
 		})
