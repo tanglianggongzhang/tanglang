@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>添加实体店-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+</head>
+<body>
+<div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：<a href="{:U('Shiti/index')}" class="a1">实体店列表</a>>>添加/编辑实体店</div>
+      <div class="center_t">
+        <form action="" method="POST" id="form1" name="form1" enctype="multipart/form-data">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right" >实体店名称</td>
+                <td align="left">
+                    <input type="text" name="name" id="name" size="100" value="{$info.name}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">电话</td>
+                <td align="left">
+                    <input type="text" name="telphone" id="telphone" size="100" value="{$info.telphone}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">地址</td>
+                <td align="left">
+                    <input type="text" name="address" id="address" size="100" value="{$info.address}" />
+                </td>
+            </tr>
+            
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">状态</td>
+                <td align="left">
+                    <label><input type="radio" name="is_display" id="is_display" value="1" <if condition="$info[is_display]==1">checked</if> />显示</label>
+                    <label><input type="radio" name="is_display" id="is_display" value="0" <if condition="$info[is_display]==0">checked</if> />隐藏</label>
+                </td>
+            </tr>
+              <if condition="$is_qx==0">
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">省</td>
+                <td align="left">
+                    <select id="p_id" name="p_id" onchange="getcity('p_id','c_id')">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="plist" >
+                          <option value="{$vo.region_id}" <if condition="$info[p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>  
+                        </volist>
+                    </select>
+                </td>
+            </tr>
+             <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">市</td>
+                <td align="left">
+                    <select id="c_id" name="c_id"  onchange="getdiqu('p_id','c_id','q_id')" ><option value="">请选择</option>
+                        <if condition="!empty($info[c_id])">
+                            <option value="{$info[c_id]}" selected>{$c_name}</option>
+                        </if>
+                    </select>
+                    
+                    
+                </td>
+            </tr>
+                  <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">区</td>
+                <td align="left">
+                    <select id="q_id" name="q_id" ><option value="">请选择</option>
+                        <if condition="!empty($info[q_id])">
+                            <option value="{$info[q_id]}" selected>{$q_name}</option>
+                        </if>
+                    </select>
+                </td>
+            </tr>
+              </if> 
+              <if condition="$is_qx==1">
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">区</td>
+                <td align="left">
+                    <select id="q_id" name="q_id">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="qlist" >
+                          <option value="{$vo.region_id}" <if condition="$info[q_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>  
+                        </volist>
+                    </select>
+                    <input type="hidden" id="p_id" name="p_id" value="{$p_id}" />
+                    <input type="hidden" id="c_id" name="c_id" value="{$c_id}" />
+                </td>
+            </tr>
+              </if>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">营业时间</td>
+                <td align="left">
+                    <input type="text" name="yingye" id="yingye" value="{$info.yingye}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">服务宗旨</td>
+                <td align="left">
+                    <input type="text" name="fwzz" size="100" id="fwzz" value="{$info.fwzz}" />
+                </td>
+            </tr> 
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">停车位</td>
+                <td align="left">
+                    <input type="text" name="tcw" id="fwzz" value="{$info.tcw}" size="10" />
+                </td>
+            </tr>   
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">展厅面积</td>
+                <td align="left">
+                    <input type="text" name="mianji" id="mianji" value="{$info.mianji}" />平方米
+                </td>
+            </tr>   
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">地图图片</td>
+                <td align="left">
+                    <input type="file" name="mapimg" id="mapimg" />
+                    <if condition="!empty($info[mapimg])">
+                        <a href="{$systemConfig.SITE_INFO.url}{$info[mapimg]}" title="查看大图" target="_blank">  <img src="__ROOT__{$info[mapimg]}" width="100" title="查看大图" /></a>
+                    </if>
+                </td>
+            </tr>  
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">周围照片</td>
+                <td align="left">
+                    <input type="file" name="zwimg" id="zwimg" />
+                    <if condition="!empty($info[zwimg])">
+                        <a href="{$systemConfig.SITE_INFO.url}{$info[zwimg]}" title="查看大图" target="_blank"> <img src="__ROOT__{$info[zwimg]}" width="100" title="查看大图" alt="" />    </a>
+                    </if>
+                </td>
+            </tr>  
+            <tr align="left"  class="center_t_d">
+              <td colspan="2"><input type="hidden" id="id" name="id" value="{$info.id}" />   
+                <input type="submit" class="btn submit" value="提交" id="sub" name="sub" /></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+</body>
+</html>
+<script>
+    function getcity(proid,cityid){
+	//	 alert(proid+","+cityid);
+//		var pid=$("#"+proid).val();
+		var pid=document.getElementById(proid).value;
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"{:U('Member/getcity')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+cityid).append(citystr);
+					
+				}
+				
+			}
+					
+		});	
+	}
+        function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+		var cid=document.getElementById(cityid).value;
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
+</script>
