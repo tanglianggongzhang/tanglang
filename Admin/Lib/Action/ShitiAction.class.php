@@ -379,7 +379,7 @@ class ShitiAction extends CommonAction {
         if ($status == 1)
             $up = 0;
         $m = M("Shiti");
-        $res = $m->where("id=" . $id)->save(array("is_display" => $id));
+        $res = $m->where("id=" . $id)->save(array("is_display" => $up));
         if ($res) {
             $this->success("修改成功！");
         } else {

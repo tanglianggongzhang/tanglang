@@ -89,6 +89,8 @@ $(function(){
         
         </if>
         <if condition="$is_qx==1">
+            <input type="hidden" id="p_id" name="p_id" value="{$p_id}" />
+        <input type="hidden" id="c_id" name="c_id" value="{$c_id}" />
             <label>区</label>
         <select id="q_id" name="q_id" onchange="getstd('p_id','c_id','q_id')" ><option value="">请选择区</option>
             
@@ -104,11 +106,17 @@ $(function(){
                 <option value="{$vo.id}" <if condition="$stid==$vo[id]">selected</if>>{$vo.name}</option>  
             </volist>
         </select>
-        <input name="sub" type="submit"  value="查询" class="sub1" />
+         <input name="sub" type="submit"  value="查询" class="sub1" />
+         <if condition="$is_qx==1">
+       
+        <if condition="$keys!=''||$q_id!=''||$stid!=''">
+            <a href="{:U('Shiti/shenqing')}">取消查询</a>
+        </if>
+        <else/>
         <if condition="$keys!=''||$p_id!=''||$c_id!=''||$q_id!=''||$stid!=''">
             <a href="{:U('Shiti/shenqing')}">取消查询</a>
         </if>
-        
+         </if>
         </form>
         <div class="theme-popover">
           
@@ -243,7 +251,7 @@ function getstd(proid,cityid,dqid){
 			type:"GET",
 			dataType:"Json",
 			success: function(msg){
-                            //var msg=eval("("+msg+")");
+                            var msg=eval("("+msg+")");
                             $("#stid").empty();
                             var citystr="";
                             var len=msg.length;

@@ -99,8 +99,14 @@ $(function(){
         </if>
         
         <input name="sub" type="submit"  value="查询" class="sub1" />
+        <if condition="$is_qx==1">
+        <if condition="$keys!=''||$q_id!=''">
+            <a href="{:U('Shiti/index')}">取消查询</a>
+        </if>
+            <else/>
         <if condition="$keys!=''||$p_id!=''||$c_id!=''||$q_id!=''">
             <a href="{:U('Shiti/index')}">取消查询</a>
+        </if>
         </if>
         <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加实体店</a>
         </form>

@@ -78,6 +78,8 @@ $(function(){
             </if>
         </select>
         <label>区</label>
+        
+            
         <select id="q_id" name="q_id" onchange="getstd('p_id','c_id','q_id')"><option value="">请选择区</option>
             <if condition="!empty($q_id)">
                 
@@ -87,6 +89,8 @@ $(function(){
         
         </if>
         <if condition="$is_qx==1">
+            <input type="hidden" id="p_id" name="p_id" value="{$p_id}" />
+        <input type="hidden" id="c_id" name="c_id" value="{$c_id}" />
             <label>区</label>
         <select id="q_id" name="q_id" onchange="getstd('p_id','c_id','q_id')" ><option value="">请选择区</option>
             
@@ -102,10 +106,16 @@ $(function(){
                 <option value="{$vo.id}" <if condition="$stid==$vo[id]">selected</if>>{$vo.name}</option>  
             </volist>
         </select>
-        
-        <input name="sub" type="submit"  value="查询" class="sub1" />
+         <input name="sub" type="submit"  value="查询" class="sub1" />
+        <if condition="$is_qx==1">
+       
+        <if condition="$keys!=''||$q_id!=''||$stid!=''">
+            <a href="{:U('Shiti/liststhdp')}">取消查询</a>
+        </if>
+        <else/>
         <if condition="$keys!=''||$p_id!=''||$c_id!=''||$q_id!=''||$stid!=''">
             <a href="{:U('Shiti/liststhdp')}">取消查询</a>
+        </if>
         </if>
         <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加实体店幻灯片</a>
         </form>
