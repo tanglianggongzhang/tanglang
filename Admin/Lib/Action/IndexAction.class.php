@@ -41,7 +41,7 @@ class IndexAction extends CommonAction {
             'magic_quotes_runtime' => (1 === get_magic_quotes_runtime()) ? 'YES' : 'NO',
         );
         $this->assign('server_info', $info);
-        
+
         $this->display();
     }
 
@@ -118,11 +118,11 @@ class IndexAction extends CommonAction {
     public function logout() {
         //记录管理员log
         $data = array(
-            "a_id" =>$_SESSION[C('USER_AUTH_KEY')],
-            "l_content" => "管理员[" .$_SESSION['username'] . "]于[" . date("Y-m-d H:i:s") . "]登录了[唐亮工长俱乐部]后台管理系统！"
+            "a_id" => $_SESSION[C('USER_AUTH_KEY')],
+            "l_content" => "管理员[" . $_SESSION['username'] . "]于[" . date("Y-m-d H:i:s") . "]登录了[唐亮工长俱乐部]后台管理系统！"
         );
         M("Log")->add($data);
-        
+
         setcookie("$this->loginMarked", NULL, -3600, "/");
         unset($_SESSION["$this->loginMarked"], $_COOKIE["$this->loginMarked"]);
         if (isset($_SESSION[C('USER_AUTH_KEY')])) {
@@ -133,113 +133,132 @@ class IndexAction extends CommonAction {
         }
         $this->redirect("Index/login");
     }
-    
+
     /**
      * 城市管理
      */
-    public function city(){
+    public function city() {
         parent::_initalize();
-        $systemConfig=$this->systemConfig;
-        $this->assign("systemConfig",$systemConfig);
-        $id=$_GET['id'];
-        
-        $cmod=new CityModel();
-        $list=$cmod->citylist($id);
-        $this->assign("list",$list);
-        $sjid=$cmod->getprovinceid($id);
-        if(!empty($sjid))
-            $this->assign ("shilieb","<a href='".U('Index/city',array('id'=>$sjid))."' class='a1'>返回上级</a>");
-        $this->assign("c_id",$id);
+        $systemConfig = $this->systemConfig;
+        $this->assign("systemConfig", $systemConfig);
+        $id = $_GET['id'];
+
+        $cmod = new CityModel();
+        $list = $cmod->citylist($id);
+        $this->assign("list", $list);
+        $sjid = $cmod->getprovinceid($id);
+        if (!empty($sjid))
+            $this->assign("shilieb", "<a href='" . U('Index/city', array('id' => $sjid)) . "' class='a1'>返回上级</a>");
+        $this->assign("c_id", $id);
         $this->display();
     }
+
     /**
      * 设置地区
      */
-    public function setcitydq(){
-        if(IS_POST){
-            $id=$_POST['id'];//省id
-            $diqu=$_POST['diqu'];
+    public function setcitydq() {
+        if (IS_POST) {
+            $id = $_POST['id']; //省id
+            $diqu = $_POST['diqu'];
             //获取市的id
-            $m=new CityModel();
-            $pidstr=$m->getsqid($id);
+            $m = new CityModel();
+            $pidstr = $m->getsqid($id);
             #修改地区
-            $res=$m->updatedq($pidstr, $diqu);
-            if($res){
-                $this->success("操作成功",U("Index/city"));
-            }else{
+            $res = $m->updatedq($pidstr, $diqu);
+            if ($res) {
+                $this->success("操作成功", U("Index/city"));
+            } else {
                 $this->error("操作失败");
             }
             exit;
         }
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        $id=$_GET['id'];
-        $this->assign("id",$id);
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $this->assign("id", $id);
         $cof = include WEB_ROOT . 'Common/config2.php';
-        $this->assign("diqu",$cof['diqu']);
-        
+        $this->assign("diqu", $cof['diqu']);
+
         $this->display();
     }
 
     /**
      * 启用城市
      */
-    public function opNodeStatus(){
-        $id=$_GET['id'];
-        $status=$_GET['status'];
-        $status=$status==0?1:0;
-        $res=M("Area")->where(array("region_id"=>$id))->save(array("agency_id"=>$status));
+    public function opNodeStatus() {
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        $status = $status == 0 ? 1 : 0;
+        $res = M("Area")->where(array("region_id" => $id))->save(array("agency_id" => $status));
         header("Content-Type:text/html; charset=utf-8");
         header('Content-Type:application/json; charset=utf-8');
-        if($res)
-            $msg=array("status"=>1,"info"=>"操作成功!");
+        if ($res)
+            $msg = array("status" => 1, "info" => "操作成功!");
         else
-            $msg=array("status"=>0,"info"=>"操作失败!");
+            $msg = array("status" => 0, "info" => "操作失败!");
         echo json_encode($msg);
     }
+
     /**
      * 推荐城市
      */
-    public function opTjStatus(){
-        $id=$_GET['id'];
-        $status=$_GET['status'];
-        $status=$status==0?1:0;
-        $res=M("Area")->where(array("region_id"=>$id))->save(array("is_tj"=>$status));
+    public function opTjStatus() {
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        $status = $status == 0 ? 1 : 0;
+        $res = M("Area")->where(array("region_id" => $id))->save(array("is_tj" => $status));
         header("Content-Type:text/html; charset=utf-8");
         header('Content-Type:application/json; charset=utf-8');
-        if($res)
-            $msg=array("status"=>1,"info"=>"操作成功!");
+        if ($res)
+            $msg = array("status" => 1, "info" => "操作成功!");
         else
-            $msg=array("status"=>0,"info"=>"操作失败!");
+            $msg = array("status" => 0, "info" => "操作失败!");
         echo json_encode($msg);
     }
+
     /**
      * 设置经纬度
      */
-    public function setjw(){
-        $m=M("Area");
-        if(IS_POST){
-            $id=$_POST['id'];
-            $pid=$_POST['pid'];
-            $jingdu=trim($_POST['jingdu']);
-            $weidu=trim($_POST['weidu']);
-            $res=$m->where("region_id=".$id)->save(array("jingdu"=>$jingdu,"weidu"=>$weidu));
-            
-            if($res)
-            $this->success("操作成功!",U("Index/city",array("id"=>$pid)));
+    public function setjw() {
+        $m = M("Area");
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $pid = $_POST['pid'];
+            $jingdu = trim($_POST['jingdu']);
+            $weidu = trim($_POST['weidu']);
+            $res = $m->where("region_id=" . $id)->save(array("jingdu" => $jingdu, "weidu" => $weidu));
+
+            if ($res)
+                $this->success("操作成功!", U("Index/city", array("id" => $pid)));
             else
-                $this->error ("操作失败!");
+                $this->error("操作失败!");
             exit;
         }
         parent::_initalize();
-        $this->assign("systemConfig",  $this->systemConfig);
-        $id=$_GET['id'];
-        $pid=$_GET['pid'];
-        $this->assign("pid",$pid);
-        $this->assign("id",$id);
-        
-        $info=$m->where("region_id=".$id)->find();
-        $this->assign("info",$info);
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $pid = $_GET['pid'];
+        $this->assign("pid", $pid);
+        $this->assign("id", $id);
+
+        $info = $m->where("region_id=" . $id)->find();
+        $this->assign("info", $info);
         $this->display();
     }
+
+    /**
+     * 获取经纬度
+     */
+    public function getjwd() {
+        header('Content-Type:application/json; charset=utf-8');
+        $id = $_POST['cid'];
+        $m=M("Area");
+        $info = $m->where("region_id=" . $id)->find();
+        if(!$info){
+            $info['jingdu']="116.404";
+            $info['weidu']="39.915";
+        }
+        echo json_encode($info);
+    }
+
 }

@@ -322,5 +322,19 @@ class SqtzAction extends CommonAction {
 
         $this->display();
     }
-
+    /**
+     * ajax
+     * 获取小区
+     */
+    public function getxq(){
+        header("Content-Type:application/json; charset=utf-8");
+        $m=M("Xq");
+        $pid=$_POST['pid'];
+        $cid=$_POST['cid'];
+        $qid=$_POST['qid'];
+        
+        $list=$m->where("p_id=".$pid." and c_id=".$cid." and q_id=".$qid)->select();
+        
+        echo json_encode($list);
+    }
 }
