@@ -389,7 +389,47 @@ class SqtzAction extends CommonAction {
     public function list_tzjl() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
+        $M=M("Sqtz");
+        $sqtzlist=$M->where(1)->order("orders desc")->field("id,name")->select();
+        $this->assign('sqtzlist',$sqtzlist);
+        //----团装记录 start
+        @import("ORG.Util.Page");
+        $tzmod=D("TzjlView");
+        $where=1;
+        $sqtzid=$_GET['sqtzid'];
+        if(!empty($sqtzid))
+            $where.=" and Tzjl.tzid=".$sqtzid;
+        
+        $totalRows=$tzmod->where($where)->count();
+        $p=new Page($totalRows,10);
+        $list=$tzmod->where($where)->order("Tzjl.addtime desc")->limit($p->firstRow.",".$p->listRows)->select();
+        $arr=array("0"=>"未联系","1"=>"已联系");
+        foreach ($list as $k=>$v){
+            $list[$k]['addtimef']=date("Y-m-d H:i:s",$v['addtime']);
+            $list[$k]['islx']=$arr[$v['is_lx']];
+        }
+        $this->assign("list",$list);
+        $this->assign("page",$p->show());
+        //----团装记录 end
+        
         $this->display();
+    }
+    /**
+     * 搜索社区团装
+     */
+    public function search_sqtz(){
+        header("Content-Type:application/json; charset=utf-8");
+        $keys=  trim($_POST['keys']);
+        $m=M("Sqtz");
+        if(!empty($keys)){
+            
+            $list=$m->where("name like '%".$keys."%'")->field("id,name")->order("orders desc")->select();
+            
+        }else{
+            $list=$m->where("1")->order("orders desc")->field("id,name")->select();
+            
+        }
+        echo json_encode($list);
     }
 
     /**
@@ -397,7 +437,13 @@ class SqtzAction extends CommonAction {
      * 参与社区团装的记录
      */
     public function del_tzjl() {
-        
+        $id=$_GET['id'];
+        $M=M("Tzjl");
+        $res=$M->where("id=".$id)->delete();
+        if($res)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
     }
 
     /**
@@ -406,7 +452,19 @@ class SqtzAction extends CommonAction {
      * 参与社区团装的记录
      */
     public function update_status_tzjl() {
-        
+        $id=$_GET['id'];
+        $is_lx=$_GET['status'];
+        if($is_lx==1)
+            $is_lx=0;
+        else
+            $is_lx=1;
+        $M=M("Tzjl");
+        $res=$M->where("id=".$id)->save(array("is_lx"=>$is_lx));
+       
+        if($res)
+            $this->success ("修改成功!",U("Sqtz/list_tzjl"));
+        else
+            $this->error ("修改失败!");
     }
 
     /**
