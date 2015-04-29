@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>小区列表-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+<script>
+jQuery(document).ready(function($) {
+	$('.theme-login').click(function(){
+		window.location.href="{:U('Sqtz/addxq')}";
+	})
+	
+		
+		
+	
+
+})
+function close_win(){
+	$(".theme-popover").html("");
+		
+	$('.theme-popover-mask').fadeOut(100);
+	$('.theme-popover').slideUp(200);
+}
+
+</script>
+<style>
+.fontb{ display:block; float:right; margin-right:56px;}
+</style>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.doubledate').kuiDate({
+		className:'doubledate',
+		isDisabled: "1"  // isDisabled为可选参数，“0”表示今日之前不可选，“1”标志今日之前可选
+	});
+});
+</script>
+</head>
+
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：小区列表</div>
+      <div class="center_r_z">
+      <form method="get" name="search_form" id="search_form" action=""  >
+        <label>关键字</label>
+        <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
+        <if condition="$is_qx==0">
+        <label>省</label>
+        <select id="p_id" name="p_id" onchange="getcity('p_id','c_id')" >
+                        <option value="">请选择省</option>
+                        <volist id="vo" name="plist" >
+                          <option value="{$vo.region_id}" <if condition="$p_id==$vo[region_id]">selected</if>>{$vo.region_name}</option>  
+                        </volist>
+                    </select>
+        <label>市</label>
+        <select id="c_id" name="c_id" onchange="getdiqu('p_id','c_id','q_id')"><option value="">请选择市</option>
+            <if condition="!empty($c_id)">
+                
+                <option value="{$c_id}" selected="">{$c_name}</option>
+            </if>
+        </select>
+        <label>区</label>
+        <select id="q_id" name="q_id" ><option value="">请选择区</option>
+            <if condition="!empty($q_id)">
+                
+                <option value="{$q_id}" selected="">{$q_name}</option>
+            </if>
+        </select>
+        
+        </if>
+        <if condition="$is_qx==1">
+            <label>区</label>
+        <select id="q_id" name="q_id" ><option value="">请选择区</option>
+            
+            <volist id="vo" name="qlist" >
+                <option value="{$vo.region_id}" <if condition="$q_id==$vo[region_id]">selected</if>>{$vo.region_name}</option>  
+            </volist>
+        </select>
+        </if>
+        
+        <input name="sub" type="submit"  value="查询" class="sub1" />
+        <if condition="$is_qx==1">
+        <if condition="$keys!=''||$q_id!=''">
+            <a href="{:U('Sqtz/listxq')}">取消查询</a>
+        </if>
+            <else/>
+        <if condition="$keys!=''||$p_id!=''||$c_id!=''||$q_id!=''">
+            <a href="{:U('Sqtz/listxq')}">取消查询</a>
+        </if>
+        </if>
+        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加小区</a>
+        </form>
+        <div class="theme-popover">
+          
+        </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        <tr class="center_t_t">
+          <td class="td1" width="135">编号</td>
+          <td width="135">小区名称</td>
+          <td width="135">添加时间</td>
+        <td width="135">城市</td>
+          <td width="135">添加人</td>
+          <td class="td2" width="135">操作</td>
+        </tr>
+        <volist id="vo" name="list">
+        <tr class="center_t_d">
+          <td class="td1" width="135">{$vo.id}</td>
+          <td width="135"><a href="{$vo.link}" target="_blank">{$vo.name}</a></td>
+          <td width="135">{$vo.addtimef}</td>
+          
+          <td width="135">{$vo.p_name}/{$vo.c_name}/{$vo.q_name}</td>
+          <td width="135">{$vo.adduname}</td>
+          <td width="135">
+            <a name="{$vo.id}" link="{:U('Sqtz/delxq',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+            <a aid="{$vo.id}" href="{:U('Sqtz/editxq',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
+          </td>
+          
+        </tr>
+        </volist>
+      </table>
+      <div class="paging">
+        <div class="paging_l">{$page}</div>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+<!--添加-->
+
+<!--查看-->
+
+<!--编辑-->
+
+<script>
+//删除
+    $(".del").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要删除["+n+"]吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+    $(".xgzt").click(function(){
+        var i=$(this).attr("aid");
+        if(confirm("您确定要修改["+i+"]的状态吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+	//获取城市
+	  function getcity(proid,cityid){
+		var pid=$("#"+proid).val();
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"{:U('Member/getcity')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				msg=eval("("+msg+")");
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					for(l=0;l<len;l++){
+						citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+					}
+					
+					
+					$("#"+cityid).append(citystr);
+				}
+				
+			}
+					
+		});
+		
+			
+}
+function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+		var cid=document.getElementById(cityid).value;
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				var msg=eval("("+msg+")");
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+                                        
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
+//添加用户	
+function add_user(){
+
+
+	var a_name=$("#a_name").val();
+	var pwd=$("#pwd").val();
+	var cof_pwd=$("#cof_pwd").val();
+	var nickname=$("#nickname").val();
+	var truename=$("#truename").val();
+	var sex=$("#sex").val();
+	var email=$("#email").val();
+	var qq=$("#qq").val();
+	var telphone=$("#telphone").val();
+	var year=$("#year").val();
+	var month=$("#month").val();
+	var day=$("#day").val();
+	var proid=$("#proid").val();
+	var cityid=$("#cityid").val();
+	
+	$.ajax({
+		data:"a_name="+a_name+"&pwd="+pwd+"&cof_pwd="+cof_pwd+"&nickname="+nickname+"&truename="+truename+"&sex="+sex+"&email="+email+"&qq="+qq+"&telphone="+telphone+"&year="+year+"&month="+month+"&day="+day+"&proid="+proid+"&cityid="+cityid,
+		cache:false,
+		url:"{:U('Member/addmember')}",
+		type:"POST",
+		dataType:"JSON",
+		success: function(msg){
+			msg=eval("("+msg+")");
+			if(msg.status){
+				$("#a_name").val("");
+				$("#pwd").val("");
+				$("#cof_pwd").val("");
+				$("#nickname").val("");
+				$("#truename").val("");
+				$("#sex").val("");
+				$("#email").val("");
+				$("#qq").val("");
+				$("#telphone").val("");
+				$("#year").val("");
+				$("#month").val("");
+				$("#day").val("");
+				$('.theme-popover-mask').fadeOut(100);
+				$('.theme-popover').slideUp(200);
+				alert(msg.info);
+			}else{
+				alert(msg.info);
+			}
+			
+		}
+	});
+	
+		
+}
+
+//获取日期 
+
+function getdays(){
+	var mon=$("#month").val();
+	var year=$("#year").val();
+	$.ajax({
+		data:"year="+year+"&mon="+mon,
+		cache:false,
+		url:"{:U('Member/getdays')}",
+		type:"POST",
+		dataType:"JSON",
+		success: function(msg){
+			msg=eval("("+msg+")");
+			$("#day").empty();
+			var l;
+			var htm="";
+			for(l=0;l<msg.length;l++){
+				htm+="<option value='"+msg[l]+"'>"+msg[l]+"</option>";
+			}
+			$("#day").append(htm);	
+			
+		}
+	});	
+}
+//查看
+$(".chakan").click(function(){
+	var aid=$(this).attr("aid");	
+	
+	
+	$.ajax({
+		data:"aid="+aid,
+		type:"POST",
+		dataType:"JSON",
+		url:"{:U('Member/getinfo')}",
+		cache:false,
+		success: function(msg){
+			msg=eval("("+msg+")");
+			
+			document.getElementById("a_aname_1").innerHTML=msg.a_aname_1;
+			document.getElementById("nickname_1").innerHTML=msg.nickname_1;
+			document.getElementById("truename_1").innerHTML=msg.truename_1;
+			document.getElementById("sex_1").innerHTML=msg.sex_1;
+			document.getElementById("email_1").innerHTML=msg.email_1;
+			document.getElementById("qq_1").innerHTML=msg.qq_1;	
+			document.getElementById("telphone_1").innerHTML=msg.telphone_1;	
+			document.getElementById("year_1").innerHTML=msg.year_1;
+                        
+			document.getElementById("city_1").innerHTML=msg.city_1;
+                        
+        if(msg.img!='')
+                        document.getElementById("logo_img").innerHTML="<img src='__ROOT__/avatar/"+msg.img+"_60.jpg'/>";
+                    
+                        document.getElementById("address_1").innerHTML=msg.address_1;
+                        
+			
+			
+			}
+		})
+	
+	
+	
+	$(".theme-popover").html($(".yc_ck").html());
+		
+	$('.theme-popover-mask').fadeIn(100);
+	$('.theme-popover').slideDown(200);
+	
+	
+		
+});
+//编辑
+$(".edituser").click(function(){
+	var aid=$(this).attr("aid");
+	//alert("编辑"+aid);
+	$.ajax({
+		data:"aid="+aid+"&is_cl=1",	
+		cache:false,
+		type:"POST",
+		dataType:"JSON",
+		url:"{:U('Member/getinfo')}",
+		success: function(msg){
+			msg=eval("("+msg+")");
+			document.getElementById("a_name_e").value=msg.a_name;
+			document.getElementById("nickname_e").value=msg.nickname;
+			document.getElementById("truename_e").value=msg.truename;
+			document.getElementById("email_e").value=msg.email;
+			document.getElementById("qq_e").value=msg.qq;
+			document.getElementById("telphone_e").value=msg.movphone;
+			if(msg.sex==2)
+			var str_sex="	<option value='1' >男</option><option value='2' selected>女</option>";
+			else
+			var str_sex="	<option value='1' selected >男</option><option value='2' >女</option>";
+			
+			document.getElementById("sex_e").innerHTML=str_sex;
+			
+			//年
+			var str_year="";
+			<volist id="vo" name="year">
+			if(msg.bir_year=="{$vo}")
+            	str_year+=' <option value="{$vo}" selected >{$vo}</option>';
+			else
+				str_year+=' <option value="{$vo}" >{$vo}</option>';	   
+            </volist>
+			document.getElementById("year_e").innerHTML=str_year;
+			//月
+			var str_month="";
+			 <volist id="vo" name="month">
+			 if(msg.bir_month=="{$vo}")
+             	str_month+='<option value="{$vo}" selected>{$vo}</option>';
+			 else
+			 	str_month+='<option value="{$vo}">{$vo}</option>';
+             </volist>
+			document.getElementById("month_e").innerHTML=str_month;
+			//日
+			var str_day="";
+			<volist id="vo" name="day">
+              if(msg.bir_day=="{$vo}")
+             	str_day+='<option value="{$vo}" selected>{$vo}</option>';
+			 else
+			 	str_day+='<option value="{$vo}">{$vo}</option>';
+            </volist>
+			document.getElementById("day_e").innerHTML=str_day;		
+			//省
+			var str_province="";
+			
+			<volist id="vo" name="pro_list">
+			if(msg.province_id=={$vo.region_id})
+            str_province+='<option value="{$vo.region_id}" selected>{$vo.region_name}</option>';
+			else
+			str_province+='<option value="{$vo.region_id}" >{$vo.region_name}</option>';
+			
+            </volist>
+			document.getElementById("proid_e").innerHTML=str_province;
+					
+			//市
+			var city_str="";
+			for(var i=0;i<msg.city.length;i++){
+				if(msg.city_id==msg.city[i].region_id)
+				city_str+="<option value='"+msg.city[i].region_id+"' selected>"+msg.city[i].region_name+"</option>";
+				else
+				city_str+="<option value='"+msg.city[i].region_id+"' >"+msg.city[i].region_name+"</option>";
+			}
+			
+			document.getElementById("cityid_e").innerHTML=city_str;
+			document.getElementById("aid_e").value=msg.a_id;
+			
+			
+		}
+	});
+	
+	
+	$(".theme-popover").html($(".yc_edit").html());
+		
+	$('.theme-popover-mask').fadeIn(100);
+	$('.theme-popover').slideDown(200);
+	
+});
+//编辑操作
+function edit_user(){
+	var a_name=document.getElementById("a_name_e").value;
+	var pwd=document.getElementById("pwd_e").value;
+	var cof_pwd=document.getElementById("cof_pwd_e").value;
+	var nickname=document.getElementById("nickname_e").value;
+	var truename=document.getElementById("truename_e").value;
+	var sex=document.getElementById("sex_e").value;
+	var email=document.getElementById("email_e").value;
+	var qq=document.getElementById("qq_e").value;
+	var telphone=document.getElementById("telphone_e").value;
+	var year=document.getElementById("year_e").value;
+	var month=document.getElementById("month_e").value;
+	var day=document.getElementById("day_e").value;
+	var proid=document.getElementById("proid_e").value;
+	var cityid=document.getElementById("cityid_e").value;
+	var aid=document.getElementById("aid_e").value;
+	
+	$.ajax({
+		data:"a_name="+a_name+"&pwd="+pwd+"&cof_pwd="+cof_pwd+"&nickname="+nickname+"&truename="+truename+"&sex="+sex+"&email="+email+"&qq="+qq+"&telphone="+telphone+"&year="+year+"&month="+month+"&day="+day+"&proid="+proid+"&cityid="+cityid+"&aid="+aid,
+		cache:false,
+		dataType:"JSON",
+		type:"POST",
+		url:"{:U('Member/edit_user')}",
+		success: function(msg){
+			msg=eval("("+msg+")");
+			
+			if(msg.status==1){
+				alert(msg.info);
+				window.location.reload();
+			}
+			
+			}
+		})
+	
+	
+	
+}
+//当鼠标在文本框中文字隐藏,当离开之后文字显示
+$(".input1").blur(function(){
+	if($(this).val()=="")
+	$(this).val("请输入关键字");
+	});
+$(".input1").focus(function(){
+	$(this).val("");
+	});
+
+
+
+
+    
+</script>
+</body>
+</html>

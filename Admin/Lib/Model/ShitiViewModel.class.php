@@ -17,7 +17,6 @@ class ShitiViewModel extends ViewModel {
         "Shiti"=>array("id","name","telphone","address","yingye","fwzz","tcw","mianji","mapimg","zwimg","is_display","addtime","_type" => "LEFT"),
         "Provice"=>array("region_name"=>"p_name","region_id"=>"p_id","_table"=>"t_area","_on"=>"Provice.region_id=Shiti.p_id","_type" => "LEFT"),
         "City"=>array("region_name"=>"c_name","region_id"=>"c_id","_table"=>"t_area","_on"=>"City.region_id=Shiti.c_id","_type" => "LEFT"),
-        "qu"=>array("region_name"=>"q_name","region_id"=>"q_id","_table"=>"t_area","_on"=>"qu.region_id=Shiti.q_id","_type" => "LEFT"),
-        
+        "qu"=>array("region_name"=>"q_name","region_id"=>"q_id","_table"=>"t_area","_on"=>"qu.region_id=Shiti.q_id","_type" => "LEFT")
     );
 }

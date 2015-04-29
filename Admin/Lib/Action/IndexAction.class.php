@@ -213,5 +213,33 @@ class IndexAction extends CommonAction {
             $msg=array("status"=>0,"info"=>"操作失败!");
         echo json_encode($msg);
     }
-    
+    /**
+     * 设置经纬度
+     */
+    public function setjw(){
+        $m=M("Area");
+        if(IS_POST){
+            $id=$_POST['id'];
+            $pid=$_POST['pid'];
+            $jingdu=trim($_POST['jingdu']);
+            $weidu=trim($_POST['weidu']);
+            $res=$m->where("region_id=".$id)->save(array("jingdu"=>$jingdu,"weidu"=>$weidu));
+            
+            if($res)
+            $this->success("操作成功!",U("Index/city",array("id"=>$pid)));
+            else
+                $this->error ("操作失败!");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",  $this->systemConfig);
+        $id=$_GET['id'];
+        $pid=$_GET['pid'];
+        $this->assign("pid",$pid);
+        $this->assign("id",$id);
+        
+        $info=$m->where("region_id=".$id)->find();
+        $this->assign("info",$info);
+        $this->display();
+    }
 }

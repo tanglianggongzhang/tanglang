@@ -1,0 +1,373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>添加社区团装-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+<script language="javascript" src="__PUBLIC__/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ckfinder/ckfinder.js"></script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/datepicker/css/jquery-ui.css" />
+<style>
+    
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }  
+.ui-timepicker-div dl { text-align: left; }  
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }  
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }  
+.ui-timepicker-div td { font-size: 90%; }  
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }  
+    
+</style>
+<script type="text/javascript" src="__PUBLIC__/datepicker/js/jquery-ui-datepicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/datepicker/js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=4KXKDmnlxqezwFM9bajbsfoE"></script>
+</head>
+<body>
+<div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：<a href="{:U('Sqtz/index')}" class="a1">社区团装列表</a>>>添加/编辑社区团装</div>
+      <div class="center_t">
+        <form action="" method="POST" id="form1" name="form1" enctype="multipart/form-data">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right" >社区团装名称</td>
+                <td align="left">
+                    <input type="text" name="name" id="name" size="100" value="{$info.name}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">附加标题</td>
+                <td align="left">
+                    <input type="text" name="ftname" id="ftname" size="100" value="{$info.ftname}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">均价</td>
+                <td align="left">
+                    <input type="text" name="junjia" id="junjia" size="20" value="{$info.junjia}" />元
+                </td>
+            </tr>
+            
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">状态</td>
+                <td align="left">
+                    <label><input type="radio" name="is_display" id="is_display" value="1" <if condition="$info[is_display]==1">checked</if> />显示</label>
+                    <label><input type="radio" name="is_display" id="is_display" value="0" <if condition="$info[is_display]==0">checked</if> />隐藏</label>
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">项目地址</td>
+                <td align="left">
+                    <input type="text" name="address" id="address" size="100" value="{$info.address}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">户型</td>
+                <td align="left">
+                    <select id="huxing" name="huxing">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="hxlist">
+                            <option value="{$vo.id}" <if condition="$vo[id]==$info[huxing]">selected</if>>{$vo.name}</option>
+                        </volist>
+                    </select>
+                </td>
+            </tr>  
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">小区</td>
+                <td align="left">
+                    <select id="xq_id" name="xq_id">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="xqlist">
+                            <option value="{$vo.id}" <if condition="$vo[id]==$info[xq_id]">selected</if>>{$vo.name}</option>
+                        </volist>
+                    </select>
+                </td>
+            </tr>    
+              
+              
+              
+              
+              
+              
+              
+              
+              <if condition="$is_qx==0">
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">省</td>
+                <td align="left">
+                    <select id="p_id" name="p_id" onchange="getcity('p_id','c_id')">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="plist" >
+                          <option value="{$vo.region_id}" <if condition="$info[p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>  
+                        </volist>
+                    </select>
+                </td>
+            </tr>
+             <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">市</td>
+                <td align="left">
+                    <select id="c_id" name="c_id"  onchange="getdiqu('p_id','c_id','q_id')" ><option value="">请选择</option>
+                        <if condition="!empty($info[c_id])">
+                            <option value="{$info[c_id]}" selected>{$c_name}</option>
+                        </if>
+                    </select>
+                    
+                    
+                </td>
+            </tr>
+                  <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">区</td>
+                <td align="left">
+                    <select id="q_id" name="q_id" ><option value="">请选择</option>
+                        <if condition="!empty($info[q_id])">
+                            <option value="{$info[q_id]}" selected>{$q_name}</option>
+                        </if>
+                    </select>
+                </td>
+            </tr>
+              </if> 
+              <if condition="$is_qx==1">
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">区</td>
+                <td align="left">
+                    <select id="q_id" name="q_id">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="qlist" >
+                          <option value="{$vo.region_id}" <if condition="$info[q_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>  
+                        </volist>
+                    </select>
+                    <input type="hidden" id="p_id" name="p_id" value="{$p_id}" />
+                    <input type="hidden" id="c_id" name="c_id" value="{$c_id}" />
+                </td>
+            </tr>
+              </if>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">开始时间</td>
+                <td align="left">
+                    <input type="text" name="starttime" id="starttime" value="{$info.starttime}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">结束时间</td>
+                <td align="left">
+                    <input type="text" name="endtime" id="endtime" value="{$info.endtime}" />
+                </td>
+            </tr> 
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">已经签约?户</td>
+                <td align="left">
+                    <input type="text" name="qyhnum" id="qyhnum" value="{$info.qyhnum}" size="10" />
+                </td>
+            </tr>   
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">预算</td>
+                <td align="left">
+                    <input type="text" name="yusuan" id="yusuan" value="{$info.yusuan}" size="10" />万元
+                </td>
+            </tr>   
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">省？元</td>
+                <td align="left">
+                    <input type="text" name="shengprice" id="shengprice" value="{$info.shengprice}" size="10" />元
+                </td>
+            </tr>  
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">团装介绍</td>
+                <td align="left">
+                    <textarea id="tzjs" name="tzjs" cols="100" rows="10">{$info.tzjs}</textarea>
+                </td>
+            </tr>  
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">活动内容</td>
+                <td align="left">
+                    <textarea id="hdnr" name="hdnr" cols="100" rows="10">{$info.hdnr}</textarea>
+                </td>
+            </tr>  
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">活动内容</td>
+                <td align="left">
+                    <textarea id="hdnr" name="hdnr" cols="100" rows="10">{$info.hdnr}</textarea>
+                </td>
+            </tr>  
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">所在区域</td>
+                <td align="left">
+                    <input type="text" name="szqy" id="szqy" size="100" value="{$info.szqy}" />
+                </td>
+            </tr>   
+              
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">活动地点</td>
+                <td align="left">
+                    <input type="text" name="hddd" id="hddd" size="100" value="{$info.hddd}" />
+                </td>
+            </tr> 
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">报名电话</td>
+                <td align="left">
+                    <input type="text" name="bmdh" id="bmdh" size="100" value="{$info.bmdh}" />
+                </td>
+            </tr>       
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">活动详情</td>
+                <td align="left">
+                    <textarea id="hdxq" name="hdxq" class="ckeditor" cols="100" rows="10">{$info.hdxq}</textarea>
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">参与人数</td>
+                <td align="left">
+                    <input type="text" name="cyrs" id="cyrs" size="20" value="{$info.cyrs}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">排序</td>
+                <td align="left">
+                    <input type="text" name="orders" id="orders" size="20" value="{$info.orders}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">选择所在的经度和纬度</td>
+                <td align="left">
+                    <input type="hidden" name="jingdu" id="jingdu" value="{$info.jingdu}" />
+                    <input type="hidden" name="weidu" id="weidu" value="{$info.weidu}" />
+                    <style>
+                        #mapcontainer{width: 800px; height: 800px;}
+                    </style>
+                    <div id="mapcontainer"></div>
+                    <script type="text/javascript"> 
+    var map = new BMap.Map("mapcontainer");          // 创建地图实例  
+    var point = new BMap.Point(116.404, 39.915);  // 创建点坐标 
+    map.centerAndZoom(point, 15);                 // 初始化地图，设置中心点坐标和地图级别  
+    var opts = {offset: new BMap.Size(150, 5)};
+
+    map.addControl(new BMap.NavigationControl());//添加控件
+    map.addControl(new BMap.ScaleControl(opts));//控件偏移位置
+    map.addControl(new BMap.OverviewMapControl());
+    map.addControl(new BMap.MapTypeControl());
+    map.setCurrentCity("北京");
+
+
+    var marker=new BMap.Marker(point);//创建标注
+    map.addOverlay(marker);//将标注添加到地图中
+    marker.enableDragging();
+    marker.addEventListener("dragend", function(e){
+    alert("当前位置：" + e.point.lng + ", " + e.point.lat);
+    });
+    
+
+
+
+
+
+
+</script> 
+                    
+                </td>
+            </tr>
+              
+              
+              
+              
+              
+              
+            <tr align="left"  class="center_t_d">
+              <td colspan="2"><input type="hidden" id="id" name="id" value="{$info.id}" />   
+                <input type="submit" class="btn submit" value="提交" id="sub" name="sub" /></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+</body>
+</html>
+<script>
+    function getcity(proid,cityid){
+	//	 alert(proid+","+cityid);
+//		var pid=$("#"+proid).val();
+		var pid=document.getElementById(proid).value;
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"{:U('Member/getcity')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+cityid).append(citystr);
+					
+				}
+				
+			}
+					
+		});	
+	}
+        function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+		var cid=document.getElementById(cityid).value;
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
+
+
+CKEDITOR.replace( 'hdxq',
+{
+filebrowserBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html',
+filebrowserImageBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Images',
+filebrowserFlashBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Flash',
+filebrowserUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+filebrowserImageUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
+filebrowserFlashUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
+});
+
+
+$("#starttime").datetimepicker();
+$("#endtime").datetimepicker();
+</script>

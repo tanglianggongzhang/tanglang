@@ -52,6 +52,7 @@
                                     </if>
                                     <if condition="$vo[level]=='市'">
                                         <a href="{:U('Index/city',array('id'=>$vo[region_id]))}">查看区</a>
+                                        <a href="{:U('Index/setjw',array('id'=>$vo[region_id],'pid'=>$c_id))}">设置经纬度</a>
                                     </if>
                                     
                                     

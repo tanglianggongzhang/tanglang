@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>设置经纬度-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+</head>
+<body>
+<div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
+  <div class="center_r">
+    <div class="center">
+        <div class="center_r_t">您的位置：<a href="{:U('Index/city',array('id'=>$pid))}" class="a1">返回城市列表</a>>>设置经纬度</div>
+      <div class="center_t">
+        <form action="" method="POST" id="form1" name="form1" enctype="multipart/form-data">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right" >经度</td>
+                <td align="left">
+                    <input type="text" name="jingdu" id="jingdu" size="100" value="{$info.jingdu}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%" align="right" >纬度</td>
+                <td align="left">
+                    <input type="text" name="weidu" id="weidu" size="100" value="{$info.weidu}" />
+                </td>
+            </tr>
+              
+            <tr align="left"  class="center_t_d">
+              <td colspan="2"><input type="hidden" id="id" name="id" value="{$info.region_id}" />   
+                  <input type="hidden" id="pid" name="pid" value="{$pid}" />   
+                <input type="submit" class="btn submit" value="提交" id="sub" name="sub" /></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+</body>
+</html>
+<script>
+    function getcity(proid,cityid){
+	//	 alert(proid+","+cityid);
+//		var pid=$("#"+proid).val();
+		var pid=document.getElementById(proid).value;
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"{:U('Member/getcity')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+cityid).append(citystr);
+					
+				}
+				
+			}
+					
+		});	
+	}
+        function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+		var cid=document.getElementById(cityid).value;
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
+</script>
