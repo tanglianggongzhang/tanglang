@@ -103,7 +103,7 @@
 			type:"POST",
 			dataType:"Json",
 			success: function(msg){
-				
+				var msg=eval("("+msg+")");
 				if(msg.status==1){
 					$("#"+cityid).empty();
 					var citystr="";
@@ -134,7 +134,7 @@
 			type:"POST",
 			dataType:"Json",
 			success: function(msg){
-				
+				var msg=eval("("+msg+")");
 				if(msg.status==1){
 					$("#"+dqid).empty();
 					var citystr="";

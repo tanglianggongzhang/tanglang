@@ -20,7 +20,29 @@ class SqtzAction extends CommonAction {
     public function index() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
-        #
+        @import("ORG.Util.Page");
+        $cmod=new CityModel();
+        if($this->getqx($_SESSION['my_info']['role'])==1){
+            //地区管理员
+            $p_id=$_SESSION['my_info']['proid'];
+            $c_id=$_SESSION['my_info']['cityid'];
+            $qlist=$cmod->getcity($c_id);
+            $this->assign("qlist",$qlist);
+        }else{
+            $p_id=$_GET['p_id'];
+            $c_id=$_GET['c_id'];
+            $plist=$cmod->getcity(1);
+            $this->assign("plist",$plist);
+        }
+        $where="1";
+        $smod=M("Sqtzview");
+        
+        $this->assign("is_qx",$this->getqx($_SESSION['my_info']['role']));
+        $totalRows=$smod->where($where)->count();
+        $p=new Page($totalRows,10);
+        $list=$smod->where($where)->limit($p->firstRow.",".$p->listRows)->order("addtime desc")->select();
+        $this->assign("list",$list);
+        $this->assign("page",$p->show());
         $this->display();
     }
 
@@ -29,6 +51,78 @@ class SqtzAction extends CommonAction {
      * 社区团装
      */
     public function addsqtz() {
+        if(IS_POST){
+            $name=trim($_POST['name']);
+            if(empty($name)){
+                $this->error("社区团装名称不能为空！");exit;
+            }
+            $ftname=  trim($_POST['ftname']);
+            $tzimg="";
+            $imginf=$this->upload("./Uploads/sqtz/");
+            if(!empty($imginf[0]['savename']))
+                $tzimg="/Uploads/sqtz/".$imginf[0]['savename'];
+            
+            $junjia=  trim($_POST['junjia']);
+            $is_display=$_POST['is_display'];
+            $huxing=$_POST['huxing'];
+            $p_id=$_POST['p_id'];
+            $c_id=$_POST['c_id'];
+            $q_id=$_POST['q_id'];
+            $address=$_POST['address'];
+            $xq_id=$_POST['xq_id'];
+            $starttime=$_POST['starttime'];
+            $endtime=$_POST['endtime'];
+            $qyhnum=  trim($_POST['qyhnum']);
+            $yusuan=  trim($_POST['yusuan']);
+            $shengprice=  trim($_POST['shengprice']);
+            $tzjs=trim($_POST['tzjs']);
+            $hdnr=trim($_POST['hdnr']);
+            $szqy=  trim($_POST['szqy']);
+            $hddd=  trim($_POST['hddd']);
+            $bmdh=  trim($_POST['bmdh']);
+            $hdxq=  trim($_POST['hdxq']);
+            $cyrs=  trim($_POST['cyrs']);
+            $orders=  trim($_POST['orders']);
+            $jingdu=trim($_POST['jingdu']);
+            $weidu=  trim($_POST['weidu']);
+            $addtime=  time();
+            $m=M("Sqtz");
+            $data=array(
+                "name"=>$name,
+                "ftname"=>$ftname,
+                "tzimg"=>$tzimg,
+                "junjia"=>$junjia,
+                "is_display"=>$is_display,
+                "huxing"=>$huxing,
+                "p_id"=>$p_id,
+                "c_id"=>$c_id,
+                "q_id"=>$q_id,
+                "address"=>$address,
+                "xq_id"=>$xq_id,
+                "starttime"=>$starttime,
+                "endtime"=>$endtime,
+                "qyhnum"=>$qyhnum,
+                "yusuan"=>$yusuan,
+                "shengprice"=>$shengprice,
+                "tzjs"=>$tzjs,
+                "hdnr"=>$hdnr,
+                "szqy"=>$szqy,
+                "hddd"=>$hddd,
+                "bmdh"=>$bmdh,
+                "hdxq"=>$hdxq,
+                "cyrs"=>$cyrs,
+                "orders"=>$orders,
+                "jingdu"=>$jingdu,
+                "weidu"=>$weidu,
+                "addtime"=>$addtime
+            );
+            $res=$m->add($data);
+            if($res)
+                $this->success ("操作成功!",U("Sqtz/index"));
+            else
+                $this->error ("操作失败!");
+            exit;
+        }
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
         #户型

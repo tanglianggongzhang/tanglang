@@ -48,6 +48,16 @@
                 </td>
             </tr>
             <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">社区团装图片</td>
+                <td align="left">
+                    <input type="file" name="tzimg" id="tzimg"  value="" />
+                    <if condition="!empty($info[tzimg])">
+                        <img src="{$systemConfig.SITE_INFO.url}{$info[tzimg]}" width="100" />
+                    </if>
+                </td>
+            </tr>
+                
+            <tr align="left"  class="center_t_d">
                 <td width="20%" align="right">均价</td>
                 <td align="left">
                     <input type="text" name="junjia" id="junjia" size="20" value="{$info.junjia}" />元
@@ -184,12 +194,7 @@
                     <textarea id="hdnr" name="hdnr" cols="100" rows="10">{$info.hdnr}</textarea>
                 </td>
             </tr>  
-            <tr align="left"  class="center_t_d">
-                <td width="20%" align="right">活动内容</td>
-                <td align="left">
-                    <textarea id="hdnr" name="hdnr" cols="100" rows="10">{$info.hdnr}</textarea>
-                </td>
-            </tr>  
+            
             <tr align="left"  class="center_t_d">
                 <td width="20%" align="right">所在区域</td>
                 <td align="left">
