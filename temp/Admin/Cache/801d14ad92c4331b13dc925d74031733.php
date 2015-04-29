@@ -13,7 +13,7 @@
 
 
 
-<script src="__ROOT__/Public/js/jquery.js"></script>
+<script src="__PUBLIC__/datepicker/js/jquery.min.js"></script>
 
 <script src="__ROOT__/Public/js/jquery.validate.js"></script>
 
@@ -135,7 +135,8 @@
                                     <a href="javascript:void(0);" class="opTj" val="<?php echo ($vo["is_tj"]); ?>"><?php echo ($vo["chtjTxt"]); ?></a>
                                     <?php if($vo[level]=='省/直辖市'): ?><a href="<?php echo U('Index/city',array('id'=>$vo[region_id]));?>">查看市</a>
                                     <a href="<?php echo U('Index/setcitydq',array('id'=>$vo[region_id]));?>">设置所属地区</a><?php endif; ?>
-                                    <?php if($vo[level]=='市'): ?><a href="<?php echo U('Index/city',array('id'=>$vo[region_id]));?>">查看区</a><?php endif; ?>
+                                    <?php if($vo[level]=='市'): ?><a href="<?php echo U('Index/city',array('id'=>$vo[region_id]));?>">查看区</a>
+                                        <a href="<?php echo U('Index/setjw',array('id'=>$vo[region_id],'pid'=>$c_id));?>">设置经纬度</a><?php endif; ?>
                                     
                                     
                                 </td>

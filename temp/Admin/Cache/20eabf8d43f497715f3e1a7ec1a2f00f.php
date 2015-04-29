@@ -17,7 +17,7 @@ and open the template in the editor.
 
 
 
-<script src="__ROOT__/Public/js/jquery.js"></script>
+<script src="__PUBLIC__/datepicker/js/jquery.min.js"></script>
 
 <script src="__ROOT__/Public/js/jquery.validate.js"></script>
 

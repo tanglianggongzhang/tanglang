@@ -17,7 +17,7 @@ and open the template in the editor.
 
 
 
-<script src="__ROOT__/Public/js/jquery.js"></script>
+<script src="__PUBLIC__/datepicker/js/jquery.min.js"></script>
 
 <script src="__ROOT__/Public/js/jquery.validate.js"></script>
 
@@ -52,35 +52,3 @@ and open the template in the editor.
    </div>
 </body>
 </html>
-<script>
-    $(document).ready(function() {
-        $("#form_login").validate({
-            rules:{
-                name:{required:true,},
-                pwd:{required:true,},
-                verify_code:{required:true,}
-            },
-            messages:{
-                name:{required:"请输入用户名"},
-                pwd:{required:"请输入密码"},
-                verify_code:{required:"请输入验证码"}
-            }
-        });
-        $("#verify_code").keyup(function() {
-            $.ajax({
-                url: "<?php echo U('Index/check_code');?>",
-                data: "post_val=" + $(this).val(),
-                type: "POST",
-                cache: false,
-                dataType: "JSON",
-                success: function(msg) {
-                    if (msg.code == 0) {
-                        $("#sub").attr("disabled", true);
-                    } else {
-                        $("#sub").attr("disabled", false);
-                    }
-                }
-            });
-        });
-    })
-</script>
