@@ -262,27 +262,27 @@
                     <input type="text" id="but" name="dinfo[birthday]" readonly value="{$info[birthday]}" />
                     </td>
                 </tr>  
-                <if condition="$_SESSION['my_info']['role']!=2">
+                <if condition="$is_qx==0">
                 <tr>
                     <td>省份/城市：</td>
                     <td>
                         <select id="province_id" name="dinfo[province_id]" onchange="getcity('province_id','city_id')" >
                             <option value="">请选择省份</option>
                             <volist id="vo" name="pro_list">
-                            	<option value="{$vo.region_id}" <if condition="$info[province_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
+                            	<option value="{$vo.region_id}" <if condition="$info[p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
                             </volist>
                         </select>
                         <select id="city_id" name="dinfo[city_id]" onchange="getdiqu('province_id','city_id','qu_id')">
                             <option value="">请选择市</option>
-                            <if condition="!empty($info[city_id])">
-                            <option value="{$info.city_id}" selected="selected">{$info.cityname}</option>
+                            <if condition="!empty($info[c_id])">
+                            <option value="{$info.c_id}" selected="selected">{$info.city_name}</option>
                             </if>
                         </select>
                         
                         <select id="qu_id" name="dinfo[qu_id]">
                             <option value="">请选择区</option>
-                            <if condition="$info[qu_id]">
-                                <option value="{$info.qu_id}" selected="selected">{$info.quname}</option>
+                            <if condition="$info[q_id]">
+                                <option value="{$info.q_id}" selected="selected">{$info.qu_name}</option>
                             </if>
                         </select>
                         
@@ -293,12 +293,12 @@
                     <tr>
                     <td>地区：</td>
                     <td>
-                        
-                        
+                        <input type="hidden" id="province_id" name="dinfo[province_id]" value="{$proid}" />
+                        <input type="hidden" id="city_id" name="dinfo[city_id]" value="{$cityid}" />
                         <select id="qu_id" name="dinfo[qu_id]">
                             <option value="">请选择区</option>
                             <volist id="vo" name="qulist">
-                            <option value="{$vo.region_id}" <if condition="$info[qu_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
+                            <option value="{$vo.region_id}" <if condition="$info[q_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
                             </volist>
                         </select>
                         
@@ -324,7 +324,7 @@
                         <select id="huxing" name="dinfo[huxing]">
                             <option value="">请选择户型</option>
                             <volist id="vo" name="hxlist">
-                                <option value="{$vo.id}">{$vo.name}</option>
+                                <option value="{$vo.id}" <if condition="$info[huxing]==$vo[id]">selected</if> >{$vo.name}</option>
                             </volist>
                         </select>
                     </td>
@@ -339,7 +339,7 @@
                         <select id="zxjd" name="dinfo[zxjd]">
                             <option value="">请选择装修阶段</option>
                             <volist id="vo" name="zxjdlist" key="k">
-                                <option value="{$k}">{$vo}</option>
+                                <option value="{$k}" <if condition="$info[zxjd]==$k">selected</if>>{$vo}</option>
                             </volist>
                         </select>
                     </td>
@@ -350,7 +350,7 @@
                         <select id="zxjd" name="dinfo[fengge]">
                             <option value="">请选择风格</option>
                             <volist id="vo" name="fglist">
-                                <option value="{$vo.id}">{$vo.name}</option>
+                                <option value="{$vo.id}" <if condition="$info[fengge]==$vo[id]">selected</if>>{$vo.name}</option>
                             </volist>
                         </select>
                     </td>
@@ -361,7 +361,7 @@
                         <select id="yusuan" name="dinfo[yusuan]">
                             <option value="">请选择预算</option>
                             <volist id="vo" name="yslist">
-                                <option value="{$vo.ysid}">{$vo.name}</option>
+                                <option value="{$vo.ysid}" <if condition="$info[yusuan]==$vo[ysid]">selected</if>>{$vo.name}</option>
                             </volist>
                         </select>
                     </td>
@@ -374,12 +374,13 @@
                 </tr>
                 
                 <tr>
+                    <input type="hidden" name="aid" value="{$info.a_id}"/>
                     <td colspan="2"><input type="submit" class="btn submit" id="sub" name="sub" value="提交"/></td>
                     
                 </tr>
                 
             </table>
-            <input type="hidden" name="aid" value="{$info.a_id}"/>
+            
         </form>
       </div>
     </div>
