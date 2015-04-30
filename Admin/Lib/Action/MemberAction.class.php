@@ -1097,8 +1097,23 @@ class MemberAction extends CommonAction {
         $proid = $citymod->getprovinceid($cityid); 
         //获取地区
         $qulist=$citymod->getqu($cityid);
-       
         $this->assign("qulist",$qulist);
+        #户型
+        $hxmod=M("Hxcategory");
+        $hxlist=$hxmod->where("1")->order(" addtime desc")->select();
+        $this->assign("hxlist",$hxlist);
+        
+        #装修阶段
+        $zxjdlist=include_once './Common/config2.php';
+        $this->assign("zxjdlist",$zxjdlist['zxjd']);
+        #喜欢风格
+        $fgMod=M("Fgcategory");
+        $fglist=$fgMod->where("1")->order(" addtime desc")->select();
+        $this->assign("fglist",$fglist);
+        #预算
+        $ysMod=M("Yusuan");
+        $yslist=$ysMod->where("1")->order(" ysid desc")->select();
+        $this->assign("yslist",$yslist);
         
         if (IS_POST) {
             $a_name = trim($_POST['a_name']);

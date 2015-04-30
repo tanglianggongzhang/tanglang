@@ -16,9 +16,19 @@
 
 <script src="__ROOT__/Public/js/jquery.validate.js"></script>
 
-<link rel="stylesheet" type="text/css" href="{$systemConfig.WEB_ROOT}/Public/easyui/themes/default/easyui.css">
-<link rel="stylesheet" type="text/css" href="{$systemConfig.WEB_ROOT}/Public/easyui/themes/icon.css">
-<script type="text/javascript" src="{$systemConfig.WEB_ROOT}/Public/easyui/jquery.easyui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/datepicker/css/jquery-ui.css" />
+<style>
+    
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }  
+.ui-timepicker-div dl { text-align: left; }  
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }  
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }  
+.ui-timepicker-div td { font-size: 90%; }  
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }  
+    
+</style>
+<script type="text/javascript" src="__PUBLIC__/datepicker/js/jquery-ui-datepicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/datepicker/js/jquery-ui-timepicker-addon.js"></script>
         
 <link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
 <link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
@@ -249,62 +259,7 @@
                 <tr>
                     <td>生日：</td>
                     <td>
-
-<input type="text" id="but" name="dinfo[birthday]" readonly value="{$info[birthday]}" />
-            <div class="easyui-calendar" style="width:250px;height:250px; display:none" data-options="formatter:formatDay"></div>
-            <script>
-		var d1 = Math.floor((Math.random()*30)+1);
-		var d2 = Math.floor((Math.random()*30)+1);
-		function formatDay(date){
-			var m = date.getMonth()+1;
-			var d = date.getDate();
-			var opts = $(this).calendar('options');
-			//if (opts.month == m && d == d1){
-				//return '<div class="icon-ok md">' + d + '</div>';
-			//} 
-			//else if (opts.month == m && d == d2){
-				//return '<div class="icon-search md">' + d + '</div>';
-			//}
-			return d;
-		}
-		$("#but").click(function(){
-			$(".easyui-calendar").show();	
-		});
-		$(".easyui-calendar").calendar({
-				onSelect:function(date){
-					var month_selected=(date.getMonth()+1)<=9?"0"+(date.getMonth()+1):(date.getMonth()+1);
-					var day_selected=date.getDate()<=9?"0"+date.getDate():date.getDate();
-					
-					var date_selected=date.getFullYear()+"-"+month_selected+"-"+day_selected;
-					var dateobj=new Date();
-					
-					var month_current=(dateobj.getMonth()+1)<=9?"0"+(dateobj.getMonth()+1):(dateobj.getMonth()+1);
-					var day_current=dateobj.getDate()<=9?"0"+dateobj.getDate():dateobj.getDate();
-					
-					var date_current=dateobj.getFullYear()+"-"+month_current+"-"+day_current;
-					
-					if(date_selected<=date_current){
-					$("#but").val(date_selected);
-					$(".easyui-calendar").hide();
-					}else{
-						alert("所选日期不能大于当前日期");
-					}
-					}
-			});
-	</script>
-            <style scoped>
-		.md{
-			height:16px;
-			line-height:16px;
-			background-position:2px center;
-			text-align:right;
-			font-weight:bold;
-			padding:0 2px;
-			color:red;
-		}
-	</style>
-    
-
+                    <input type="text" id="but" name="dinfo[birthday]" readonly value="{$info[birthday]}" />
                     </td>
                 </tr>  
                 <if condition="$_SESSION['my_info']['role']!=2">
@@ -354,6 +309,68 @@
                 <tr>
                     <td>地址：</td>
                     <td><input type="text" name="dinfo[address]" size="40" id="address" value="{$info[address]}" /></td>
+                </tr>
+                <tr>
+                    <td>积分：</td>
+                    <td><input type="text" name="dinfo[jifen]" size="10" id="jifen" value="{$info[jifen]}" /></td>
+                </tr>
+                <tr>
+                    <td>座机：</td>
+                    <td><input type="text" name="dinfo[telphone]" size="40" id="telphone" value="{$info[telphone]}" /></td>
+                </tr>
+                <tr>
+                    <td>户型：</td>
+                    <td>
+                        <select id="huxing" name="dinfo[huxing]">
+                            <option value="">请选择户型</option>
+                            <volist id="vo" name="hxlist">
+                                <option value="{$vo.id}">{$vo.name}</option>
+                            </volist>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>面积：</td>
+                    <td><input type="text" name="dinfo[mianji]" size="40" id="mianji" value="{$info[mianji]}" /></td>
+                </tr>
+                <tr>
+                    <td>装修阶段：</td>
+                    <td>
+                        <select id="zxjd" name="dinfo[zxjd]">
+                            <option value="">请选择装修阶段</option>
+                            <volist id="vo" name="zxjdlist" key="k">
+                                <option value="{$k}">{$vo}</option>
+                            </volist>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>喜欢风格：</td>
+                    <td>
+                        <select id="zxjd" name="dinfo[zxjd]">
+                            <option value="">请选择风格</option>
+                            <volist id="vo" name="fglist">
+                                <option value="{$vo.id}">{$vo.name}</option>
+                            </volist>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>预算：</td>
+                    <td>
+                        <select id="yusuan" name="dinfo[yusuan]">
+                            <option value="">请选择预算</option>
+                            <volist id="vo" name="yslist">
+                                <option value="{$vo.ysid}">{$vo.name}</option>
+                            </volist>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>装修时间：</td>
+                    <td>
+                        <input type="text" id="zxtime" name="dinfo[zxtime]" readonly value="{$info[zxtime]}" />
+                    </td>
                 </tr>
                 
                 <tr>
@@ -596,5 +613,6 @@
 			  });
 		}
 	})
-	
+$("#but").datetimepicker();
+$("#zxtime").datetimepicker();
 </script>
