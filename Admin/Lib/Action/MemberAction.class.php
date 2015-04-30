@@ -17,12 +17,9 @@ class MemberAction extends CommonAction {
 
         $systemConfig = $this->systemConfig;
         $this->assign("systemConfig", $systemConfig);
-        //获取省份
-
+        #获取省份
         $citymod = new CityModel();
-        $pro_list = $citymod->getprovince(1);
-        $this->assign("pro_list", $pro_list);
-
+        
         $memmod = new MemberModel();
         $year = $memmod->getyear();
         $this->assign("year", $year);
@@ -40,13 +37,16 @@ class MemberAction extends CommonAction {
         $end_date = trim($_GET['end_date']);
         $province = trim($_GET['province']);
         $city = trim($_GET['city']);
+        $qu=  trim($_GET['qu']);
 
         $this->assign("keys", $keys);
         $this->assign("start_date", $start_date);
         $this->assign("end_date", $end_date);
         $this->assign("province", $province);
         $this->assign("city", $city);
-
+        $this->assign("qu",$qu);
+        
+        
         $cityname = $citymod->getname($city);
         $this->assign("cityname", $cityname);
         $map = "a_type=1 ";
@@ -58,16 +58,26 @@ class MemberAction extends CommonAction {
             $end_date = strtotime($end_date . "23:59:59");
             $map.=" and UNIX_TIMESTAMP(create_time)<= " . $end_date;
         }
-        if ($_SESSION['my_info']['role'] != 2) {
+        if ($this->getqx($_SESSION['my_info']['role']) == 0) {
             //非地区管理员
+            $pro_list = $citymod->getprovince(1);
+            $this->assign("pro_list", $pro_list);
+        
             if (!empty($province)) {
-                $map.=" and province_id=" . $province;
+                $map.=" and p_id=" . $province;
             }
             if (!empty($city)) {
-                $map.=" and city_id=" . $city;
+                $map.=" and c_id=" . $city;
             }
+            $this->assign("is_qx",$this->getqx($_SESSION['my_info']['role']));
         } else {
-            $map .= " and city_id=" . $_SESSION['my_info']['cityid'];
+            $map.=" and p_id=" . $_SESSION['my_info']['proid'];
+            $map .= " and c_id=" . $_SESSION['my_info']['cityid'];
+            #区
+            $qlist=$citymod->getcity($_SESSION['my_info']['cityid']);
+            $this->assign("qlist",$qlist);
+            
+            $this->assign("is_qx",$this->getqx($_SESSION['my_info']['role']));
         }
 
         if (!empty($keys)) {
@@ -79,7 +89,7 @@ class MemberAction extends CommonAction {
         # echo $pumod->getLastSql();
         $page = new Page($count, 12);
         $showpage = $page->show();
-        $list = $pumod->where($map)->order("a_id desc")->limit($page->firstRow.",".$page->listRows)->select();
+        $list = $pumod->where($map)->order("a_id desc")->limit($page->firstRow . "," . $page->listRows)->select();
         foreach ($list as $k => $v) {
             if (!empty($vo['last_login']))
                 $list[$k]['last_login'] = date("Y-m-d", $vo['last_login']);
@@ -231,45 +241,20 @@ class MemberAction extends CommonAction {
         header('Content-Type:application/json; charset=utf-8');
 
         $aid = $_POST['aid'];
-        $ptmod = M("Putongmember");
+        $ptmod = M("Kehuview");
         $info = $ptmod->where("a_id=" . $aid)->find();
+        $arr=  include_once './Common/config2.php';
         if (!$_POST['is_cl']) {
             $info['sex'] = ($info['sex'] == 1) ? "男" : "女";
             if (!empty($info['last_login']))
                 $info['last_login'] = date("Y-m-d", $info['last_login']);
             else
                 $info['last_login'] = "从未登录";
+            $info['zxjd']=$arr['zxjd'][$info['zxjd']];
+            $info['status']=$info['status']==1?"启用":"禁用";
         }
-        $arlist = M("Area")->where("region_id=" . $info['city_id'])->field("region_name")->find();
-        if (!$_POST['is_cl']) {
-            $data = array(
-                "a_aname_1" => $info['a_name'],
-                "nickname_1" => $info['nickname'],
-                "truename_1" => $info['truename'],
-                "sex_1" => $info['sex'],
-                "email_1" => $info['email'],
-                "qq_1" => $info['qq'],
-                "telphone_1" => $info['movphone'],
-                "year_1" => $info['birthday'],
-                "city_1" => $arlist['region_name'],
-                "img" => $info['logo'],
-                "address_1" => $info['address']
-            );
-            echo json_encode($data);
-        } else {
-            $bir = $info['birthday'];
-            $bir_arr = explode("-", $bir);
-            $info['bir_year'] = $bir_arr[0];
-            $info['bir_month'] = $bir_arr[1];
-            $info['bir_day'] = $bir_arr[2];
-            //获取province 下的所有city
-            $mod = new CityModel();
-            $city = $mod->getcity($info['province_id']);
-
-            $info['city'] = $city;
-
-            echo json_encode($info);
-        }
+        
+        echo json_encode($info);
     }
 
     /**
@@ -1094,27 +1079,27 @@ class MemberAction extends CommonAction {
         $pro_list = $citymod->getprovince(1);
         $this->assign("pro_list", $pro_list);
         $cityid = $_SESSION['my_info']['cityid'];
-        $proid = $citymod->getprovinceid($cityid); 
+        $proid = $citymod->getprovinceid($cityid);
         //获取地区
-        $qulist=$citymod->getqu($cityid);
-        $this->assign("qulist",$qulist);
+        $qulist = $citymod->getqu($cityid);
+        $this->assign("qulist", $qulist);
         #户型
-        $hxmod=M("Hxcategory");
-        $hxlist=$hxmod->where("1")->order(" addtime desc")->select();
-        $this->assign("hxlist",$hxlist);
-        
+        $hxmod = M("Hxcategory");
+        $hxlist = $hxmod->where("1")->order(" addtime desc")->select();
+        $this->assign("hxlist", $hxlist);
+
         #装修阶段
-        $zxjdlist=include_once './Common/config2.php';
-        $this->assign("zxjdlist",$zxjdlist['zxjd']);
+        $zxjdlist = include_once './Common/config2.php';
+        $this->assign("zxjdlist", $zxjdlist['zxjd']);
         #喜欢风格
-        $fgMod=M("Fgcategory");
-        $fglist=$fgMod->where("1")->order(" addtime desc")->select();
-        $this->assign("fglist",$fglist);
+        $fgMod = M("Fgcategory");
+        $fglist = $fgMod->where("1")->order(" addtime desc")->select();
+        $this->assign("fglist", $fglist);
         #预算
-        $ysMod=M("Yusuan");
-        $yslist=$ysMod->where("1")->order(" ysid desc")->select();
-        $this->assign("yslist",$yslist);
-        
+        $ysMod = M("Yusuan");
+        $yslist = $ysMod->where("1")->order(" ysid desc")->select();
+        $this->assign("yslist", $yslist);
+
         if (IS_POST) {
             $a_name = trim($_POST['a_name']);
             $pwd = trim($_POST['pwd']);
@@ -1157,21 +1142,22 @@ class MemberAction extends CommonAction {
             $movphone = trim($_POST['dinfo']['movphone']);
             $birthday = $_POST['dinfo']['birthday'];
             $citymod = new CityModel();
-            if ($_SESSION['my_info']['role'] == 2) {
-                $cityid = $_SESSION['my_info']['cityid'];
-                $proid = $citymod->getprovinceid($cityid);
-                
+            if ($this->getqx($_SESSION['my_info']['role']) == 1) {
+                //地区管理员
+                $p_id = $_SESSION['my_info']['proid'];
+                $c_id = $_SESSION['my_info']['cityid'];
+                $p_id = $citymod->getprovinceid($cityid);
             } else {
-                $cityid = $_POST['dinfo']['city_id'];
-                $proid = $_POST['dinfo']['province_id'];
-                
-                if (empty($proid)) {
+                $c_id = $_POST['dinfo']['city_id'];
+                $p_id = $_POST['dinfo']['province_id'];
+
+                if (empty($p_id)) {
                     $returnarr['status'] = 0;
                     $returnarr['info'] = "请选择省份";
                     $this->error($returnarr['info']);
                     exit;
                 }
-                if (empty($cityid)) {
+                if (empty($c_id)) {
                     $returnarr['status'] = 0;
                     $returnarr['info'] = "请选择城市";
                     $this->error($returnarr['info']);
@@ -1187,28 +1173,42 @@ class MemberAction extends CommonAction {
             }
             $picName = $_POST['picName'];
             $address = trim($_POST['dinfo']['address']);
+            $jifen = trim($_POST['dinfo']['jifen']);
+            
+            $telphone = trim($_POST['dinfo']['telphone']);
+            $huxing = $_POST['dinfo']['huxing'];
+            $mianji = trim($_POST['dinfo']['mianji']);
+            $zxjd = $_POST['dinfo']['zxjd'];
+            $fengge = $_POST['dinfo']['fengge'];
+            $yusuan = $_POST['dinfo']['yusuan'];
+            $zxtime = $_POST['dinfo']['zxtime'];
 
             $fjdata = array(
-                "nickname" => $nickname,
                 "truename" => $truename,
+                "logo" => $picName,
+                "jifen" => $jifen,
                 "sex" => $sex,
                 "email" => $email,
                 "qq" => $qq,
-                "movphone" => $movphone,
+                "movphone" => $movphone, //移动电话
+                "telphone" => $telphone,
                 "birthday" => $birthday,
-                "city_id" => $cityid,
-                "province_id" => $proid,
-                
-                "qu_id" => $qu_id,
-                "logo" => $picName,
-                "address" => $address
+                "c_id" => $c_id,
+                "p_id" => $p_id,
+                "q_id" => $qu_id,
+                "address" => $address,
+                "huxing" => $huxing,
+                "mianji" => $mianji,
+                "zxjd" => $zxjd,
+                "fengge" => $fengge,
+                "yusuan" => $yusuan,
+                "zxtime" => $zxtime
             );
-
-
+            
 
             $res = $memmod->add_member($maindata, $fjdata);
             if ($res) {
-                $this->success("操作成功！");
+                $this->success("操作成功！", U('Member/index'));
             } else {
                 $this->error("操作失败！");
             }
@@ -1778,7 +1778,7 @@ class MemberAction extends CommonAction {
         $m = M("Putongmember");
         $info = $m->where("a_id=" . $aid)->find();
         $this->assign("info", $info);
-        
+
         $citymod = new CityModel();
         $pro_list = $citymod->getprovince(1);
         $this->assign("pro_list", $pro_list);
@@ -1837,7 +1837,7 @@ class MemberAction extends CommonAction {
                 $datai['province_id'] = $province_id;
             if ($city_id != $info['city_id'])
                 $datai['city_id'] = $city_id;
-            
+
             if ($address != $info['address'])
                 $datai['address'] = $address;
             $m2 = M("Webmember");
