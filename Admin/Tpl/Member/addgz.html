@@ -7,18 +7,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
 	<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
-
 <link href="__ROOT__/Public/css/common.css" rel="stylesheet" type="text/css" />
-
-
-
 <script src="__ROOT__/Public/tuxcj/js/jquery-1.7.2.min.js"></script>
 
-<script src="__ROOT__/Public/js/jquery.validate.js"></script>
 
-<link rel="stylesheet" type="text/css" href="{$systemConfig.WEB_ROOT}/Public/easyui/themes/default/easyui.css">
-<link rel="stylesheet" type="text/css" href="{$systemConfig.WEB_ROOT}/Public/easyui/themes/icon.css">
-<script type="text/javascript" src="{$systemConfig.WEB_ROOT}/Public/easyui/jquery.easyui.min.js"></script>
+
         
 <link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
 <link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
@@ -137,6 +130,25 @@
 	display: none;
 }
 </style>
+
+<script language="javascript" src="__PUBLIC__/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ckfinder/ckfinder.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=4KXKDmnlxqezwFM9bajbsfoE"></script>
+
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/datepicker/css/jquery-ui.css" />
+<style>
+    
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }  
+.ui-timepicker-div dl { text-align: left; }  
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }  
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }  
+.ui-timepicker-div td { font-size: 90%; }  
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }  
+    
+</style>
+<script type="text/javascript" src="__PUBLIC__/datepicker/js/jquery-ui-datepicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/datepicker/js/jquery-ui-timepicker-addon.js"></script>
+
     </head>
     <body>
         <div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
@@ -144,7 +156,7 @@
     <div class="center">
       <div class="center_r_t">您的位置：<a href="{:U('Member/foreman')}" class="a1">明星工长</a>>>>编辑/添加 明星工长信息</div>
       <div class="center_t">
-          <form action="" id="form1" name="form1" method="post">
+          <form action="" id="form1" name="form1" enctype="multipart/form-data" method="post">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab center_t">
                 <tr>
                     <td width="120">登录名称：</td>
@@ -223,7 +235,7 @@
                 <tr>
                     <td>姓名：</td>
                     <td>
-                       <input type="text" name="truename" size="40" id="truename" value="{$info.f_truename}" />
+                       <input type="text" name="truename" size="40" id="truename" value="{$info.truename}" />
                     </td>
                 </tr>
                 <tr>
@@ -235,100 +247,107 @@
                 <tr>
                     <td>装修公司排名：</td>
                     <td>
-                       <input type="text" name="paiming" size="40" id="ruzhitime" value="{$info.paiming}" />
+                       <input type="text" name="paiming" size="10" id="ruzhitime" value="{$info.paiming}" />
                     </td>
                 </tr>
                 
                 <tr>
                     <td>公司名称：</td>
                     <td>
-                       <input type="text" name="company" size="40" id="company" value="{$info.company}" />
+                       <input type="text" name="company" size="100" id="company" value="{$info.company}" />
                     </td>
                 </tr>
                 <tr>
                     <td>口碑值：</td>
                     <td>
-                       <input type="text" name="koubei" size="40" id="koubei" value="{$info.koubei}" />
+                       <input type="text" name="koubei" size="10" id="koubei" value="{$info.koubei}" />
                     </td>
                 </tr>
                 <tr>
                     <td>评论数：</td>
                     <td>
-                       <input type="text" name="comments" size="40" id="comments" value="{$info.comments}" />
+                       <input type="text" name="comments" size="10" id="comments" value="{$info.comments}" />
                     </td>
                 </tr>
                 <tr>
                     <td>施工团队数目：</td>
                     <td>
-                       <input type="text" name="peoples" size="40" id="peoples" value="{$info.peoples}" />
+                       <input type="text" name="peoples" size="10" id="peoples" value="{$info.peoples}" />
                     </td>
                 </tr>
                 <tr>
                     <td>案例数目：</td>
                     <td>
-                       <input type="text" name="cases" size="40" id="cases" value="{$info.cases}" />
+                       <input type="text" name="cases" size="10" id="cases" value="{$info.cases}" />
                     </td>
                 </tr>
                 <tr>
                     <td>预约次数：</td>
                     <td>
-                       <input type="text" name="yuyues" size="40" id="yuyues" value="{$info.yuyues}" />
+                       <input type="text" name="yuyues" size="10" id="yuyues" value="{$info.yuyues}" />
                     </td>
                 </tr>
                 <tr>
                     <td>服务业主人数：</td>
                     <td>
-                       <input type="text" name="fwyzrs" size="40" id="fwyzrs" value="{$info.fwyzrs}" />
+                       <input type="text" name="fwyzrs" size="10" id="fwyzrs" value="{$info.fwyzrs}" />
                     </td>
                 </tr>
                 <tr>
                     <td>服务范围：</td>
                     <td>
                        
-                       <textarea name="fuwu" cols="100" rows="10">{$info.fuwu}</textarea>
-                       <if condition="!empty($info[fuwu])">备注：多种服务按enter键</if>
+                       <textarea name="fuwu" cols="100" rows="10">{$fuwuarr}</textarea>
+                       <br/>
+                       <if condition="empty($info[fuwu])">备注：多种服务按enter键</if>
                        
                     </td>
                 </tr>
                 <tr>
                     <td>代表作品：</td>
                     <td>
-                       
+                        <select name="zuopin[]" id="zuopin" size="10" multiple="multiple">
+                            <volist id="vo" name="caselist">
+                                <option value="{$vo.id}" <if condition="in_array($vo[id],$zparr)">selected</if> >{$vo.title}</option>
+                            </volist>
+                        </select>
+                        备注按着Ctrl键的同时点击鼠标的左键进行多选
                     </td>
                 </tr>
                 <tr>
                     <td>是否进行身份证认证：</td>
                     <td>
-                        <label><input type="radio" id="is_sfz" name="is_sfz" value="1" <if condition="$info.is_sfz==1">checked</if> /> 是</label>
-                        <label><input type="radio" id="is_sfz" name="is_sfz" value="0" <if condition="$info.is_sfz==0">checked</if> /> 否</label>
+                       
+                        <label><input type="radio" id="is_sfz" name="is_sfz" value="1" <if condition="$info[is_sfz]==1">checked</if> /> 是</label>
+                        <label><input type="radio" id="is_sfz" name="is_sfz" value="0" <if condition="$info[is_sfz]==0">checked</if> /> 否</label>
                     </td>
                 </tr>
                 <tr>
                     <td>是否签约：</td>
                     <td>
-                        <label><input type="radio" id="is_qy" name="is_qy" value="1" <if condition="$info.is_qy==1">checked</if> /> 是</label>
-                        <label><input type="radio" id="is_qy" name="is_qy" value="0" <if condition="$info.is_qy==0">checked</if> /> 否</label>
+                        <label><input type="radio" id="is_qy" name="is_qy" value="1" <if condition="$info[is_qy]==1">checked</if> /> 是</label>
+                        <label><input type="radio" id="is_qy" name="is_qy" value="0" <if condition="$info[is_qy]==0">checked</if> /> 否</label>
                     </td>
                 </tr>
                 <tr>
                     <td>签约时间：</td>
                     <td>
-                        <input type="text" name="qytime" id="qytime" valu="{$info.qytime}" />
+                        <input type="text" name="qytime" id="qytime" value="{$info[qytime]}" />
                     </td>
                 </tr>
                 <tr>
                    <td>是否缴纳保证金：</td>
                     <td>
-                        <label><input type="radio" id="is_bzj" name="is_bzj" value="1" <if condition="$info.is_bzj==1">checked</if> /> 是</label>
-                        <label><input type="radio" id="is_bzj" name="is_bzj" value="0" <if condition="$info.is_bzj==0">checked</if> /> 否</label>
+                        <label><input type="radio" id="is_bzj" name="is_bzj" value="1" <if condition="$info[is_bzj]==1">checked</if> /> 是</label>
+                        <label><input type="radio" id="is_bzj" name="is_bzj" value="0" <if condition="$info[is_bzj]==0">checked</if> /> 否</label>
                     </td>
                 </tr>
                 <tr>
                     <td>身份证图片</td>
                     <td>
-                        <input type="file" name="sfz_img" id="sfz_img" value="" />
+                        <input type="file" name="sfz_img" id="sfz_img" value="" /><br/>
                         <if condition="!empty($info[sfz_img])">
-                            <img src="{$info.sfz_img}" width="100"/>
+                            <img src="{$systemConfig.SITE_INFO.url}{$info.sfz_img}" width="100"/>
                         </if>
                     </td>
                 </tr>
@@ -366,7 +385,7 @@
                 </tr>                
                 <tr>
                     <td>工龄：</td>
-                    <td><input type="text" name="gongling" size="40" id="gongling" value="{$info[gongling]}" /></td>
+                    <td><input type="text" name="gongling" size="10" id="gongling" value="{$info[gongling]}" /></td>
                 </tr>                
                 <tr>
                     <td>是否推荐：</td>
@@ -378,16 +397,16 @@
                  <tr>
                     <td>导航图片</td>
                     <td>
-                        <input type="file" name="dhimg" id="dhimg" value="" />
+                        <input type="file" name="dhimg" id="dhimg" value="" /><br/>
                         <if condition="!empty($info[dhimg])">
-                            <img src="{$info.dhimg}" width="100"/>
+                            <img src="{$systemConfig.SITE_INFO.url}{$info.dhimg}" width="100"/>
                         </if>
                     </td>
                 </tr>
                 
                 <tr>
                     <td>qq：</td>
-                    <td><input type="text" name="dinfo[qq]" size="40" id="qq" value="{$info[f_qq]}" /></td>
+                    <td><input type="text" name="qq" size="40" id="qq" value="{$info[qq]}" /></td>
                 </tr>  
                 
                 <if condition="$is_qx==0">
@@ -400,13 +419,13 @@
                             	<option value="{$vo.region_id}" <if condition="$info[p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
                             </volist>
                         </select>
-                        <select id="c_id" name="c_id">
+                        <select id="c_id" name="c_id" onchange="getdiqu('p_id','c_id','q_id')">
                             <option value="">请选择市</option>
-                            <if condition="!empty($info[f_c_id])">
+                            <if condition="!empty($info[c_id])">
                             <option value="{$info.c_id}" selected="selected">{$info.cname}</option>
                             </if>
                         </select>
-                        <select id="q_id" name="dinfo[q_id]">
+                        <select id="q_id" name="q_id">
                             <option value="">请选择市</option>
                             <if condition="!empty($info[q_id])">
                             <option value="{$info.q_id}" selected="selected">{$info.qname}</option>
@@ -423,9 +442,9 @@
                         <input type="hidden" id="p_id" name="p_id" value="{$p_id}" />
                         <input type="hidden" id="c_id" name="c_id" value="{$c_id}" />
                         
-                        <select id="q_id" name="dinfo[q_id]">
+                        <select id="q_id" name="q_id">
                             <option value="">请选择市</option>
-                            <volist id="vo" name="pro_list">
+                            <volist id="vo" name="qulist">
                                 <option value="{$vo.region_id}" <if condition="$vo[region_id]==$info[q_id]">selected</if> >{$vo.region_name}</option>
                             </volist>  
                             
@@ -445,7 +464,54 @@
                 <tr>
                     <td>选择标注：</td>
                     <td>
-                    
+                    <input type="hidden" name="jingdu" id="jingdu" value="{$info.jingdu}" />
+                    <input type="hidden" name="weidu" id="weidu" value="{$info.weidu}" />
+                    <style>
+                        #mapcontainer{width: 800px; height: 800px;}
+                    </style>
+                    <div id="mapcontainer"></div>
+                    <script type="text/javascript"> 
+    var map = new BMap.Map("mapcontainer");         
+    <if condition="!empty($info[jingdu])&&!empty($info[weidu])"> 
+    
+    var point = new BMap.Point({$info[jingdu]}, {$info[weidu]});  
+     
+    <else />
+    
+    var point = new BMap.Point(116.404, 39.915);  
+    
+    </if>
+    map.centerAndZoom(point, 12);                 // 初始化地图，设置中心点坐标和地图级别  
+    var opts = {offset: new BMap.Size(150, 5)};
+
+    map.addControl(new BMap.NavigationControl());//添加控件
+    map.addControl(new BMap.ScaleControl(opts));//控件偏移位置
+    map.addControl(new BMap.OverviewMapControl());
+    map.addControl(new BMap.MapTypeControl());
+    
+    var marker=new BMap.Marker(point);//创建标注
+    map.addOverlay(marker);//将标注添加到地图中
+    marker.enableDragging();
+    <if condition="!empty($info[jingdu])&&!empty($info[weidu])"> 
+    document.getElementById("jingdu").value="{$info[jingdu]}";
+    document.getElementById("weidu").value="{$info[weidu]}";
+    <else />
+    document.getElementById("jingdu").value="116.404";
+    document.getElementById("weidu").value="39.915";
+    </if>
+    marker.addEventListener("dragend", function(e){
+   
+    document.getElementById("jingdu").value=e.point.lng;
+    document.getElementById("weidu").value=e.point.lat;
+    });
+    
+
+
+
+
+
+
+</script> 
                     
                     </td>
                     
@@ -469,22 +535,7 @@
     </body>
 </html>
 <script>
-    $(document).ready(function() {
-        $("#form1").validate({
-            rules:{
-                a_name:{required:true,},
-               
-            },
-            messages:{
-                a_name:{required:"请输入用户名/邮件地址"},
-                
-            }
-        });
-		
-        
-		
-    })
-	
+    
 	 function getcity(proid,cityid){
 	//	 alert(proid+","+cityid);
 //		var pid=$("#"+proid).val();
@@ -518,7 +569,72 @@
 					
 		});	
 	}
-	
+	function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+            var cid=document.getElementById(cityid).value;
+            //获取市区对应的经纬度
+            $.ajax({
+                data:"cid="+cid,
+                cache:false,
+		url:"{:U('Index/getjwd')}",
+		type:"POST",
+		dataType:"Json",
+                success:function(msg){
+                   // var msg=eval("("+msg+")");
+                    document.getElementById("jingdu").value=msg.jingdu;
+                    document.getElementById("weidu").value=msg.weidu;
+                   // alert(msg.jingdu);
+                    var map = new BMap.Map("mapcontainer");          // 创建地图实例  
+                    var point = new BMap.Point(msg.jingdu, msg.weidu);  // 创建点坐标 
+                    map.centerAndZoom(point, 12);                 // 初始化地图，设置中心点坐标和地图级别  
+                    
+                    var opts = {offset: new BMap.Size(150, 5)};
+                    map.addControl(new BMap.NavigationControl());//添加控件
+                    map.addControl(new BMap.ScaleControl(opts));//控件偏移位置
+                    map.addControl(new BMap.OverviewMapControl());
+                    map.addControl(new BMap.MapTypeControl());
+
+                    var marker=new BMap.Marker(point);//创建标注
+                    map.addOverlay(marker);//将标注添加到地图中
+                    marker.enableDragging();
+                    marker.addEventListener("dragend", function(e){
+                    //alert("当前位置：" + e.point.lng + ", " + e.point.lat);
+                    document.getElementById("jingdu").value=e.point.lng;
+                    document.getElementById("weidu").value=e.point.lat;
+                    });
+                    
+                    
+                }
+            });
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				//var msg=eval("("+msg+")");
+				
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
 </script>
 
 
@@ -660,5 +776,46 @@
 			  });
 		}
 	})
-	
+CKEDITOR.replace( 'content',
+{
+filebrowserBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html',
+filebrowserImageBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Images',
+filebrowserFlashBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Flash',
+filebrowserUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+filebrowserImageUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
+filebrowserFlashUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
+});
+$("#qytime").datetimepicker();
+$("#ruzhitime").datetimepicker();
+//地址
+$("#address").blur(function(){
+   var address=$(this).val();
+   if(address!=''){
+       var jingdu=$("#jingdu").val();
+       var weidu=$("#weidu").val();
+       var c_name=$("#c_id").find("option:selected").text();
+       var map = new BMap.Map("mapcontainer");
+       map.centerAndZoom(new BMap.Point(jingdu, weidu), 11);
+       
+       var opts = {offset: new BMap.Size(150, 5)};
+        map.addControl(new BMap.NavigationControl());//添加控件
+        map.addControl(new BMap.ScaleControl(opts));//控件偏移位置
+        map.addControl(new BMap.OverviewMapControl());
+        map.addControl(new BMap.MapTypeControl());
+       
+       
+       // 创建地址解析器实例
+        var myGeo = new BMap.Geocoder();
+        // 将地址解析结果显示在地图上，并调整地图视野
+        myGeo.getPoint(address,function(point){
+            map.centerAndZoom(point, 16);
+            $("#jingdu").val(point.lng);
+            $("#weidu").val(point.lat);
+            
+            map.addOverlay(new BMap.Marker(point));
+        },c_name);
+
+   }
+
+});
 </script>
