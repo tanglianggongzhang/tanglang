@@ -221,145 +221,235 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>真实姓名：</td>
+                    <td>姓名：</td>
                     <td>
-                       <input type="text" name="dinfo[truename]" size="40" id="truename" value="{$info.f_truename}" />
+                       <input type="text" name="truename" size="40" id="truename" value="{$info.f_truename}" />
                     </td>
                 </tr>
                 <tr>
-                    <td>公司名称：</td>
+                    <td>入职日期：</td>
                     <td>
-                       <input type="text" name="dinfo[company]" size="40" id="truename" value="{$info.f_company}" />
+                       <input type="text" name="ruzhitime" size="40" id="ruzhitime" value="{$info.ruzhitime}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>装修公司排名：</td>
+                    <td>
+                       <input type="text" name="paiming" size="40" id="ruzhitime" value="{$info.paiming}" />
                     </td>
                 </tr>
                 
                 <tr>
+                    <td>公司名称：</td>
+                    <td>
+                       <input type="text" name="company" size="40" id="company" value="{$info.company}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>口碑值：</td>
+                    <td>
+                       <input type="text" name="koubei" size="40" id="koubei" value="{$info.koubei}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>评论数：</td>
+                    <td>
+                       <input type="text" name="comments" size="40" id="comments" value="{$info.comments}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>施工团队数目：</td>
+                    <td>
+                       <input type="text" name="peoples" size="40" id="peoples" value="{$info.peoples}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>案例数目：</td>
+                    <td>
+                       <input type="text" name="cases" size="40" id="cases" value="{$info.cases}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>预约次数：</td>
+                    <td>
+                       <input type="text" name="yuyues" size="40" id="yuyues" value="{$info.yuyues}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>服务业主人数：</td>
+                    <td>
+                       <input type="text" name="fwyzrs" size="40" id="fwyzrs" value="{$info.fwyzrs}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>服务范围：</td>
+                    <td>
+                       
+                       <textarea name="fuwu" cols="100" rows="10">{$info.fuwu}</textarea>
+                       <if condition="!empty($info[fuwu])">备注：多种服务按enter键</if>
+                       
+                    </td>
+                </tr>
+                <tr>
+                    <td>代表作品：</td>
+                    <td>
+                       
+                    </td>
+                </tr>
+                <tr>
+                    <td>是否进行身份证认证：</td>
+                    <td>
+                        <label><input type="radio" id="is_sfz" name="is_sfz" value="1" <if condition="$info.is_sfz==1">checked</if> /> 是</label>
+                        <label><input type="radio" id="is_sfz" name="is_sfz" value="0" <if condition="$info.is_sfz==0">checked</if> /> 否</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>是否签约：</td>
+                    <td>
+                        <label><input type="radio" id="is_qy" name="is_qy" value="1" <if condition="$info.is_qy==1">checked</if> /> 是</label>
+                        <label><input type="radio" id="is_qy" name="is_qy" value="0" <if condition="$info.is_qy==0">checked</if> /> 否</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>签约时间：</td>
+                    <td>
+                        <input type="text" name="qytime" id="qytime" valu="{$info.qytime}" />
+                    </td>
+                </tr>
+                <tr>
+                   <td>是否缴纳保证金：</td>
+                    <td>
+                        <label><input type="radio" id="is_bzj" name="is_bzj" value="1" <if condition="$info.is_bzj==1">checked</if> /> 是</label>
+                        <label><input type="radio" id="is_bzj" name="is_bzj" value="0" <if condition="$info.is_bzj==0">checked</if> /> 否</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>身份证图片</td>
+                    <td>
+                        <input type="file" name="sfz_img" id="sfz_img" value="" />
+                        <if condition="!empty($info[sfz_img])">
+                            <img src="{$info.sfz_img}" width="100"/>
+                        </if>
+                    </td>
+                </tr>
+                <tr>
+                    <td>个人简介</td>
+                    <td>
+                        <textarea id="content" name="content" cols="100" rows="10">
+                            {$info.content}
+                        </textarea>
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>座机：</td>
+                    <td><input type="text" name="telphone" id="telphone" value="{$info.telphone}" /></td>
+                </tr>
+                <tr>
+                    <td>手机号：</td>
+                    <td><input type="text" name="movphone" id="movphone" value="{$info.movphone}" /></td>
+                </tr>
+                
+                
+                <tr>
                     <td>性别：</td>
                     <td>
-                        <label><input type="radio" name="dinfo[sex]" id="sex" value="1" <if condition="$info[f_sex]==1">checked</if> />男</label>
-                        <label><input type="radio" name="dinfo[sex]" id="sex" value="2" <if condition="$info[f_sex]==2">checked</if> />女</label>
+                        <label><input type="radio" name="sex" id="sex" value="1" <if condition="$info[sex]==1">checked</if> />男</label>
+                        <label><input type="radio" name="sex" id="sex" value="2" <if condition="$info[sex]==2">checked</if> />女</label>
                         
                     </td>
                 </tr>                 
                 
                 <tr>
                     <td>email：</td>
-                    <td><input type="text" name="dinfo[email]" size="40" id="email" value="{$info[f_email]}" /></td>
+                    <td><input type="text" name="email" size="40" id="email" value="{$info[email]}" /></td>
                 </tr>                
+                <tr>
+                    <td>工龄：</td>
+                    <td><input type="text" name="gongling" size="40" id="gongling" value="{$info[gongling]}" /></td>
+                </tr>                
+                <tr>
+                    <td>是否推荐：</td>
+                    <td>
+                        <label><input type="radio" name="is_tj" id="is_tj" value="1" <if condition="$info[is_tj]==1">checked</if> />推荐</label>
+                        <label><input type="radio" name="is_tj" id="is_tj" value="0"  <if condition="$info[is_tj]==0">checked</if> />普通</label>
+                    </td>
+                </tr>                
+                 <tr>
+                    <td>导航图片</td>
+                    <td>
+                        <input type="file" name="dhimg" id="dhimg" value="" />
+                        <if condition="!empty($info[dhimg])">
+                            <img src="{$info.dhimg}" width="100"/>
+                        </if>
+                    </td>
+                </tr>
+                
                 <tr>
                     <td>qq：</td>
                     <td><input type="text" name="dinfo[qq]" size="40" id="qq" value="{$info[f_qq]}" /></td>
                 </tr>  
-                <tr>
-                    <td>
-                        
-                       手机号： 
-                    </td>
-                    <td><input type="text" name="dinfo[phone]" size="40" id="phone" value="{$info[f_phone]}" /></td>
-                </tr>
-                <tr>
-                    <td>
-                        
-                       座机： 
-                    </td>
-                    <td><input type="text" name="dinfo[telphone]" size="40" id="telphone" value="{$info[f_telphone]}" /></td>
-                </tr>
                 
-                <tr>
-                    <td>生日：</td>
-                    <td>
-
-<input type="text" id="but" name="dinfo[birthday]" readonly value="{$info[f_birthday]}" />
-            <div class="easyui-calendar" style="width:250px;height:250px; display:none" data-options="formatter:formatDay"></div>
-            <script>
-		var d1 = Math.floor((Math.random()*30)+1);
-		var d2 = Math.floor((Math.random()*30)+1);
-		function formatDay(date){
-			var m = date.getMonth()+1;
-			var d = date.getDate();
-			var opts = $(this).calendar('options');
-			//if (opts.month == m && d == d1){
-				//return '<div class="icon-ok md">' + d + '</div>';
-			//} 
-			//else if (opts.month == m && d == d2){
-				//return '<div class="icon-search md">' + d + '</div>';
-			//}
-			return d;
-		}
-		$("#but").click(function(){
-			$(".easyui-calendar").show();	
-		});
-		$(".easyui-calendar").calendar({
-				onSelect:function(date){
-					var month_selected=(date.getMonth()+1)<=9?"0"+(date.getMonth()+1):(date.getMonth()+1);
-					var day_selected=date.getDate()<=9?"0"+date.getDate():date.getDate();
-					
-					var date_selected=date.getFullYear()+"-"+month_selected+"-"+day_selected;
-					var dateobj=new Date();
-					
-					var month_current=(dateobj.getMonth()+1)<=9?"0"+(dateobj.getMonth()+1):(dateobj.getMonth()+1);
-					var day_current=dateobj.getDate()<=9?"0"+dateobj.getDate():dateobj.getDate();
-					
-					var date_current=dateobj.getFullYear()+"-"+month_current+"-"+day_current;
-					
-					if(date_selected<=date_current){
-					$("#but").val(date_selected);
-					$(".easyui-calendar").hide();
-					}else{
-						alert("所选日期不能大于当前日期");
-					}
-					}
-			});
-	</script>
-            <style scoped>
-		.md{
-			height:16px;
-			line-height:16px;
-			background-position:2px center;
-			text-align:right;
-			font-weight:bold;
-			padding:0 2px;
-			color:red;
-		}
-	</style>
-    
-
-                    </td>
-                </tr>  
-                <if condition="$_SESSION['my_info']['role']!=2">
+                <if condition="$is_qx==0">
                 <tr>
                     <td>省份/城市：</td>
                     <td>
-                        <select id="p_id" name="dinfo[p_id]" onchange="getcity('p_id','c_id')" >
+                        <select id="p_id" name="p_id" onchange="getcity('p_id','c_id')" >
                             <option value="">请选择省份</option>
                             <volist id="vo" name="pro_list">
-                            	<option value="{$vo.region_id}" <if condition="$info[f_p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
+                            	<option value="{$vo.region_id}" <if condition="$info[p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
                             </volist>
                         </select>
-                        <select id="c_id" name="dinfo[c_id]">
+                        <select id="c_id" name="c_id">
                             <option value="">请选择市</option>
                             <if condition="!empty($info[f_c_id])">
-                            <option value="{$info.f_c_id}" selected="selected">{$info.cityname}</option>
+                            <option value="{$info.c_id}" selected="selected">{$info.cname}</option>
                             </if>
                         </select>
+                        <select id="q_id" name="dinfo[q_id]">
+                            <option value="">请选择市</option>
+                            <if condition="!empty($info[q_id])">
+                            <option value="{$info.q_id}" selected="selected">{$info.qname}</option>
+                            </if>
+                        </select>
+                        
+                    </td>
+                </tr> 
+                </if>
+                <if condition="$is_qx==1">
+                <tr>
+                    <td>区：</td>
+                    <td>
+                        <input type="hidden" id="p_id" name="p_id" value="{$p_id}" />
+                        <input type="hidden" id="c_id" name="c_id" value="{$c_id}" />
+                        
+                        <select id="q_id" name="dinfo[q_id]">
+                            <option value="">请选择市</option>
+                            <volist id="vo" name="pro_list">
+                                <option value="{$vo.region_id}" <if condition="$vo[region_id]==$info[q_id]">selected</if> >{$vo.region_name}</option>
+                            </volist>  
+                            
+                        </select>
+                        
                     </td>
                 </tr> 
                 </if>
                 
+                
+                
+                
                 <tr>
                     <td>地址：</td>
-                    <td><input type="text" name="dinfo[address]" size="40" id="address" value="{$info[f_address]}" /></td>
-                </tr>
-                
-                <tr>
-                    <td>收藏数目：</td>
-                    <td><input type="text" name="dinfo[collect]" size="10" id="collect" value="{$info[f_collect]}" /></td>
+                    <td><input type="text" name="address" size="40" id="address" value="{$info[address]}" /></td>
                 </tr>
                 <tr>
-                    <td>口碑：</td>
-                    <td><input type="text" name="dinfo[koubei]" size="10" id="koubei" value="{$info[f_koubei]}" /></td>
+                    <td>选择标注：</td>
+                    <td>
+                    
+                    
+                    </td>
+                    
                 </tr>
-                
                 
                 <tr>
                     <td colspan="2"><input type="submit" class="btn submit" id="sub" name="sub" value="提交"/></td>
