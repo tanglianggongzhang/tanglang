@@ -437,6 +437,7 @@ class MemberAction extends CommonAction {
 
         $cou = $m->where($map)->order("a_id desc")->count();
 
+
         $page = new Page($cou, 12);
         $showpage = $page->show();
         $list = $m->where($map)->order("a_id desc")->select();
@@ -739,115 +740,6 @@ class MemberAction extends CommonAction {
     }
 
     /**
-     * 编辑
-     * 明星工长
-     */
-    public function edit_foreman() {
-        header('Content-Type:application/json; charset=utf-8');
-        $a_name = trim($_POST['a_name']);
-        $pwd = trim($_POST['pwd']);
-        $cof_pwd = trim($_POST['cof_pwd']);
-        $aid = trim($_POST['aid']);
-        $truename = trim($_POST['truename']);
-        $sex = trim($_POST['sex']);
-        $company = trim($_POST['company']);
-        $telphone = trim($_POST['telphone']);
-        $phone = trim($_POST['phone']);
-        $email = trim($_POST['email']);
-        $qq = trim($_POST['qq']);
-        $year = trim($_POST['year']);
-        $month = trim($_POST['month']);
-        $day = trim($_POST['day']);
-        $proid = trim($_POST['proid']);
-        $cityid = trim($_POST['cityid']);
-        $address = trim($_POST['address']);
-        $collect = trim($_POST['collect']);
-        $koubei = trim($_POST['koubei']);
-        $jibie = trim($_POST['jibie']);
-        $addtime = trim($_POST['addtime']);
-        $birthday = $year . "-" . $month . "-" . $day;
-        if (empty($a_name)) {
-            $return = array("status" => 0, "info" => "登录账户不能为空!");
-            echo json_encode($return);
-            exit;
-        }
-
-        $mod = M("Member");
-        $minfo = $mod->where("a_id=" . $aid)->field("a_id,a_name,a_pwd")->find();
-        $data = array();
-        $map = array("a_id" => $aid);
-        if (!empty($pwd) && !empty($cof_pwd) && $cof_pwd == $pwd) {
-            $pwd = encrypt($pwd);
-            if ($pwd != $minfo['a_pwd']) {
-                $data['a_pwd'] = $pwd;
-            }
-        }
-        if ($a_name != $minfo['a_name']) {
-            $data['a_name'] = $a_name;
-        }
-        if (!empty($data)) {
-            $mod->where($map)->save($data);
-        }
-        $fjdata = array();
-        $map2 = array("f_id" => $aid);
-        $mod2 = M("ForemanInfo");
-        $fjinfo = $mod2->where($map2)->find();
-        if ($fjinfo['f_truename'] != $truename) {
-            $fjdata['f_truename'] = $truename;
-        }
-        if ($fjinfo['f_company'] != $company) {
-            $fjdata['f_company'] = $company;
-        }
-        if ($fjinfo['f_collect'] != $collect) {
-            $fjdata['f_collect'] = $collect;
-        }
-        if ($fjinfo['f_koubei'] != $koubei) {
-            $fjdata['f_koubei'] = $koubei;
-        }
-        if ($fjinfo['f_jibie'] != $jibie) {
-            $fjdata['f_jibie'] = $jibie;
-        }
-        if ($fjinfo['f_telphone'] != $telphone) {
-            $fjdata['f_telphone'] = $telphone;
-        }
-        if ($fjinfo['f_phone'] != $phone) {
-            $fjdata['f_phone'] = $phone;
-        }
-        if ($fjinfo['f_sex'] != $sex) {
-            $fjdata['f_sex'] = $sex;
-        }
-        if ($fjinfo['f_email'] != $email) {
-            $fjdata['f_email'] = $email;
-        }
-        if ($fjinfo['f_birthday'] != $birthday) {
-            $fjdata['f_birthday'] = $birthday;
-        }
-        if ($fjinfo['f_address'] != $address) {
-            $fjdata['f_address'] = $address;
-        }
-        if ($fjinfo['f_qq'] != $qq) {
-            $fjdata['f_qq'] = $qq;
-        }
-        if ($fjinfo['f_addtime'] != $addtime) {
-            $fjdata['f_addtime'] = $addtime;
-        }
-        if ($fjinfo['f_p_id'] != $proid) {
-            $fjdata['f_p_id'] = $proid;
-        }
-        if ($fjinfo['f_c_id'] != $cityid) {
-            $fjdata['f_c_id'] = $cityid;
-        }
-
-
-        if (!empty($fjdata)) {
-            $mod2->where($map2)->save($fjdata);
-        }
-        $return = array("status" => 1, "info" => "操作成功!");
-        echo json_encode($return);
-        exit;
-    }
-
-    /**
      * 删除
      * 明星工厂
      */
@@ -855,20 +747,20 @@ class MemberAction extends CommonAction {
         $aid = $_GET['aid'];
         $mod = M("Member");
         $imod = M("ForemanInfo");
-        $info=$imod->where("a_id=".$aid)->field("a_id")->find();
-        if(!empty($info['logo'])){
-            unlink("./avatar/".$info['logo']);
+        $info = $imod->where("a_id=" . $aid)->field("a_id")->find();
+        if (!empty($info['logo'])) {
+            unlink("./avatar/" . $info['logo']);
             unlink("./avatar/" . $info['logo'] . "_30.jpg");
             unlink("./avatar/" . $info['logo'] . "_60.jpg");
             unlink("./avatar/" . $info['logo'] . "_100.jpg");
         }
-        if(!empty($info['sfz_img'])){
-            unlink(".".$info['sfz_img']);
+        if (!empty($info['sfz_img'])) {
+            unlink("." . $info['sfz_img']);
         }
-        if(!empty($info['dhimg'])){
-            unlink(".".$info['dhimg']);
+        if (!empty($info['dhimg'])) {
+            unlink("." . $info['dhimg']);
         }
-        
+
         $res = $mod->where(array("a_id" => $aid))->delete();
         $res2 = $imod->where(array("a_id" => $aid))->delete();
         if ($res && $res2) {
@@ -1977,9 +1869,25 @@ class MemberAction extends CommonAction {
     public function editgz() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
+
         $citymod = new CityModel();
-        $pro_list = $citymod->getprovince(1);
-        $this->assign("pro_list", $pro_list);
+        $is_qx=  $this->getqx($_SESSION['my_info']['role']);
+        if ($is_qx == 0) {
+            //非地区管理员
+            $pro_list = $citymod->getprovince(1);
+            $this->assign("pro_list", $pro_list);
+        }else{
+            //地区管理员
+            $p_id=$_SESSION['my_info']['proid'];
+            $c_id=$_SESSION['my_info']['cityid'];
+            #区列表
+            $qulist=$citymod->getcity($c_id);
+            $this->assign("qulist",$qulist);
+            $this->assign("p_id",$p_id);
+            $this->assign("c_id",$c_id);
+        }
+        $this->assign("is_qx",$is_qx);
+
         $aid = $_GET['aid'];
         $m = M("Foremanview");
         $info = $m->where("a_id=" . $aid)->find();
@@ -2060,12 +1968,12 @@ class MemberAction extends CommonAction {
             if ($ruzhitime != $info['ruzhitime']) {
                 $datafj['ruzhitime'] = $ruzhitime;
             }
-            if ($picName != $info['logo']&&$picName!='') {
-                unlink("./avatar/".$info['logo']);
-                unlink("./avatar/".$info['logo']."_30.jpg");
-                unlink("./avatar/".$info['logo']."_60.jpg");
-                unlink("./avatar/".$info['logo']."_100.jpg");
-                
+            if ($picName != $info['logo'] && $picName != '') {
+                unlink("./avatar/" . $info['logo']);
+                unlink("./avatar/" . $info['logo'] . "_30.jpg");
+                unlink("./avatar/" . $info['logo'] . "_60.jpg");
+                unlink("./avatar/" . $info['logo'] . "_100.jpg");
+
                 $datafj['logo'] = $picName;
             }
             if ($paiming != $info['paiming']) {
@@ -2088,7 +1996,7 @@ class MemberAction extends CommonAction {
                 $datafj['yuyues'] = $yuyues;
             if ($fwyzrs != $info['fwyzrs'])
                 $datafj['fwyzrs'] = $fwyzrs;
-            
+
             if ($fuwu != $info['fuwu'])
                 $datafj['fuwu'] = $fuwu;
             if ($zuopin != $info['zuopin'])
@@ -2097,68 +2005,66 @@ class MemberAction extends CommonAction {
                 $datafj['is_sfz'] = $is_sfz;
             if ($is_qy != $info['is_qy'])
                 $datafj['is_qy'] = $is_qy;
-            if($qytime!=$info['qytime'])
-                $datafj['qytime']=$qytime;
-            if($is_bzj!=$info['is_bzj'])
-                $datafj['is_bzj']=$is_bzj;
+            if ($qytime != $info['qytime'])
+                $datafj['qytime'] = $qytime;
+            if ($is_bzj != $info['is_bzj'])
+                $datafj['is_bzj'] = $is_bzj;
             #身份证 #导航
-            $path="/Uploads/shangjia/";
-            if(!empty($_FILES['dhimg']['name'])&&!empty($_FILES['sfz_img']['name'])){
-                
-                $imginf=$this->upload(".".$path);
-                if(!empty($imginf[0]['savename'])){
-                    unlink(".".$info['dhimg']);
-                    $datafj['dhimg']=$path.$imginf[0]['savename'];
+            $path = "/Uploads/shangjia/";
+            if (!empty($_FILES['dhimg']['name']) && !empty($_FILES['sfz_img']['name'])) {
+
+                $imginf = $this->upload("." . $path);
+                if (!empty($imginf[0]['savename'])) {
+                    unlink("." . $info['dhimg']);
+                    $datafj['dhimg'] = $path . $imginf[0]['savename'];
                 }
-                if(!empty($imginf[1]['savename'])){
-                    unlink(".".$info['sfz_img']);
-                    $datafj['sfz_img']=$path.$imginf[1]['savename'];
+                if (!empty($imginf[1]['savename'])) {
+                    unlink("." . $info['sfz_img']);
+                    $datafj['sfz_img'] = $path . $imginf[1]['savename'];
                 }
-            }
-            elseif(!empty($_FILES['dhimg']['name'])&&empty($_FILES['sfz_img']['name'])){
-                $imginf=$this->upload(".".$path);
-                if(!empty($imginf[0]['savename'])){
-                    unlink(".".$info['dhimg']);
-                    $datafj['dhimg']=$path.$imginf[0]['savename'];
+            } elseif (!empty($_FILES['dhimg']['name']) && empty($_FILES['sfz_img']['name'])) {
+                $imginf = $this->upload("." . $path);
+                if (!empty($imginf[0]['savename'])) {
+                    unlink("." . $info['dhimg']);
+                    $datafj['dhimg'] = $path . $imginf[0]['savename'];
                 }
-            }
-            elseif(empty($_FILES['dhimg']['name'])&&!empty($_FILES['sfz_img']['name'])){
-                $imginf=$this->upload(".".$path);
-                if(!empty($imginf[0]['savename'])){
-                    unlink(".".$info['sfz_img']);
-                    $datafj['sfz_img']=$path.$imginf[0]['savename'];
+            } elseif (empty($_FILES['dhimg']['name']) && !empty($_FILES['sfz_img']['name'])) {
+                $imginf = $this->upload("." . $path);
+                if (!empty($imginf[0]['savename'])) {
+                    unlink("." . $info['sfz_img']);
+                    $datafj['sfz_img'] = $path . $imginf[0]['savename'];
                 }
             }
-            if($content!=$info['content'])    
-                $datafj['content']=$content;
-            if($telphone!=$info['telphone'])
-                $datafj['telphone']=$telphone;
-            if($movphone!=$info['movphone'])
-                $datafj['movphone']=$movphone;
-            if($sex!=$info['sex'])
-                $datafj['sex']=$sex;
-            if($email!=$info['email'])
-                $datafj['email']=$email;
-            if($gongling!=$info['gongling'])
-                $datafj['gongling']=$gongling;
-            if($is_tj!=$info['is_tj'])
-                $datafj['is_tj']=$is_tj;
-           
-            if($address!=$info['address'])    
-                $datafj['address']=$address;
-            if($qq!=$info['qq'])    
-                $datafj['qq']=$qq;
-            if($p_id!=$info['p_id'])
-                $datafj['p_id']=$p_id;
-            if($c_id!=$info['c_id'])    
-                $datafj['c_id']=$c_id;
-            if($q_id!=$info['q_id'])
-                $datafj['q_id']=$q_id;
-            if($jingdu!=$info['jingdu'])
-                $datafj['jingdu']=$jingdu;
-            if($weidu!=$info['weidu'])
-                $datafj['weidu']=$weidu;
-                
+            if ($content != $info['content'])
+                $datafj['content'] = $content;
+            if ($telphone != $info['telphone'])
+                $datafj['telphone'] = $telphone;
+            if ($movphone != $info['movphone'])
+                $datafj['movphone'] = $movphone;
+            if ($sex != $info['sex'])
+                $datafj['sex'] = $sex;
+            if ($email != $info['email'])
+                $datafj['email'] = $email;
+            if ($gongling != $info['gongling'])
+                $datafj['gongling'] = $gongling;
+            if ($is_tj != $info['is_tj'])
+                $datafj['is_tj'] = $is_tj;
+
+            if ($address != $info['address'])
+                $datafj['address'] = $address;
+            if ($qq != $info['qq'])
+                $datafj['qq'] = $qq;
+            if ($p_id != $info['p_id'])
+                $datafj['p_id'] = $p_id;
+            if ($c_id != $info['c_id'])
+                $datafj['c_id'] = $c_id;
+            if ($q_id != $info['q_id'])
+                $datafj['q_id'] = $q_id;
+            if ($jingdu != $info['jingdu'])
+                $datafj['jingdu'] = $jingdu;
+            if ($weidu != $info['weidu'])
+                $datafj['weidu'] = $weidu;
+
             if (!empty($data))
                 $res1 = $m1->where("a_id=" . $aid)->save($data);
             if (!empty($datafj))
