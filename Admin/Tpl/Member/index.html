@@ -131,7 +131,7 @@ $(function(){
           <td width="135">登录时间</td>
           <td width="135">手机</td>
           <td width="100">性别</td>
-          <td width="100">级别</td>
+          
           <td class="td2" width="135">操作</td>
         </tr>
         <volist id="vo" name="list">
@@ -142,7 +142,6 @@ $(function(){
           <td width="135">{$vo.last_login}</td>
           <td width="135">{$vo.movphone}</td>
           <td width="100">{$vo.sex}</td>
-          <td width="100">普通会员</td>
           <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a>
               <a aid="{$vo.a_id}" href="{:U('Member/editpt',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a>
               <a name="{$vo.truename}" link="{:U('Member/del',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>

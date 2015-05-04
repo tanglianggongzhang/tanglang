@@ -47,7 +47,7 @@ class MemberModel extends Model {
                 }else if($data['a_type']==2){
                     //工长
                     $mod=M("ForemanInfo");
-                    $fujdata['f_id']=$id;
+                    $fujdata['a_id']=$id;
                     $res2=$mod->add($fujdata);
                     if($res2){
                         $return=array("status"=>1,"info"=>"会员添加成功");
@@ -58,7 +58,7 @@ class MemberModel extends Model {
                 }else if($data['a_type']==3){
                     //店铺
                     $mod=M("Dianpu");
-                    $fujdata['f_id']=$id;
+                    $fujdata['a_id']=$id;
                     $res2=$mod->add($fujdata);
                     if($res2){
                         $return=array("status"=>1,"info"=>"会员添加成功");
@@ -69,7 +69,7 @@ class MemberModel extends Model {
                 }else{
                     //设计师
                     $mod=M("Sheji");
-                    $fujdata['f_id']=$id;
+                    $fujdata['a_id']=$id;
                     $res2=$mod->add($fujdata);
                     if($res2){
                         $return=array("status"=>1,"info"=>"会员添加成功");

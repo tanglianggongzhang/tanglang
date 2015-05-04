@@ -69,11 +69,7 @@ $(function(){
     <div class="center">
       <div class="center_r_t">您的位置：材料商列表</div>
       <div class="center1">
-        <div class="on_line">
-          <label class="over">材料商</label>
-          <label><a href="{:U('Member/dianpu',array('is_sq'=>1,'status'=>0))}">未通过申请 列表</a></label>
-          <label><a href="{:U('Member/dianpu',array('is_sq'=>1,'status'=>1))}">已通过申请 列表</a></label>
-        </div>
+        
         <div class="center_r_z">
           <form method="get" name="search_form" id="search_form" action=""  >
             <label>关键字</label>
@@ -86,24 +82,55 @@ $(function(){
             <input type="text" name="start_date" value="{$start_date}" readonly class="doubledate ipticon"/>
             <label>-</label>
             <input type="text" name="end_date" readonly value="{$end_date}" class="doubledate ipticon"/>
-            <if condition="$_SESSION['my_info']['role']!=2">
-              <label>所属省份</label>
+            <if condition="$is_qx==0">
               <select name="province" id="province_s" class="choose" onChange="getcity('province_s','city_s')">
-                <option value="" >请选择</option>
+                <option value="" >请选择省</option>
                 <volist id="vo" name="pro_list"> <option value="{$vo.region_id}" 
                   <if condition="$vo[region_id]==$province">selected</if>
                   >{$vo.region_name}
                   </option>
                 </volist>
               </select>
-              <label>所属城市</label>
-              <select name="city" id="city_s" class="choose">
-                <option value="" >请选择</option>
+              
+              <select name="city" id="city_s" class="choose" onChange="getdiqu('province_s','city_s','q_s')">
+                <option value="" >请选择市</option>
                 <if condition="!empty($city)">
                   <option value="{$city}" selected="selected">{$cityname}</option>
                 </if>
               </select>
+               <select name="qu" id="q_s" class="choose">
+                <option value="" >请选择区</option>
+                <if condition="!empty($qu_id)">
+                  <option value="{$qu_id}" selected="selected">{$quname}</option>
+                </if>
+              </select>
+                 
             </if>
+            <if condition="$is_qx==1">
+                <input type="hidden" name="province" id="province"  value="{$province}" />
+                <input type="hidden" name="city" id="city"  value="{$city}" />
+                <select name="qu" id="q_s" class="choose">
+                <option value="" >请选择区</option>
+                <volist id="vo" name="qulist"> <option value="{$vo.region_id}" 
+                  <if condition="$vo[region_id]==$qu_id">selected</if>
+                  >{$vo.region_name}
+                  </option>
+                </volist>
+                
+              </select>
+                
+            </if>
+            <if condition="$is_qx==1">
+                <if condition="!empty($qu_id)||!empty($keys)||!empty($start_date)||!empty($end_date)">
+                    <a href="{:U('Member/dianpu')}">取消查询</a>
+                </if>
+            </if>
+            <if condition="$is_qx==0">
+                <if condition="!empty($province)||!empty($city)||!empty($qu_id)||!empty($keys)||!empty($start_date)||!empty($end_date)">
+                    <a href="{:U('Member/dianpu')}">取消查询</a>
+                </if>
+            </if>
+            
             <input name="sub" type="submit"  value="查询" class="sub1" />
             <a class="btn btn-primary btn-large theme-login" >添加用户</a>
           </form>
@@ -116,9 +143,9 @@ $(function(){
             <td width="135">公司</td>
             <td width="135">注册日期</td>
             <td width="135">城市</td>
-            <td width="135">收藏</td>
-            <td width="100">口碑值</td>
-            <td width="100">级别</td>
+            <td width="135">积分</td>
+            <td width="100">排序</td>
+            
             <td class="td2" width="135">操作</td>
           </tr>
           <volist id="vo" name="list">
@@ -126,11 +153,11 @@ $(function(){
               <td class="td1" width="135">{$vo.a_name}</td>
               <td width="135">{$vo.company}</td>
               <td width="135">{$vo.create_time}</td>
-              <td width="135">{$vo.cityname}</td>
-              <td width="135">{$vo.collect}</td>
-              <td width="100">{$vo.koubei}</td>
-              <td width="100">{$vo.jibie}</td>
-              <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a> <a aid="{$vo.a_id}" class="edituser" href="{:U('Member/edit_dianpu',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a> <a name="{$vo.company}" link="{:U('Member/del_dianpu',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
+              <td width="135">{$vo.p_name}/{$vo.c_name}/{$vo.q_name}</td>
+              <td width="135">{$vo.jifen}</td>
+              <td width="100">{$vo.orders}</td>
+              
+              <td width="135"> <a aid="{$vo.a_id}" class="edituser" href="{:U('Member/edit_dianpu',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a> <a name="{$vo.company}" link="{:U('Member/del_dianpu',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
             </tr>
           </volist>
         </table>
@@ -142,60 +169,9 @@ $(function(){
     <div class="foot"> <include file="Common:foot" /> </div>
   </div>
 </div>
-<!--添加--> 
 
-<!--查看-->
-<div class="yc_ck" style="display:none;">
-  <div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
-    <h3>查看用户信息</h3>
-  </div>
-  <div class="theme-popbod dform" style="height:431px; overflow:scroll;">
-    <ol>
-        <li>
-        <label>logo</label>
-        <font id="logo"></font> </li>
-        
-      <li style="height:30px;">
-        <label>登录帐号</label>
-        <font id="a_aname_1" class="ipt fontb"></font> </li>
-      <li style="height:30px;">
-        <label>公司名称</label>
-        <font class="ipt fontb" id="company_1"></font> </li>
-      <li style="height:30px;">
-        <label>法人</label>
-        <font class="ipt fontb" id="faren_1"></font> </li>
-      <li style="height:30px;">
-        <label>联系人姓名</label>
-        <font class="ipt fontb" id="lxrname_1"></font> </li>
-      <li style="height:30px;">
-        <label>联系人电话</label>
-        <font class="ipt fontb" id="phone_1"></font> </li>
-      <li style="height:30px;">
-        <label>客服电话</label>
-        <font class="ipt fontb" id="kefu_phone_1"></font> </li>
-      <li style="height:30px;">
-        <label>所在城市</label>
-        <font class="ipt fontb" id="city_1"></font> </li>
-      <li style="height:30px;">
-        <label>地址</label>
-        <font class="ipt fontb" id="address_1"></font> </li>
-      <li style="height:30px;">
-        <label>收藏数目</label>
-        <font class="ipt fontb" id="collect_1"></font> </li>
-      <li style="height:30px;">
-        <label>口碑值</label>
-        <font class="ipt fontb" id="koubei_1"></font> </li>
-      <li style="height:30px;">
-        <label>级别</label>
-        <font class="ipt fontb" id="jibie_1"></font> </li>
-      <li style="height:30px;">
-        <label>注册日期</label>
-        <font class="ipt fontb" id="createtime_1"></font> </li>
-    </ol>
-    </form>
-  </div>
-</div>
-<!--编辑--> 
+
+
 
 <script>
 //删除
@@ -238,7 +214,37 @@ $(function(){
 			
 }
 	
-
+function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+		var cid=document.getElementById(cityid).value;
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				msg=eval("("+msg+")");
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
 //获取日期 
 
 function getdays(){
@@ -263,53 +269,6 @@ function getdays(){
 		}
 	});	
 }
-//查看
-$(".chakan").click(function(){
-	var aid=$(this).attr("aid");	
-	
-	
-	$.ajax({
-		data:"aid="+aid,
-		type:"POST",
-		dataType:"JSON",
-		url:"{:U('Member/getdianpu')}",
-		cache:false,
-		success: function(msg){
-			msg=eval("("+msg+")");
-			
-			document.getElementById("a_aname_1").innerHTML=msg.a_name;
-			
-			document.getElementById("company_1").innerHTML=msg.company;
-			document.getElementById("faren_1").innerHTML=msg.faren;
-			document.getElementById("lxrname_1").innerHTML=msg.lxrname;
-			document.getElementById("phone_1").innerHTML=msg.phone;
-			document.getElementById("kefu_phone_1").innerHTML=msg.kefu_phone;
-			document.getElementById("city_1").innerHTML=msg.proname+"/"+msg.cityname;
-			document.getElementById("address_1").innerHTML=msg.address;
-			
-			
-			
-			document.getElementById("collect_1").innerHTML=msg.collect;
-			document.getElementById("koubei_1").innerHTML=msg.koubei;
-			document.getElementById("jibie_1").innerHTML=msg.jibie;	
-			
-			document.getElementById("createtime_1").innerHTML=msg.create_time;
-                        if(msg.logo!='')
-			document.getElementById("logo").innerHTML="<img src=__ROOT__/avatar/"+msg.logo+"_60.jpg />";
-			
-			}
-		})
-	
-	
-	
-	$(".theme-popover").html($(".yc_ck").html());
-		
-	$('.theme-popover-mask').fadeIn(100);
-	$('.theme-popover').slideDown(200);
-	
-	
-		
-});
 
 //当鼠标在文本框中文字隐藏,当离开之后文字显示
 $(".input1").blur(function(){

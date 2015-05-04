@@ -337,6 +337,15 @@ class MemberAction extends CommonAction {
      */
     public function del() {
         $aid = $_GET['aid'];
+        $mod1=M("Kehuview");
+        $info=$mod1->where("a_id=".$aid)->find();
+        if(!empty($info['logo'])){
+            unlink("./avatar/".$info['logo']);
+            unlink("./avatar/".$info['logo']."_30.jpg");
+            unlink("./avatar/".$info['logo']."_60.jpg");
+            unlink("./avatar/".$info['logo']."_100.jpg");
+        }
+        
         $mod = M("Member");
         $imod = M("Webmember");
         $res = $mod->where(array("a_id" => $aid))->delete();
@@ -922,153 +931,109 @@ class MemberAction extends CommonAction {
         parent::_initalize();
         $systemConfig = $this->systemConfig;
         $this->assign("systemConfig", $systemConfig);
-        if ($_GET['is_sq'] == 1) {
-            $m = M("Shenqingview");
-            import("ORG.Util.Page");
-            $status = $_GET['status'];
-            $map = "status=" . $status . " and u_type=3";
 
-            $keys = trim($_GET['keys']);
+        $m = M("Dianpumember");
+        import("ORG.Util.Page");
+        $map = "1";
+        $keys = trim($_GET['keys']);
 
-            $keys = ($keys == "请输入关键字") ? "" : $keys;
+        $keys = ($keys == "请输入关键字") ? "" : $keys;
 
-            $start_date = trim($_GET['start_date']);
-            $this->assign("start_date", $start_date);
+        $start_date = trim($_GET['start_date']);
+        $this->assign("start_date", $start_date);
+        $end_date = trim($_GET['end_date']);
+        $this->assign("end_date", $end_date);
 
-            $end_date = trim($_GET['end_date']);
-            $this->assign("end_date", $end_date);
-
-            if (!empty($start_date)) {
-                $start_date = strtotime($start_date . "0:0:0");
-                $map.=" and UNIX_TIMESTAMP(addtime)>= " . $start_date;
-            }
-            if (!empty($end_date)) {
-                $end_date = strtotime($end_date . "23:59:59");
-                $map.=" and UNIX_TIMESTAMP(addtime)<= " . $end_date;
-            }
-            if ($_SESSION['my_info']['role'] != 2) {
-                //非地区管理员
-                $province = $_GET['province'];
-                $this->assign("province", $province);
-                $city = $_GET['city'];
-                if (!empty($province)) {
-                    $map.=" and province_id=" . $province;
-                }
-                if (!empty($city)) {
-                    $map.=" and city_id=" . $city;
-                }
-                $this->assign("city", $city);
-            } else {
-                if ($_SESSION['my_info']['cityid'])
-                    $map.=" and city_id=" . $_SESSION['my_info']['cityid'];
-                else {
-                    $this->error("该管理员没有分配城市顾没有权限查看此页！", U('Index/index'));
-                    exit;
-                }
-            }
-
-
-
-            if (!empty($keys)) {
-                $map.=" and (truename like '%" . $keys . "%' or nickname like '%" . $keys . "%')";
-            }
-
-            $cou = $m->where($map)->order("u_id desc")->count();
-            $page = new Page($cou, 12);
-            $showpage = $page->show();
-            $list = $m->where($map)->order("u_id desc")->select();
-            foreach ($list as $k => $v) {
-                $list[$k]['sex_f'] = $this->get_sex($v['sex']);
-                $list[$k]['status_f'] = $this->get_status($v['status']);
-            }
-            $this->assign("list", $list);
-
-            $this->assign("page", $showpage);
-
-            $citymod = new CityModel();
-            $pro_list = $citymod->getprovince(1);
-            $this->assign("pro_list", $pro_list);
-
-            $this->assign("keys", $keys);
-
-            $cityname = $citymod->getname($city);
-            $this->assign("cityname", $cityname);
-
-            $this->display("dpsqlist" . $status);
-            exit;
-        } else {
-            $m = M("Dianpumember");
-            import("ORG.Util.Page");
-            $map = "1";
-            $keys = trim($_GET['keys']);
-
-            $keys = ($keys == "请输入关键字") ? "" : $keys;
-
-            $start_date = trim($_GET['start_date']);
-            $this->assign("start_date", $start_date);
-            $end_date = trim($_GET['end_date']);
-            $this->assign("end_date", $end_date);
-
-            if (!empty($start_date)) {
-                $start_date = strtotime($start_date . "0:0:0");
-                $map.=" and UNIX_TIMESTAMP(create_time)>= " . $start_date;
-            }
-            if (!empty($end_date)) {
-                $end_date = strtotime($end_date . "23:59:59");
-                $map.=" and UNIX_TIMESTAMP(create_time)<= " . $end_date;
-            }
-            //城市-------------------------------start
-            if ($_SESSION['my_info']['role'] != 2) {
-                //非地区管理员
-                $province = $_GET['province'];
-                $this->assign("province", $province);
-                $city = $_GET['city'];
-                if (!empty($province)) {
-                    $map.=" and pro_id=" . $province;
-                }
-                if (!empty($city)) {
-                    $map.=" and city_id=" . $city;
-                }
-                $this->assign("city", $city);
-            } else {
-                $map.=" and city_id=" . $_SESSION['my_info']['cityid'];
-            }
-            //城市------------------------end
-
-            if (!empty($keys)) {
-                $map.=" and (company like '%" . $keys . "%')";
-            }
-
-
-            $cou = $m->where($map)->order("a_id desc")->count();
-
-            $page = new Page($cou, 12);
-            $showpage = $page->show();
-            $list = $m->where($map)->order("a_id desc")->select();
-
-            $this->assign("list", $list);
-            $this->assign("page", $showpage);
-
-
-            $memmod = new MemberModel();
-            $year = $memmod->getyear();
-            $this->assign("year", $year);
-            $month = $memmod->getmonth();
-            $this->assign("month", $month);
-            $days = $memmod->getday($year[0], $month[0]);
-            $this->assign("day", $days);
-
-            $citymod = new CityModel();
-            $pro_list = $citymod->getprovince(1);
-            $this->assign("pro_list", $pro_list);
-
-            $this->assign("keys", $keys);
-
-            $cityname = $citymod->getname($city);
-            $this->assign("cityname", $cityname);
-
-            $this->display();
+        if (!empty($start_date)) {
+            $start_date = strtotime($start_date . "0:0:0");
+            $map.=" and UNIX_TIMESTAMP(create_time)>= " . $start_date;
         }
+        if (!empty($end_date)) {
+            $end_date = strtotime($end_date . "23:59:59");
+            $map.=" and UNIX_TIMESTAMP(create_time)<= " . $end_date;
+        }
+        //城市-------------------------------start
+        $citymod = new CityModel();
+        #区
+        $qu = $_GET['qu'];
+        if ($this->getqx($_SESSION['my_info']['role']) == 0) {
+            //非地区管理员
+            $province = $_GET['province'];
+
+            $city = $_GET['city'];
+            if (!empty($province)) {
+                $map.=" and p_id=" . $province;
+            }
+            if (!empty($city)) {
+                $map.=" and c_id=" . $city;
+            }
+            $this->assign("province", $province);
+            #市
+            $this->assign("city", $city);
+            $this->assign("cityname", $citymod->getname($city));
+
+            $this->assign("qu_id", $qu);
+            $this->assign("quname", $citymod->getname($qu));
+            #省
+            $pro_list = $citymod->getprovince(1);
+            $this->assign("pro_list", $pro_list);
+        } else {
+            $province = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+            if (empty($province) || empty($c_id)) {
+                $this->error("地区管理员没有选择省和市!");
+                exit;
+            }
+            if (!empty($province))
+                $map.=" and p_id=" . $province;
+            if (!empty($c_id))
+                $map.=" and c_id=" . $c_id;
+            $this->assign("province", $province);
+            $this->assign("city", $c_id);
+            #区
+            $qulist = $citymod->getcity($c_id);
+            $this->assign("qulist", $qulist);
+            $this->assign("qu_id", $qu);
+        }
+
+
+
+
+        $this->assign("is_qx", $this->getqx($_SESSION['my_info']['role']));
+
+        //城市------------------------end
+
+        if (!empty($keys)) {
+            $map.=" and (company like '%" . $keys . "%')";
+        }
+        if(!empty($qu)){
+            $map.=" and q_id=".$qu;
+        }
+
+        $cou = $m->where($map)->order("a_id desc")->count();
+       # echo $m->getLastSql();
+        $page = new Page($cou, 12);
+        $showpage = $page->show();
+        $list = $m->where($map)->order("a_id desc")->select();
+
+        $this->assign("list", $list);
+        $this->assign("page", $showpage);
+
+
+        $memmod = new MemberModel();
+        $year = $memmod->getyear();
+        $this->assign("year", $year);
+        $month = $memmod->getmonth();
+        $this->assign("month", $month);
+        $days = $memmod->getday($year[0], $month[0]);
+        $this->assign("day", $days);
+
+
+
+        $this->assign("keys", $keys);
+
+
+        $this->display();
     }
 
     /**
@@ -1089,10 +1054,10 @@ class MemberAction extends CommonAction {
             #区列表
             $qulist = $citymod->getqu($cityid);
             $this->assign("qulist", $qulist);
-            $this->assign("proid",$proid);
-            $this->assign("cityid",$cityid);
+            $this->assign("proid", $proid);
+            $this->assign("cityid", $cityid);
         }
-        $this->assign("is_qx",$is_qx);
+        $this->assign("is_qx", $is_qx);
         #户型
         $hxmod = M("Hxcategory");
         $hxlist = $hxmod->where("1")->order(" addtime desc")->select();
@@ -1267,14 +1232,31 @@ class MemberAction extends CommonAction {
                 "a_type" => 3,
                 "status" => $status
             );
+
             $dinfo = $_POST['dinfo'];
             $dinfo['company'] = trim($dinfo['company']);
-            $dinfo['faren'] = trim($dinfo['faren']);
             $dinfo['lxrname'] = trim($dinfo['lxrname']);
-            $dinfo['phone'] = trim($dinfo['phone']);
-            $dinfo['kefu_phone'] = trim($dinfo['kefu_phone']);
-            $dinfo['collect'] = trim($dinfo['collect']);
-            $dinfo['koubei'] = trim($dinfo[koubei]);
+            $dinfo['telphone'] = trim($dinfo['telphone']);
+            $dinfo['movphone'] = trim($dinfo['movphone']);
+            $dinfo['jifen'] = trim($dinfo['jifen']);
+            $dinfo['email'] = trim($dinfo['email']);
+            $dinfo['yingyetime'] = trim($dinfo['yingyetime']);
+            $dinfo['address'] = trim($dinfo['address']);
+            $dinfo['fwzz'] = trim($dinfo['fwzz']);
+            $dinfo['ztmj'] = trim($dinfo['ztmj']);
+            $dinfo['fwcn'] = trim($dinfo['fwcn']);
+            $dinfo['comjianjie'] = trim($_POST['comjianjie']);
+            $dinfo['comcontent'] = trim($_POST['comcontent']);
+            $dinfo['fdnum'] = trim($dinfo['fdnum']);
+            $dinfo['orders'] = trim($dinfo['orders']);
+            $dinfo['click'] = trim($dinfo['click']);
+            if (!empty($_FILES['dhimg']['name'])) {
+                $dhinfo = $this->upload("./Uploads/shangjia/");
+                if (!empty($dhinfo))
+                    $dinfo['dhimg'] = $dhinfo[0]['savename'];
+            }
+
+            $dinfo['wxts'] = trim($_POST['wxts']);
 
             if (empty($dinfo['collect']))
                 $dinfo['collect'] = 10;
@@ -1284,6 +1266,7 @@ class MemberAction extends CommonAction {
             $dinfo['jibie'] = trim($dinfo[jibie]);
             $pro_id = trim($_POST['pro_id']);
             $city_id = trim($_POST['city_id']);
+            $q_id = trim($_POST['q_id']);
             $dinfo[dizhi] = trim($dinfo[dizhi]);
             $logo = $_POST['picName'];
             if ($_SESSION['my_info']['role'] != 2) {
@@ -1300,24 +1283,39 @@ class MemberAction extends CommonAction {
                 $city_id = $_SESSION['my_info']['cityid'];
                 $pro_id = $mod->getprovinceid($city_id);
             }
+            $jingdu = $_POST['jingdu'];
+            $weidu = $_POST['weidu'];
             $fjdata = array(
+                "logo" => $logo,
                 "company" => $dinfo['company'],
-                "faren" => $dinfo['faren'],
                 "yingyezhizhao" => $dinfo['yingyezhizhao'],
                 "lxrname" => $dinfo['lxrname'],
-                "phone" => $dinfo['phone'],
-                "kefu_phone" => $dinfo['kefu_phone'],
-                "collect" => $dinfo['collect'],
-                "koubei" => $dinfo['koubei'],
-                "jibie" => $dinfo[jibie],
-                "pro_id" => $pro_id,
-                "city_id" => $city_id,
-                "address" => $dinfo[dizhi],
-                "logo" => $logo
+                "telphone" => $dinfo['telphone'],
+                "movphone" => $dinfo['movphone'],
+                "jifen" => $dinfo['jifen'],
+                "email" => $dinfo['email'],
+                "yingyetime" => $dinfo['yingyetime'],
+                "fwzz" => $dinfo[fwzz],
+                "ztmj" => $dinfo['ztmj'],
+                "comcontent" => $dinfo['comcontent'],
+                "fwcn" => $dinfo['fwcn'],
+                "comjianjie" => $dinfo['comjianjie'],
+                "fdnum" => $dinfo['fdnum'],
+                "orders" => $dinfo['orders'],
+                "click" => $dinfo['click'],
+                "is_tj" => $dinfo['is_tj'],
+                "dhimg" => $dinfo['dhimg'],
+                "wxts" => $dinfo['wxts'],
+                "p_id" => $pro_id,
+                "c_id" => $city_id,
+                "q_id" => $q_id,
+                "jingdu" => $jingdu,
+                "weidu" => $weidu,
+                "address" => $dinfo[address],
             );
             $res = $memmod->add_member($maindata, $fjdata);
             if ($res['status']) {
-                $this->success($res['info']);
+                $this->success($res['info'], U("Member/dianpu"));
             } else {
                 $this->error($res['info']);
             }
@@ -1330,8 +1328,22 @@ class MemberAction extends CommonAction {
         $this->assign("systemConfig", $systemConfig);
         //省份
         $citymod = new CityModel();
-        $pro_list = $citymod->getprovince(1);
-        $this->assign("pro_list", $pro_list);
+        if ($this->getqx($_SESSION['my_info']['role']) == 1) {
+            //地区管理员
+            $p_id = $_SESSION['my_info']['proid']; //省
+            $c_id = $_SESSION['my_info']['cityid']; //市
+            $this->assign("p_id", $p_id);
+            $this->assign("c_id", $c_id);
+            #区
+            $qulist = $citymod->getcity($c_id);
+            $this->assign("qulist", $qulist);
+        } else {
+            //非地区管理员
+            $pro_list = $citymod->getcity(1);
+            $this->assign("pro_list", $pro_list);
+        }
+        $this->assign("is_qx", $this->getqx($_SESSION['my_info']['role']));
+
 
         $this->display();
     }
@@ -1381,29 +1393,59 @@ class MemberAction extends CommonAction {
             if (!empty($mdata)) {
                 $mod->where("a_id=" . $aid)->save($mdata);
             }
+            $mod1=M("Dianpumember");
+            $inf=$mod1->where("a_id=".$aid)->find();
+            
             //编辑店铺附加表
             $dinfo = array();
-            $dinfo[company] = trim($_POST[dinfo][company]);
-            $dinfo[faren] = trim($_POST[dinfo][faren]);
-            $dinfo[yingyezhizhao] = trim($_POST[dinfo][yingyezhizhao]);
-            $dinfo[lxrname] = trim($_POST[dinfo][lxrname]);
-            $dinfo[phone] = trim($_POST[dinfo][phone]);
-            $dinfo[kefu_phone] = trim($_POST[dinfo][kefu_phone]);
-            $dinfo[collect] = trim($_POST[dinfo][collect]);
-            $dinfo[koubei] = trim($_POST[dinfo][koubei]);
-
-            $dinfo[jibie] = trim($_POST[dinfo][jibie]);
-            if ($_SESSION['my_info']['role'] != 2) {
-                $dinfo[pro_id] = trim($_POST[pro_id]);
-                $dinfo[city_id] = trim($_POST[city_id]);
-            } else {
-                $dinfo['city_id'] = $_SESSION['my_info']['cityid'];
-                $mod = new CityModel();
-                $dinfo['pro_id'] = $mod->getprovinceid($dinfo['city_id']);
+            $dinfo['logo']=$_POST['picName'];
+            if(!empty($dinfo['logo'])){
+                unlink("./avatar/".$inf['logo']);
+                unlink("./avatar/".$inf['logo']."_30.jpg");
+                unlink("./avatar/".$inf['logo']."_60.jpg");
+                unlink("./avatar/".$inf['logo']."_100.jpg");
             }
-            $dinfo[address] = trim($_POST[dinfo][dizhi]);
+            $dinfo['company'] = trim($_POST['dinfo']['company']);//公司名称
+            $dinfo['yingyezhizhao'] = trim($_POST['dinfo']['yingyezhizhao']);//营业执照
+            if(!empty($dinfo['yingyezhizhao'])){
+                unlink("./Uploads/product/".$inf['yingyezhizhao']);
+            }
+            $dinfo['lxrname'] = trim($_POST['dinfo']['lxrname']);//联系人姓名
+            $dinfo['movphone'] = trim($_POST['dinfo']['movphone']);//手机号
+            $dinfo['telphone'] = trim($_POST['dinfo']['telphone']);//联系人电话
+            $dinfo['jifen'] = trim($_POST['dinfo']['jifen']);//积分
+            $dinfo['email'] = trim($_POST['dinfo']['email']);//email
+            
+            $dinfo['yingyetime'] = trim($_POST['dinfo']['yingyetime']);//营业时间
+            $dinfo['fwzz'] = trim($_POST['dinfo']['fwzz']);#服务宗旨
+            $dinfo['ztmj'] = trim($_POST['dinfo']['ztmj']);#展厅面积
+            $dinfo['comcontent'] = trim($_POST['comcontent']);#公司介绍
+            $dinfo['fwcn'] = trim($_POST['dinfo']['fwcn']);#服务承诺
+            $dinfo['comjianjie'] = trim($_POST['comjianjie']);#店铺简介
+            $dinfo['fdnum'] = trim($_POST['dinfo']['fdnum']);#分店数目
+            $dinfo['orders'] = trim($_POST['dinfo']['orders']);#排序
+            $dinfo['click'] = trim($_POST['dinfo']['click']);#点击次数
+            $dinfo['is_tj'] = trim($_POST['dinfo']['is_tj']);#是否推荐
+            if(!empty($_FILES['dhimg']['name'])){
+                $dhimginf=$this->upload("./Uploads/shangjia/");
+                if(!empty($dhimginf[0]['savename'])){
+                    unlink("./Uploads/shangjia/".$inf['dhimg']);
+                    $dinfo['dhimg']=$dhimginf[0]['savename'];
+                    
+                }
+            }
+            $dinfo['wxts']=  trim($_POST['wxts']);#温馨提示
+            
+            $dinfo['p_id'] = trim($_POST['pro_id']);
+            $dinfo['c_id'] = trim($_POST['city_id']);
+            $dinfo['q_id'] = trim($_POST['q_id']);
+            
+            $dinfo['jingdu'] = trim($_POST['jingdu']);#经度
+            $dinfo['weidu'] = trim($_POST['weidu']);#纬度
+            $dinfo['address'] = trim($_POST['dinfo']['address']);
+            
             $mod2 = M("Dianpu");
-            $res2 = $mod2->where("f_id=" . $aid)->save($dinfo);
+            $res2 = $mod2->where("a_id=" . $aid)->save($dinfo);
             $this->success("操作成功！", U("Member/dianpu"));
 
             exit;
@@ -1413,14 +1455,29 @@ class MemberAction extends CommonAction {
         parent::_initalize();
         $systemConfig = $this->systemConfig;
         $this->assign("systemConfig", $systemConfig);
-        //省份
-        $citymod = new CityModel();
-        $pro_list = $citymod->getprovince(1);
-        $this->assign("pro_list", $pro_list);
         $aid = $_GET['aid'];
         $m = M("Dianpumember");
         $info = $m->where("a_id=" . $aid)->find();
         $this->assign("info", $info);
+        $citymod = new CityModel();
+        if ($this->getqx($_SESSION['my_info']['role']) == 1) {
+            #地区管理员
+            $p_id=$_SESSION['my_info']['proid'];
+            $c_id=$_SESSION['my_info']['cityid'];
+            #区
+            $qulist=$citymod->getcity($c_id);
+            $this->assign("qulist",$qulist);
+            $this->assign("p_id",$p_id);
+            $this->assign("c_id",$c_id);
+            
+        } else {
+            //省份
+            $pro_list = $citymod->getprovince(1);
+            $this->assign("pro_list", $pro_list);
+            
+        }
+        $this->assign("is_qx",$this->getqx($_SESSION['my_info']['role']));
+
         $this->display("adddianpu");
     }
 
@@ -1430,10 +1487,26 @@ class MemberAction extends CommonAction {
      */
     public function del_dianpu() {
         $aid = $_GET['aid'];
+        $mod1=M("Dianpumember");
+        $info=$mod1->where("a_id=".$aid)->find();
+        if(!empty($info['logo'])){
+            unlink("./avatar/".$info['logo']);
+            unlink("./avatar/".$info['logo']."_30.jpg");
+            unlink("./avatar/".$info['logo']."_60.jpg");
+            unlink("./avatar/".$info['logo']."_100.jpg");
+        }
+        if(!empty($info['dhimg'])){
+            $i="./Uploads/shangjia/";
+            unlink($i.$info['dhimg']);
+        }
+        if(!empty($info['yingyezhizhao'])){
+            $i="./Uploads/product/";
+            unlink($i.$info['yingyezhizhao']);
+        }
         $mod = M("Member");
         $imod = M("Dianpu");
         $res = $mod->where(array("a_id" => $aid))->delete();
-        $res2 = $imod->where(array("f_id" => $aid))->delete();
+        $res2 = $imod->where(array("a_id" => $aid))->delete();
         if ($res && $res2) {
             $this->success("操作成功");
         } else {
@@ -1860,8 +1933,13 @@ class MemberAction extends CommonAction {
             $datai = array();
             if ($truename != $info['truename'])
                 $datai['truename'] = $truename;
-            if ($picName != $info['logo'])
+            if ($picName != $info['logo']){
                 $datai['logo'] = $picName;
+                unlink("./avatar/".$info['logo']);
+                unlink("./avatar/".$info['logo']."_30.jpg");
+                unlink("./avatar/".$info['logo']."_60.jpg");
+                unlink("./avatar/".$info['logo']."_100.jpg");
+            }
             if ($sex != $info['sex'])
                 $datai['sex'] = $sex;
             if ($email != $info['email'])

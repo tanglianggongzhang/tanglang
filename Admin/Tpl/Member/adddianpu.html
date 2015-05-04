@@ -132,6 +132,9 @@
 	display: none;
 }
 </style>
+<script language="javascript" src="__PUBLIC__/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ckfinder/ckfinder.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=4KXKDmnlxqezwFM9bajbsfoE"></script>
     </head>
     <body>
         <div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
@@ -139,7 +142,7 @@
     <div class="center">
       <div class="center_r_t">您的位置：<a href="{:U('Member/dianpu')}" class="a1">材料商</a>>>>编辑/添加 材料商信息</div>
       <div class="center_t">
-          <form action="" id="form1" name="form1" method="post">
+          <form action="" id="form1" name="form1" enctype="multipart/form-data" method="post">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab center_t">
                 <tr>
                     <td width="120">登录名称：</td>
@@ -213,12 +216,7 @@
                     <td>公司名称：</td>
                     <td><input type="text" name="dinfo[company]" size="40" id="company" value="{$info.company}" /></td>
                 </tr>
-                <tr>
-                    <td>法人：</td>
-                    <td>
-                        <input type="text" name="dinfo[faren]" size="40" id="faren" value="{$info.faren}" />
-                    </td>
-                </tr>                
+                               
                 
                 <tr>
                     <td>上传营业执照：</td>
@@ -242,27 +240,29 @@
                 
                 <tr>
                     <td>联系人电话：</td>
-                    <td><input type="text" name="dinfo[phone]" size="40" id="phone" value="{$info[phone]}" /></td>
+                    <td><input type="text" name="dinfo[telphone]" size="40" id="telphone" value="{$info[telphone]}" /></td>
                 </tr>
                 
                 <tr>
-                    <td>客服电话：</td>
-                    <td><input type="text" name="dinfo[kefu_phone]" size="40" id="kefu_phone" value="{$info[kefu_phone]}" /></td>
+                    <td>手机号：</td>
+                    <td><input type="text" name="dinfo[movphone]" size="40" id="movphone" value="{$info[movphone]}" /></td>
                 </tr>  
-                
+                 
                 <tr>
-                    <td>收藏数值：</td>
-                    <td><input type="text" name="dinfo[collect]"size="10" id="collect" value="{$info[collect]}" /></td>
-                </tr>  
-                <tr>
-                    <td>口碑值：</td>
-                    <td><input type="text" name="dinfo[koubei]" size="10" id="koubei" value="{$info[koubei]}" /></td>
+                    <td>积分：</td>
+                    <td><input type="text" name="dinfo[jifen]" size="10" id="jifen" value="{$info[jifen]}" /></td>
                 </tr>  
                 <tr>
-                    <td>级别：</td>
-                    <td><input type="text" name="dinfo[jibie]" size="10" id="jibie" value="{$info[jibie]}" /></td>
-                </tr>  
-<if condition="$_SESSION['my_info']['role']!=2">
+                    <td>email：</td>
+                    <td><input type="text" name="dinfo[email]" size="100" id="email" value="{$info[email]}" /></td>
+                </tr>
+                <tr>
+                    <td>营业时间：</td>
+                    <td><input type="text" name="dinfo[yingyetime]" size="100" id="yingyetime" value="{$info[yingyetime]}" /></td>
+                </tr>
+                       
+               
+<if condition="$is_qx==0">
                 <tr>
                     <td>省份/城市：</td>
                     <td>
@@ -270,22 +270,161 @@
                         <select id="pro_id" name="pro_id" onchange="getcity('pro_id','city_id')" >
                             <option value="">请选择省份</option>
                             <volist id="vo" name="pro_list">
-                            	<option value="{$vo.region_id}" <if condition="$info[pro_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
+                            	<option value="{$vo.region_id}" <if condition="$info[p_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
                             </volist>
                         </select>
-                        <select id="city_id" name="city_id">
+                        <select id="city_id" name="city_id" onchange="getdiqu('pro_id','city_id','q_id')">
                             <option value="">请选择市</option>
-                            <if condition="!empty($info[city_id])">
-                            <option value="{$info.city_id}" selected="selected">{$info.cityname}</option>
+                            <if condition="!empty($info[c_id])">
+                            <option value="{$info.c_id}" selected="selected">{$info.c_name}</option>
+                            </if>
+                        </select>
+                        <select id="q_id" name="q_id">
+                            <option value="">请选择市</option>
+                            <if condition="!empty($info[q_id])">
+                            <option value="{$info.q_id}" selected="selected">{$info.q_name}</option>
                             </if>
                         </select>
                        
                     </td>
-                </tr>  </if>
+                </tr>  
+</if>
+                
+<if condition="$is_qx==1">
+<tr>
+                    <td>区：</td>
+                    <td>
+                        <input type="hidden" id="pro_id" name="pro_id" value="{$p_id}" />
+                        <input type="hidden" id="city_id" name="city_id" value="{$c_id}" />
+                        <select id="q_id" name="q_id">
+                            <option value="">请选择区</option>
+                            <volist id="vo" name="qulist">
+                            	<option value="{$vo.region_id}" <if condition="$info[q_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
+                            </volist>
+                        </select>
+                       
+                    </td>
+                </tr>  
+</if>                
+                
+                
                 <tr>
                     <td>地址：</td>
-                    <td><input type="text" name="dinfo[dizhi]" size="40" id="dizhi" value="{$info[address]}" /></td>
+                    <td><input type="text" name="dinfo[address]" size="100" id="address" value="{$info[address]}" /></td>
                 </tr>
+                <tr align="left"  class="center_t_d">
+                <td width="20%" align="right">添加标注</td>
+                <td align="left">
+                    <input type="hidden" name="jingdu" id="jingdu" value="{$info.jingdu}" />
+                    <input type="hidden" name="weidu" id="weidu" value="{$info.weidu}" />
+                    <style>
+                        #mapcontainer{width: 800px; height: 800px;}
+                    </style>
+                    <div id="mapcontainer"></div>
+                    <script type="text/javascript"> 
+    var map = new BMap.Map("mapcontainer");         
+    <if condition="!empty($info[jingdu])&&!empty($info[weidu])"> 
+    
+    var point = new BMap.Point({$info[jingdu]}, {$info[weidu]});  
+     
+    <else />
+    
+    var point = new BMap.Point(116.404, 39.915);  
+    
+    </if>
+    map.centerAndZoom(point, 12);                 // 初始化地图，设置中心点坐标和地图级别  
+    var opts = {offset: new BMap.Size(150, 5)};
+
+    map.addControl(new BMap.NavigationControl());//添加控件
+    map.addControl(new BMap.ScaleControl(opts));//控件偏移位置
+    map.addControl(new BMap.OverviewMapControl());
+    map.addControl(new BMap.MapTypeControl());
+    
+    var marker=new BMap.Marker(point);//创建标注
+    map.addOverlay(marker);//将标注添加到地图中
+    marker.enableDragging();
+    <if condition="!empty($info[jingdu])&&!empty($info[weidu])"> 
+    document.getElementById("jingdu").value="{$info[jingdu]}";
+    document.getElementById("weidu").value="{$info[weidu]}";
+    <else />
+    document.getElementById("jingdu").value="116.404";
+    document.getElementById("weidu").value="39.915";
+    </if>
+    marker.addEventListener("dragend", function(e){
+   
+    document.getElementById("jingdu").value=e.point.lng;
+    document.getElementById("weidu").value=e.point.lat;
+    });
+    
+
+
+
+
+
+
+</script> 
+                    
+                </td>
+            </tr>
+                <tr>
+                    <td>服务宗旨：</td>
+                    <td><input type="text" name="dinfo[fwzz]" size="100" id="fwzz" value="{$info[fwzz]}" /></td>
+                </tr>
+                <tr>
+                    <td>展厅面积：</td>
+                    <td><input type="text" name="dinfo[ztmj]" size="10" id="ztmj" value="{$info[ztmj]}" /></td>
+                </tr>
+                <tr>
+                    <td>服务承诺：</td>
+                    <td><input type="text" name="dinfo[fwcn]" size="100" id="fwcn" value="{$info[fwcn]}" /></td>
+                </tr>
+                <tr>
+                    <td>店铺简介：</td>
+                    <td>
+                    <textarea id="comjianjie" name="comjianjie" cols="100" rows="5">{$info[comjianjie]}</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>公司介绍：</td>
+                    <td>
+                    <textarea id="comcontent" name="comcontent" class="ckeditor" cols="100" rows="5">{$info[comcontent]}</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>分店数目：</td>
+                    <td><input type="text" name="dinfo[fdnum]" size="10" id="fdnum" value="{$info[fdnum]}" /></td>
+                </tr>
+                <tr>
+                    <td>排序：</td>
+                    <td><input type="text" name="dinfo[orders]" size="10" id="orders" value="{$info[orders]}" /></td>
+                </tr>
+                <tr>
+                    <td>点击次数：</td>
+                    <td><input type="text" name="dinfo[click]" size="10" id="click" value="{$info[click]}" /></td>
+                </tr>
+                <tr>
+                    <td>推荐：</td>
+                    <td>
+                    <label><input type="radio" name="dinfo[is_tj]" id="is_tj" value="1" <if condition="$info[is_tj]==1">checked</if> />推荐</label>
+                    <label><input type="radio" name="dinfo[is_tj]" id="is_tj" value="0" <if condition="$info[is_tj]==0">checked</if> />普通</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>导航图：</td>
+                    <td>
+                    <input type="file" name="dhimg" id="dhimg" />
+                    <if condition="!empty($info[dhimg])">
+                    <img src="{$systemConfig.SITE_INFO.url}/Uploads/shangjia/{$info.dhimg}" width="100"/>
+                    </if>
+                    </td>
+                </tr>
+                <tr>
+                    <td>温馨提示：</td>
+                    <td>
+                    <textarea id="wxts" name="wxts" cols="100" rows="5">{$info[wxts]}</textarea>
+                    </td>
+                </tr>
+                
                 
                 <tr>
                     <td colspan="2"><input type="submit" class="btn submit" id="sub" name="sub" value="提交"/></td>
@@ -355,6 +494,74 @@
 		});	
 	}
 	
+	
+	function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+            var cid=document.getElementById(cityid).value;
+            //获取市区对应的经纬度
+            $.ajax({
+                data:"cid="+cid,
+                cache:false,
+		url:"{:U('Index/getjwd')}",
+		type:"POST",
+		dataType:"Json",
+                success:function(msg){
+                    var msg=eval("("+msg+")");
+                    document.getElementById("jingdu").value=msg.jingdu;
+                    document.getElementById("weidu").value=msg.weidu;
+                    
+                    var map = new BMap.Map("mapcontainer");          // 创建地图实例  
+                    var point = new BMap.Point(msg.jingdu, msg.weidu);  // 创建点坐标 
+                    map.centerAndZoom(point, 12);                 // 初始化地图，设置中心点坐标和地图级别  
+                    
+                    var opts = {offset: new BMap.Size(150, 5)};
+                    map.addControl(new BMap.NavigationControl());//添加控件
+                    map.addControl(new BMap.ScaleControl(opts));//控件偏移位置
+                    map.addControl(new BMap.OverviewMapControl());
+                    map.addControl(new BMap.MapTypeControl());
+
+                    var marker=new BMap.Marker(point);//创建标注
+                    map.addOverlay(marker);//将标注添加到地图中
+                    marker.enableDragging();
+                    marker.addEventListener("dragend", function(e){
+                    //alert("当前位置：" + e.point.lng + ", " + e.point.lat);
+                    document.getElementById("jingdu").value=e.point.lng;
+                    document.getElementById("weidu").value=e.point.lat;
+                    });
+                    
+                    
+                }
+            });
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				//var msg=eval("("+msg+")");
+				
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
+	
 </script>
 
 <script>
@@ -407,7 +614,11 @@
 					if(response){
 						//console.log(data);
 						$("#image").html("<image src=__ROOT__/Uploads/product/"+data+" height=100 />");	
-						$("#yingyezhizhao").val(data);
+						var yy=$("#yingyezhizhao").val();
+                                                if(yy!='')
+                                                $("#yingyezhizhao").val(yy+","+data);
+                                                else
+                                                    $("#yingyezhizhao").val(data);
 						
 					}else{
 						alert('图片'+file.name+"上传失败");
@@ -564,5 +775,47 @@
 			  });
 		}
 	})
+CKEDITOR.replace( 'comcontent',
+{
+filebrowserBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html',
+filebrowserImageBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Images',
+filebrowserFlashBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Flash',
+filebrowserUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+filebrowserImageUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
+filebrowserFlashUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
+});
+
+
+//地址
+$("#address").blur(function(){
+   var address=$(this).val();
+   if(address!=''){
+       var jingdu=$("#jingdu").val();
+       var weidu=$("#weidu").val();
+       var c_name=$("#c_id").find("option:selected").text();
+       var map = new BMap.Map("mapcontainer");
+       map.centerAndZoom(new BMap.Point(jingdu, weidu), 11);
+       
+       var opts = {offset: new BMap.Size(150, 5)};
+        map.addControl(new BMap.NavigationControl());//添加控件
+        map.addControl(new BMap.ScaleControl(opts));//控件偏移位置
+        map.addControl(new BMap.OverviewMapControl());
+        map.addControl(new BMap.MapTypeControl());
+       
+       
+       // 创建地址解析器实例
+        var myGeo = new BMap.Geocoder();
+        // 将地址解析结果显示在地图上，并调整地图视野
+        myGeo.getPoint(address,function(point){
+            map.centerAndZoom(point, 16);
+            $("#jingdu").val(point.lng);
+            $("#weidu").val(point.lat);
+            
+            map.addOverlay(new BMap.Marker(point));
+        },c_name);
+
+   }
+
+});
 	
 </script>
