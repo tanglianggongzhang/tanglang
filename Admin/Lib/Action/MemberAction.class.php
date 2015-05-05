@@ -607,13 +607,16 @@ class MemberAction extends CommonAction {
             $fjdata1['comments'] = trim($_POST['comments']);
             $fjdata1['peoples'] = trim($_POST['peoples']);
             $fjdata1['cases'] = trim($_POST['cases']);
+            
             $fjdata1['yuyues'] = trim($_POST['yuyues']);
             $fjdata1['fwyzrs'] = trim($_POST['fwyzrs']);
             $fuwu = trim($_POST['fuwu']);
             $fuwu = str_replace("\n", ",", $fuwu);
             $fjdata1['fuwu'] = $fuwu;
-            $zuopin = $_POST['zuopin'];
-            $zuopin_str = implode(",", $zuopin);
+            
+            /*$zuopin = $_POST['zuopin'];
+            $zuopin_str = implode(",", $zuopin);*/
+            
             $fjdata1['zuopin'] = $zuopin_str;
             $fjdata1['is_sfz'] = $_POST['is_sfz'];
             $fjdata1['is_qy'] = $_POST['is_qy'];
@@ -697,9 +700,7 @@ class MemberAction extends CommonAction {
             }
         }
         #代表作品 案例
-        $casemod = M("Case");
-        $caselist = $casemod->where("status=1")->field("id,title")->select();
-        $this->assign("caselist", $caselist);
+        $this->assign("addgz",1);
 
         $this->display();
     }
@@ -1871,30 +1872,30 @@ class MemberAction extends CommonAction {
         $this->assign("systemConfig", $this->systemConfig);
 
         $citymod = new CityModel();
-        $is_qx=  $this->getqx($_SESSION['my_info']['role']);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
         if ($is_qx == 0) {
             //非地区管理员
             $pro_list = $citymod->getprovince(1);
             $this->assign("pro_list", $pro_list);
-        }else{
+        } else {
             //地区管理员
-            $p_id=$_SESSION['my_info']['proid'];
-            $c_id=$_SESSION['my_info']['cityid'];
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
             #区列表
-            $qulist=$citymod->getcity($c_id);
-            $this->assign("qulist",$qulist);
-            $this->assign("p_id",$p_id);
-            $this->assign("c_id",$c_id);
+            $qulist = $citymod->getcity($c_id);
+            $this->assign("qulist", $qulist);
+            $this->assign("p_id", $p_id);
+            $this->assign("c_id", $c_id);
         }
-        $this->assign("is_qx",$is_qx);
+        $this->assign("is_qx", $is_qx);
 
         $aid = $_GET['aid'];
         $m = M("Foremanview");
         $info = $m->where("a_id=" . $aid)->find();
         $this->assign("info", $info);
         #代表作品-案例
-        $casemod = M("Case");
-        $caselist = $casemod->where("status=1")->field("id,title")->select();
+        $casemod = new CaseModel();
+        $caselist = $casemod->getcaselist(1, $aid);
         $this->assign("caselist", $caselist);
 
         if (IS_POST) {
@@ -2090,9 +2091,23 @@ class MemberAction extends CommonAction {
     public function addsjs() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
+
         $citymod = new CityModel();
-        $pro_list = $citymod->getprovince(1);
-        $this->assign("pro_list", $pro_list);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        if ($is_qx == 0) {
+            #省
+            $pro_list = $citymod->getprovince(1);
+            $this->assign("pro_list", $pro_list);
+            
+        }else{
+            $p_id=$_SESSION['my_info']['proid'];
+            $c_id=$_SESSION['my_info']['cityid'];
+            #区
+            $qulist=$citymod->getcity($c_id);
+            $this->assign("qulist",$qulist);
+        }
+        $this->assign("is_qx",$is_qx);
+        
         if (IS_POST) {
             $a_name = trim($_POST['a_name']);
             $status = trim($_POST['status']);

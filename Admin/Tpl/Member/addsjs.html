@@ -221,17 +221,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>真实姓名：</td>
+                    <td>姓名：</td>
                     <td>
                        <input type="text" name="truename" size="40" id="truename" value="{$info.truename}" />
                     </td>
                 </tr>
-                <tr>
-                    <td>昵称：</td>
-                    <td>
-                       <input type="text" name="nickname" size="40" id="nickname" value="{$info.nickname}" />
-                    </td>
-                </tr>
+                
                 <tr>
                     <td>性别：</td>
                     <td>
@@ -240,101 +235,84 @@
                         
                     </td>
                 </tr>
-                
                 <tr>
-                    <td>公司名称：</td>
+                    <td>手机号码：</td>
                     <td>
-                       <input type="text" name="comname" size="40" id="comname" value="{$info.comname}" />
+                       <input type="text" name="mvophone" size="100" id="mvophone" value="{$info.mvophone}" />
                     </td>
                 </tr>
                 <tr>
-                    <td>公司座机：</td>
+                    <td>口碑值：</td>
                     <td>
-                       <input type="text" name="comphone" size="40" id="comphone" value="{$info.comphone}" />
+                       <input type="text" name="koubei" size="10" id="koubei" value="{$info.koubei}" />
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        
-                       手机号： 
-                    </td>
-                    <td><input type="text" name="phonenum" size="40" id="phonenum" value="{$info[phonenum]}" /></td>
-                </tr>
-                                 
-                
                 <tr>
                     <td>email：</td>
-                    <td><input type="text" name="email" size="40" id="email" value="{$info[email]}" /></td>
-                </tr>               
-                
+                    <td>
+                       <input type="text" name="email" size="100" id="email" value="{$info.email}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>工龄：</td>
+                    <td>
+                       <input type="text" name="gongling" size="10" id="gongling" value="{$info.gongling}" />
+                    </td>
+                </tr>
                 <tr>
                     <td>qq：</td>
-                    <td><input type="text" name="qq" size="40" id="qq" value="{$info[qq]}" /></td>
-                </tr>  
-               
-                
-                <tr>
-                    <td>生日：</td>
                     <td>
-
-<input type="text" id="but" name="birthday" readonly value="{$info[birthday]}" />
-            <div class="easyui-calendar" style="width:250px;height:250px; display:none" data-options="formatter:formatDay"></div>
-            <script>
-		var d1 = Math.floor((Math.random()*30)+1);
-		var d2 = Math.floor((Math.random()*30)+1);
-		function formatDay(date){
-			var m = date.getMonth()+1;
-			var d = date.getDate();
-			var opts = $(this).calendar('options');
-			//if (opts.month == m && d == d1){
-				//return '<div class="icon-ok md">' + d + '</div>';
-			//} 
-			//else if (opts.month == m && d == d2){
-				//return '<div class="icon-search md">' + d + '</div>';
-			//}
-			return d;
-		}
-		$("#but").click(function(){
-			$(".easyui-calendar").show();	
-		});
-		$(".easyui-calendar").calendar({
-				onSelect:function(date){
-					var month_selected=(date.getMonth()+1)<=9?"0"+(date.getMonth()+1):(date.getMonth()+1);
-					var day_selected=date.getDate()<=9?"0"+date.getDate():date.getDate();
-					
-					var date_selected=date.getFullYear()+"-"+month_selected+"-"+day_selected;
-					var dateobj=new Date();
-					
-					var month_current=(dateobj.getMonth()+1)<=9?"0"+(dateobj.getMonth()+1):(dateobj.getMonth()+1);
-					var day_current=dateobj.getDate()<=9?"0"+dateobj.getDate():dateobj.getDate();
-					
-					var date_current=dateobj.getFullYear()+"-"+month_current+"-"+day_current;
-					
-					if(date_selected<=date_current){
-					$("#but").val(date_selected);
-					$(".easyui-calendar").hide();
-					}else{
-						alert("所选日期不能大于当前日期");
-					}
-					}
-			});
-	</script>
-            <style scoped>
-		.md{
-			height:16px;
-			line-height:16px;
-			background-position:2px center;
-			text-align:right;
-			font-weight:bold;
-			padding:0 2px;
-			color:red;
-		}
-	</style>
-    
-
+                       <input type="text" name="qq" size="100" id="qq" value="{$info.qq}" />
                     </td>
-                </tr>  
-                <if condition="$_SESSION['my_info']['role']!=2">
+                </tr>
+                <tr>
+                    <td>籍贯：</td>
+                    <td>
+                       <input type="text" name="jiguan" size="100" id="jiguan" value="{$info.jiguan}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>擅长风格：</td>
+                    <td>
+                       读取风格列表scfg
+                    </td>
+                </tr>
+                <tr>
+                    <td>代表作品：</td>
+                    <td>
+                       读取案例列表dbzp
+                    </td>
+                </tr>
+                <tr>
+                    <td>职称：</td>
+                    <td>
+                       <input type="text" name="zhicheng" size="100" id="zhicheng" value="{$info.zhicheng}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>设计理念：</td>
+                    <td>
+                       <input type="text" name="sjln" size="100" id="sjln" value="{$info.sjln}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>是否推荐：</td>
+                    <td>
+                        <label><input type="radio" id="is_tj" name="is_tj" value="1" <if condition="$info[is_tj]==1">checked</if> />推荐</label>
+                        <label><input type="radio" id="is_tj" name="is_tj" value="0" <if condition="$info[is_tj]==0">checked</if> />普通</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>导航图片：</td>
+                    <td>
+                        <input type="file" name="dhimg" id="dhimg" />
+                        <if condition="!empty($info[dhimg])">
+                            <img src="{$info.dhimg}" width="100" />
+                        </if>
+                    </td>
+                </tr>
+                
+                <if condition="$is_qx==0">
                 <tr>
                     <td>省份/城市：</td>
                     <td>
@@ -350,6 +328,26 @@
                             <option value="{$info.c_id}" selected="selected">{$info.cityname}</option>
                             </if>
                         </select>
+                        <select id="q_id" name="q_id">
+                            <option value="">请选择区</option>
+                            <if condition="!empty($info[q_id])">
+                            <option value="{$info.q_id}" selected="selected">{$info.qname}</option>
+                            </if>
+                        </select>
+                    </td>
+                </tr> 
+                </if>
+                <if condition="$is_qx==1">
+                <tr>
+                    <td>区：</td>
+                    <td>
+                        
+                        <select id="q_id" name="q_id">
+                            <option value="">请选择区</option>
+                            <volist id="vo" name="qulist">
+                            	<option value="{$vo.region_id}" <if condition="$info[q_id]==$vo[region_id]">selected</if>>{$vo.region_name}</option>
+                            </volist>
+                        </select>
                     </td>
                 </tr> 
                 </if>
@@ -360,12 +358,10 @@
                 </tr>
                 
                 <tr>
-                    <td>收藏数目：</td>
-                    <td><input type="text" name="collect" size="10" id="collect" value="{$info[collect]}" /></td>
-                </tr>
-                <tr>
-                    <td>口碑：</td>
-                    <td><input type="text" name="koubei" size="10" id="koubei" value="{$info[koubei]}" /></td>
+                    <td>添加标注：</td>
+                    <td>
+                    
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="2"><input type="submit" class="btn submit" id="sub" name="sub" value="提交"/></td>
