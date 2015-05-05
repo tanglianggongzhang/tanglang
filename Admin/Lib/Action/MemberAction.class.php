@@ -45,7 +45,7 @@ class MemberAction extends CommonAction {
         $this->assign("province", $province);
         $this->assign("city", $city);
         $this->assign("qu", $qu);
-        $this->assign("quname",$citymod->getname($qu));
+        $this->assign("quname", $citymod->getname($qu));
 
         $cityname = $citymod->getname($city);
         $this->assign("cityname", $cityname);
@@ -690,8 +690,8 @@ class MemberAction extends CommonAction {
             );
 
             $memmod = new MemberModel();
-            $res = $memmod->add_member($maindata, $fjdata1);
-            if ($res) {
+            $res1 = $memmod->add_member($maindata, $fjdata1);
+            if ($res1) {
                 $this->success("操作成功！", U("Member/foreman"));
                 exit;
             } else {
@@ -779,15 +779,15 @@ class MemberAction extends CommonAction {
         $aid = $_GET['aid'];
         $mod = M("Member");
         $imod = M("Sheji");
-        $info=$imod->where("a_id=".$aid)->find();
-        if(!empty($info['dhimg'])){
-            unlink("./".$info['dhimg']);
+        $info = $imod->where("a_id=" . $aid)->find();
+        if (!empty($info['dhimg'])) {
+            unlink("./" . $info['dhimg']);
         }
-        if(!empty($info['logo'])){
-            $path="./avatar/";
-            unlink($path.$info['logo']);
+        if (!empty($info['logo'])) {
+            $path = "./avatar/";
+            unlink($path . $info['logo']);
         }
-        
+
         $res = $mod->where(array("a_id" => $aid))->delete();
         $res2 = $imod->where(array("a_id" => $aid))->delete();
         if ($res && $res2) {
@@ -2204,19 +2204,18 @@ class MemberAction extends CommonAction {
         if ($is_qx == 0) {
             $pro_list = $citymod->getprovince(1);
             $this->assign("pro_list", $pro_list);
-        }else{
+        } else {
             #地区管理员
-            
         }
         #擅长风格
-        $fgmod=M("Fgcategory");
-        $fglist=$fgmod->where(1)->select();
-        $this->assign("fglist",$fglist);
+        $fgmod = M("Fgcategory");
+        $fglist = $fgmod->where(1)->select();
+        $this->assign("fglist", $fglist);
         #作品 案例
-        $casemod=new CaseModel();
-        $caselist=$casemod->getcaselist(2, $aid);
-        $this->assign("caselist",$caselist);
-        
+        $casemod = new CaseModel();
+        $caselist = $casemod->getcaselist(2, $aid);
+        $this->assign("caselist", $caselist);
+
         if (IS_POST) {
             $a_name = trim($_POST['a_name']);
             $status = trim($_POST['status']);
@@ -2226,34 +2225,34 @@ class MemberAction extends CommonAction {
                 $this->error("登录名称不能为空！");
                 exit;
             }
-            
-            
+
+
             $picName = trim($_POST['picName']);
             $truename = trim($_POST['truename']);
             $sex = trim($_POST['sex']);
-            $movphone=  trim($_POST['mvophone']);
-            $koubei=trim($_POST['koubei']);
+            $movphone = trim($_POST['mvophone']);
+            $koubei = trim($_POST['koubei']);
             $email = trim($_POST['email']);
-            $gongling=trim($_POST['gongling']);
+            $gongling = trim($_POST['gongling']);
             $qq = trim($_POST['qq']);
-            $jiguan=trim($_POST['jiguan']);
-            $scfg=trim($_POST['scfg']);
-            $zhicheng=trim($_POST['zhicheng']);
-            $sjln=  trim($_POST['sjln']);
-            $is_tj=trim($_POST['is_tj']);
+            $jiguan = trim($_POST['jiguan']);
+            $scfg = trim($_POST['scfg']);
+            $zhicheng = trim($_POST['zhicheng']);
+            $sjln = trim($_POST['sjln']);
+            $is_tj = trim($_POST['is_tj']);
             $p_id = $_POST['p_id'];
             $c_id = $_POST['c_id'];
-            $q_id=$_POST['q_id'];
+            $q_id = $_POST['q_id'];
             $aid = $_POST['aid'];
-            $dbzp=$_POST['dbzp'];
-            $dbzp_str=implode(",", $dbzp);
-            
+            $dbzp = $_POST['dbzp'];
+            $dbzp_str = implode(",", $dbzp);
+
             $address = trim($_POST['address']);
-            
+
             $jingdu = trim($_POST['jingdu']);
             $weidu = trim($_POST['weidu']);
-            
-            
+
+
             $data = array();
             $m = M("Member");
             if (!empty($pwd) && !empty($confirm_pwd)) {
@@ -2271,61 +2270,61 @@ class MemberAction extends CommonAction {
             if (!empty($data))
                 $res1 = $m->where("a_id=" . $aid)->save($data);
             $datafj = array();
-            
+
             if ($picName != $info['logo'])
                 $datafj['logo'] = $picName;
-            
+
             if ($truename != $info['truename'])
                 $datafj['truename'] = $truename;
-            
+
             if ($sex != $info['sex'])
                 $datafj['sex'] = $sex;
             //------------导航图片修改---start
-            if(!empty($_FILES['dhimg']['name'])){
-                $path="/Uploads/shangjia/";
-                
-                $imginf=$this->upload(".".$path);
-                if(!empty($imginf[0]['savename'])){
-                    unlink(".".$path.$info['dhimg']);
-                    $datafj['dhimg']=$path.$imginf[0]['savename'];
+            if (!empty($_FILES['dhimg']['name'])) {
+                $path = "/Uploads/shangjia/";
+
+                $imginf = $this->upload("." . $path);
+                if (!empty($imginf[0]['savename'])) {
+                    unlink("." . $path . $info['dhimg']);
+                    $datafj['dhimg'] = $path . $imginf[0]['savename'];
                 }
             }
             //=------------导航图片修改------end
-            if($movphone!=$info['movphone'])
-                $datafj['movphone']=$movphone;
-            if($koubei!=$info['koubei'])
-                $datafj['koubei']=$koubei;
-            if($email!=$info['email'])
-                $datafj['email']=$email;
-            if($gongling!=$info['gongling'])
-                $datafj['gongling']=$gongling;
-            if($qq!=$info['qq'])
-                $datafj['qq']=$qq;
-            if($jiguan!=$info['jiguan'])
-                $datafj['jiguan']=$jiguan;
-            if($dbzp_str!=$info['dbzp'])
-                $datafj['dbzp']=$dbzp_str;
-            if($scfg!=$info['scfg'])
-                $datafj['scfg']=$scfg;
-            if($zhicheng!=$info['zhicheng'])
-                $datafj['zhicheng']=$zhicheng;
-            if($sjln!=$info['sjln'])
-                $datafj['sjln']=$sjln;
-            if($is_tj!=$info['is_tj'])
-                $datafj['is_tj']=$is_tj;
-            if($p_id!=$info['p_id'])
-                $datafj['p_id']=$p_id;
-            if($c_id!=$info['c_id'])
-                $datafj['c_id']=$c_id;
-            if($q_id!=$info['q_id'])
-                $datafj['q_id']=$q_id;
-            if($address!=$info['address'])
-                $datafj['address']=$address;
-            if($jingdu!=$info['jingdu'])
-                $datafj['jingdu']=$jingdu;
-            if($weidu!=$info['weidu'])
-                $datafj['weidu']=$weidu;
-            
+            if ($movphone != $info['movphone'])
+                $datafj['movphone'] = $movphone;
+            if ($koubei != $info['koubei'])
+                $datafj['koubei'] = $koubei;
+            if ($email != $info['email'])
+                $datafj['email'] = $email;
+            if ($gongling != $info['gongling'])
+                $datafj['gongling'] = $gongling;
+            if ($qq != $info['qq'])
+                $datafj['qq'] = $qq;
+            if ($jiguan != $info['jiguan'])
+                $datafj['jiguan'] = $jiguan;
+            if ($dbzp_str != $info['dbzp'])
+                $datafj['dbzp'] = $dbzp_str;
+            if ($scfg != $info['scfg'])
+                $datafj['scfg'] = $scfg;
+            if ($zhicheng != $info['zhicheng'])
+                $datafj['zhicheng'] = $zhicheng;
+            if ($sjln != $info['sjln'])
+                $datafj['sjln'] = $sjln;
+            if ($is_tj != $info['is_tj'])
+                $datafj['is_tj'] = $is_tj;
+            if ($p_id != $info['p_id'])
+                $datafj['p_id'] = $p_id;
+            if ($c_id != $info['c_id'])
+                $datafj['c_id'] = $c_id;
+            if ($q_id != $info['q_id'])
+                $datafj['q_id'] = $q_id;
+            if ($address != $info['address'])
+                $datafj['address'] = $address;
+            if ($jingdu != $info['jingdu'])
+                $datafj['jingdu'] = $jingdu;
+            if ($weidu != $info['weidu'])
+                $datafj['weidu'] = $weidu;
+
             //-------------------------end
             $fjMod = M("Sheji");
             if (!empty($datafj))
@@ -2343,34 +2342,377 @@ class MemberAction extends CommonAction {
     /**
      * 添加工人
      */
-    public function addgr(){
+    public function addgr() {
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("systemConfig", $this->systemConfig);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $cmod = new CityModel();
+        if ($is_qx == 1) {
+            #地区管理员
+            $c_id = $_SESSION['my_info']['cityid'];
+            $p_id = $_SESSION['my_info']['proid'];
+
+            $qlist = $cmod->getcity($c_id);
+            $this->assign("qlist", $qlist);
+            $this->assign("c_id", $c_id);
+            $this->assign("p_id", $p_id);
+        } else {
+            #省
+            $plist = $cmod->getprovince(1);
+            $this->assign("plist", $plist);
+        }
+        $this->assign("is_qx", $is_qx);
+
+        if (IS_POST) {
+            $a_name = trim($_POST['a_name']); //用户登录信息
+            $status = $_POST['status']; //状态
+            $pwd = trim($_POST['pwd']);
+            $confirm_pwd = trim($_POST['confirm_pwd']);
+            if (empty($a_name)) {
+                $this->error("请填写登录名！");
+                exit;
+            }
+            if (empty($pwd)) {
+                $this->error("请填写密码！");
+                exit;
+            }
+            if (empty($confirm_pwd)) {
+                $this->error("确认密码不能为空！");
+                exit;
+            }
+            if ($confirm_pwd != $pwd) {
+                $this->error("两次输入的密码不一致!");
+                exit;
+            }
+            #检测用户名是否存在
+            $memMod = M("Member");
+            $res = $memMod->where("a_type=2 and a_name='" . $a_name . "'")->count();
+            if ($res > 0) {
+                $this->error("登录名已经存在！");
+                exit;
+            }
+            //登录信息接受结束
+
+            $picName = trim($_POST['picName']); //logo
+            $truename = trim($_POST['truename']);
+            $ruzhitime = trim($_POST['ruzhitime']);
+            #身份证
+            if (!empty($_FILES['sfz_img']['name'])) {
+                $path = "/Uploads/shangjia/";
+                $sfzimg = $this->upload("." . $path);
+                if (!empty($sfzimg[0]['savename']))
+                    $sfz_img = $path . $sfzimg[0]['savename'];
+            }
+            $content = trim($_POST['content']);
+            $movphone = trim($_POST['movphone']);
+            $sex = $_POST['sex'];
+            $email = trim($_POST['email']);
+            $gongling = trim($_POST['gongling']);
+            $qq = trim($_POST['qq']);
+            $orders = trim($_POST['orders']);
+            $is_tj = $_POST['is_tj'];
+            $p_id = $_POST['p_id'];
+            $c_id = $_POST['c_id'];
+            $q_id = $_POST['q_id'];
+            $address = trim($_POST['address']);
+            $jingdu = $_POST['jingdu'];
+            $weidu = $_POST['weidu'];
+            $aid = $_POST['aid'];
+
+
+            $maindata = array(
+                "a_name" => $a_name,
+                "a_pwd" => encrypt($pwd),
+                "a_type" => 5,
+                "status" => $status
+            );
+            $fjdata1 = array(
+                "truename" => $truename,
+                "ruzhitime" => $ruzhitime,
+                "logo" => $picName,
+                "sfz_img" => $sfz_img,
+                "content" => $content,
+                "movphone" => $movphone,
+                "sex" => $sex,
+                "email" => $email,
+                "gongling" => $gongling,
+                "address" => $address,
+                "qq" => $qq,
+                "orders" => $orders,
+                "is_tj" => $is_tj,
+                "p_id" => $p_id,
+                "c_id" => $c_id,
+                "q_id" => $q_id,
+                "jingdu" => $jingdu,
+                "weidu" => $weidu
+            );
+            $memmod = new MemberModel();
+            $res1 = $memmod->add_member($maindata, $fjdata1);
+            if ($res1) {
+                $this->success("操作成功！", U("Member/grlist"));
+                exit;
+            } else {
+                $this->error("操作失败！");
+                exit;
+            }
+        }
         $this->display();
     }
+
     /**
      * 工人列表
      */
-    public function grlist(){
+    public function grlist() {
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("systemConfig", $this->systemConfig);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $cmod = new CityModel();
+        $q_id = $_GET['qu'];
+        if ($is_qx == 1) {
+            #地区管理员
+            $c_id = $_SESSION['my_info']['cityid'];
+            $p_id = $_SESSION['my_info']['proid'];
+
+            $qlist = $cmod->getcity($c_id);
+            $this->assign("qlist", $qlist);
+
+            $this->assign("c_id", $c_id);
+            $this->assign("p_id", $p_id);
+        } else {
+            #省
+            $p_id = $_GET['p_id'];
+            $c_id = $_GET['c_id'];
+            $plist = $cmod->getprovince(1);
+            $this->assign("plist", $plist);
+
+            $quname = $cmod->getname($q_id);
+            $this->assign("quname", $quname);
+            $cityname = $cmod->getname($c_id);
+            $this->assign("cityname", $cityname);
+            $this->assign("province", $p_id);
+        }
+
+        $this->assign("qu", $q_id);
+
+        $this->assign("is_qx", $is_qx);
+        @import("ORG.Util.Page");
+        $where = "1";
+        $start_date = $_GET['start_date'];
+        $end_date = $_GET['end_date'];
+        if (!empty($start_date)) {
+            $start_date = strtotime($start_date . "0:0:0");
+            $where.=" and UNIX_TIMESTAMP(ruzhitime)>= " . $start_date;
+        }
+        if (!empty($end_date)) {
+            $end_date = strtotime($end_date . "23:59:59");
+            $where.=" and UNIX_TIMESTAMP(ruzhitime)<= " . $end_date;
+        }
+
+        if (!empty($p_id)) {
+            $where.=" and p_id=" . $p_id;
+        }
+        if (!empty($c_id)) {
+            $where.=" and c_id=" . $c_id;
+        }
+        if (!empty($q_id)) {
+            $where.=" and q_id=" . $q_id;
+        }
+        $keys = $_GET['keys'] == "请输入关键字" ? "" : $keys;
+        if (!empty($keys))
+            $where.=" and truename like '%" . $keys . "%'";
+
+        $m = M("Gongrenview");
+        $totalRows = $m->where($where)->count();
+        $page = new Page($totalRows, 10);
+        $list = $m->where($where)->limit($page->firstRow . "," . $page->listRows)->order("create_time desc")->select();
+        $sex_arr = array("1" => "男", "2" => "女");
+        foreach ($list as $k => $v) {
+            $list[$k]['sexf'] = $sex_arr[$v['sex']];
+        }
+
+        $this->assign("list", $list);
+        $this->assign("page", $page->show());
+
         $this->display();
     }
+
     /**
      * 删除工人
      */
-    public function delgr(){
-        $a_id=$_GET['a_id'];
+    public function delgr() {
+        $a_id = $_GET['aid'];
+        $M=M("Gongren");
+        $info=$M->where("a_id=".$a_id)->find();
+        if(!empty($info['logo'])){
+            $path="/avatar/";
+            unlink(".".$path.$info['logo']);
+            unlink(".".$path.$info['logo']."_30.jpg");
+            unlink(".".$path.$info['logo']."_60.jpg");
+            unlink(".".$path.$info['logo']."_100.jpg");
+        }
+        if(!empty($info['sfz_img'])){
+            unlink(".".$info['sfz_img']);
+        }
+        $m1=M("Member");
+        $res1=$m1->where("a_id=".$a_id)->delete();
+        $res=$M->where("a_id=".$a_id)->delete();
+        
+        if($res1&&$res){
+            $this->success("操作成功！");
+        }else{
+            $this->error("操作失败!");
+        }
         
     }
+
     /**
      * 修改工人
      */
-    public function editgr(){
+    public function editgr() {
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("systemConfig", $this->systemConfig);
+        $aid = $_GET['aid'];
+        $m = M("Gongrenview");
+        $info = $m->where("a_id=" . $aid)->find();
+        $this->assign("info", $info);
+        $cmod = new CityModel();
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        if ($is_qx == 1) {
+            #地区管理员
+            $c_id = $_SESSION['my_info']['cityid'];
+            $p_id = $_SESSION['my_info']['proid'];
+
+            $qlist = $cmod->getcity($c_id);
+            $this->assign("qlist", $qlist);
+
+            $this->assign("c_id", $c_id);
+            $this->assign("p_id", $p_id);
+        } else {
+            #省
+            $p_id = $_GET['p_id'];
+            $c_id = $_GET['c_id'];
+            $plist = $cmod->getprovince(1);
+            $this->assign("plist", $plist);
+
+
+            $this->assign("province", $p_id);
+        }
+        $this->assign("is_qx",$is_qx);
+        
+        if (IS_POST) {
+            $pwd = trim($_POST['pwd']);
+            $confirm_pwd = trim($_POST['confirm_pwd']);
+            $a_name = trim($_POST['a_name']);
+            $status = trim($_POST['status']);
+            //附加表------------start
+            $picName = $_POST['picName']; //头像修改
+            $truename = trim($_POST['truename']);
+            $ruzhitime = trim($_POST['ruzhitime']);
+            $sfz_img = $_FILES['sfz_img']['name']; //身份证
+            $content = trim($_POST['content']);
+            $movphone = trim($_POST['movphone']);
+            $sex = $_POST['sex'];
+            $email = trim($_POST['email']);
+            $gongling = trim($_POST['gongling']);
+            $qq = trim($_POST['qq']);
+            $orders = trim($_POST['orders']);
+            $is_tj = trim($_POST['is_tj']);
+            $p_id = $_POST['p_id'];
+            $c_id = $_POST['c_id'];
+            $q_id = $_POST['q_id'];
+            $address = $_POST['address'];
+            $jingdu = $_POST['jingdu'];
+            $weidu = $_POST['weidu'];
+
+            //附加表-------------end
+            $data = array();
+            if (!empty($pwd) && !empty($confirm_pwd)) {
+                //修改密码
+                if ($pwd != $confirm_pwd) {
+                    $this->error("两次输入的密码必须一致!");
+                    exit;
+                }
+                $data['a_pwd'] = encrypt($pwd);
+            }
+            if (empty($a_name)) {
+                $this->error("登录名称不能为空！");
+                exit;
+            }
+            if ($a_name != $info['a_name']) {
+                $data['a_name'] = $a_name;
+            }
+            if ($status != $info['status']) {
+                $data['status'] = $status;
+            }
+            if (!empty($picName)) {
+                unlink("./avatar/" . $info['logo']);
+            }
+            if (!empty($sfz_img)) {
+                $path = "/Uploads/shangjia/";
+                $imginfo = $this->upload("." . $path);
+                if (!empty($imginfo[0]['savename'])){
+                    $sfzimg = $imginfo[0]['savename'];
+                    unlink(".".$path.$info['sfz_img']);
+                }
+            }
+            $datafj=array();
+            if(!empty($sfzimg))
+                $datafj['sfz_img']=$sfzimg;
+            if($truename!=$info['truename'])
+                $datafj['truename']=$truename;
+            if($ruzhitime!=$info['ruzhitime'])
+                $datafj['ruzhitime']=$ruzhitime;
+            if(!empty($picName))
+                $datafj['logo']=$picName;
+            if($content!=$info['content'])
+                $datafj['content']=$content;
+            if($movphone!=$info['movphone'])
+                $datafj['movphone']=$movphone;
+            if($sex!=$info['sex'])
+                $datafj['sex']=$sex;
+            if($email!=$info['email'])
+                $datafj['email']=$email;
+            if($gongling!=$info['gongling'])
+                $datafj['gongling']=$gongling;
+            if($address!=$info['address'])
+                $datafj['address']=$address;
+            if($qq!=$info['qq'])
+                $datafj['qq']=$qq;
+            if($orders!=$info['orders'])
+                $datafj['orders']=$orders;
+            if($is_tj!=$info['is_tj'])
+                $datafj['is_tj']=$is_tj;
+            if($p_id!=$info['p_id'])
+                $datafj['p_id']=$p_id;
+            if($c_id!=$info['c_id'])
+                $datafj['c_id']=$c_id;
+            if($q_id!=$info['q_id'])
+                $datafj['q_id']=$q_id;
+            if($jingdu!=$info['jingdu'])
+                $datafj['jingdu']=$jingdu;
+            if($weidu!=$info['weidu'])
+                $datafj['weidu']=$weidu;
+            
+            $m1=M("Member");
+            $m2=M("Gongren");
+            if (!empty($data))
+                $res1 = $m1->where("a_id=" . $aid)->save($data);
+            else
+                $res1=1;
+            if (!empty($datafj)){
+                $res2 = $m2->where("a_id=" . $aid)->save($datafj);
+            }  else {
+                $res2=1;
+            }
+            if (!$res1 && !$res2) {
+                $this->error("操作失败！");
+            } else {
+                $this->success("操作成功！", U("Member/grlist"));
+            }
+            
+            exit;
+        }
         $this->display("addgr");
     }
-    
-    
+
 }

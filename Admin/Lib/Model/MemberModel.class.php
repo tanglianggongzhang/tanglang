@@ -66,9 +66,20 @@ class MemberModel extends Model {
                         $this->where(array("a_id"=>$id))->delete();
                         $return=array("status"=>0,"info"=>"附加信息添加失败");
                     }
-                }else{
+                }else if($data['a_type']==4){
                     //设计师
                     $mod=M("Sheji");
+                    $fujdata['a_id']=$id;
+                    $res2=$mod->add($fujdata);
+                    if($res2){
+                        $return=array("status"=>1,"info"=>"会员添加成功");
+                    }else{
+                        $this->where(array("a_id"=>$id))->delete();
+                        $return=array("status"=>0,"info"=>"附加信息添加失败");
+                    }
+                }else{
+                    //工人
+                    $mod=M("Gongren");
                     $fujdata['a_id']=$id;
                     $res2=$mod->add($fujdata);
                     if($res2){
