@@ -167,7 +167,8 @@ class CommonAction extends Action {
 
         if (!$upload->upload()) {// 上传错误提示错误信息
             #echo json_encode(array('status' => 0, 'info' => $upload->getErrorMsg()));
-            echo $upload->getErrorMsg();
+            #echo $upload->getErrorMsg();
+            return "";
         } else {// 上传成功 获取上传文件信息
             return $info = $upload->getUploadFileInfo();
         }
