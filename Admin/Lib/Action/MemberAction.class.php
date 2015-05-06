@@ -2714,5 +2714,10 @@ class MemberAction extends CommonAction {
         }
         $this->display("addgr");
     }
-
+    /**
+     * 添加好友
+     */
+    function addfirendgx(){
+       
+    }
 }
