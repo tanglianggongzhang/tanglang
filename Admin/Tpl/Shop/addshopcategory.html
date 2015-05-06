@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>商城分类-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+</head>
+<body>
+<div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：<a href="{:U('Shop/shopcategory')}" class="a1">商城分类</a>>>添加分类</div>
+      <div class="center_t">
+          <form action="" method="POST" id="form1" name="form1" enctype="multipart/form-data" >
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
+            <tr align="left"  class="center_t_d">
+                <td width="20%">名称</td>
+                <td align="left">
+                    <input type="text" size="100" name="cname" id="cname" value="{$info.cname}" />
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%">分类图标</td>
+                <td align="left">
+                    <input type="file" name="clogo" id="clogo" value="" />
+                    <if condition="!empty($info[clogo])">
+                        <img src="{$systemConfig.SITE_INFO.url}{$info.clogo}" width="100"/>
+                    </if>
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%">上级分类</td>
+                <td align="left">
+                    <select id="pid" name="pid">
+                        <option value="0">顶级分类</option>
+                        <volist name="sclist" id="vo">
+                            <option value="{$vo.cid}" <if condition="$vo[cid]==$info[pid]">selected</if>>{$vo.fullname}</option>
+                        </volist>
+                    </select>
+                </td>
+            </tr>
+                
+            <tr align="left"  class="center_t_d">
+              <td colspan="2"><input type="hidden" id="cid" name="cid" value="{$info.cid}" />   
+                <input type="submit" class="btn submit" value="提交" id="sub" name="sub" /></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+</body>
+</html>
