@@ -407,6 +407,118 @@ class GongzhangAction extends CommonAction {
         else
             echo 0;
     }
+    /**
+     * 快速
+     * ajax
+     * 修改日记分类名称
+     */
+    public function ajaxupdate_cate_rj(){
+        $name = $_POST['name'];
+        $id = $_POST['id'];
+        $m = M("Rijicategory");
+        $rs = $m->where("cid=" . $id)->save(array("cname" => $name));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
+    
+    /**
+     * 日记分类
+     */
+    public function category_riji(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("gzlist",  $this->getgzh());
+        if(IS_POST){
+            $uid=$_POST['uid'];
+            $cname=  trim($_POST['cname']);
+            if(empty($cname)){
+                $this->error("分类名称不能为空！");
+                exit;
+            }
+            #检查分类名称是否存在
+            if($this->category_rj_exist($cname, $uid)){
+                $this->error("分类名称已经存在！");
+                exit;
+            }
+            $adduid=$_SESSION['my_info']['a_id'];
+            $data=array(
+                "cname"=>$cname,
+                "uid"=>$uid,
+                "adduid"=>$adduid
+            );
+            $M=M("Rijicategory");
+            $rs=$M->add($data);
+            if($rs)
+                $this->success ("操作成功！");
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
+        
+        $where="1";
+        @import("ORG.Util.Page");
+        
+        
+        $M=D("RijicategoryView");
+        $cou=$M->where($where)->order("cid desc")->count();
+        $page=new Page($cou, 10);
+        $list=$M->where($where)->order("cid desc")->limit($page->firstRow.",".$page->listRows)->select();
+        $this->assign("list",$list);
+        
+        $this->display();
+    }
+    /**
+     * 删除日记分类
+     */
+    public function del_cate_rj(){
+        $id=$_GET['id'];
+        $M=M("Rijicategory");
+        $rs=$M->where("cid=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+
+    /**
+     * 添加装修日记
+     */
+    public function add_riji(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->display();
+    }
+    /**
+     * 编辑装修日记
+     */
+    public  function edit_riji(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->display("add_riji");
+    }
+    /**
+     * 删除装修日记
+     */
+    public function del_riji(){
+        
+    }
+    /**
+     * 列表 
+     * 装修日记
+     */
+    public function list_riji(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->display();
+    }
+
+
+
+
+
+//--------------------------------------------------
 
     /**
      * 图片集合
@@ -467,7 +579,7 @@ class GongzhangAction extends CommonAction {
      * 获取工长列表
      */
     private function getgzh() {
-        $is_qx=$_SESSION['my_info']['role'];
+        $is_qx=  $this->getqx($_SESSION['my_info']['role']);
         $where ="1";
         if($is_qx==1){
             $p_id=$_SESSION['my_info']['proid'];
@@ -480,5 +592,17 @@ class GongzhangAction extends CommonAction {
         $list = $M->where($where)->field("a_id,a_name,truename")->select();
         return $list;
     }
-
+    /**
+     * 检查
+     * 日记分类名称是否存在
+     */
+    private function category_rj_exist($cname,$uid){
+        $m=M("Rijicategory");
+        $rs=$m->where(array("cname"=>$cname,"uid"=>$uid))->count();
+        if($rs>0)
+            return 1;
+        else
+            return 0;
+    }
+    
 }

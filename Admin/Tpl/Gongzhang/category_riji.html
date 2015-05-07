@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>日记分类-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+<script>
+jQuery(document).ready(function($) {
+	$('.theme-login').click(function(){
+		window.location.href="{:U('Gongzhang/addsgdt')}";
+	})
+	
+		
+		
+	
+
+})
+function close_win(){
+	$(".theme-popover").html("");
+		
+	$('.theme-popover-mask').fadeOut(100);
+	$('.theme-popover').slideUp(200);
+}
+
+</script>
+<style>
+.fontb {
+	display: block;
+	float: right;
+	margin-right: 56px;
+}
+.tuji{ border: 1px solid #0070a9; }
+</style>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.doubledate').kuiDate({
+		className:'doubledate',
+		isDisabled: "1"  // isDisabled为可选参数，“0”表示今日之前不可选，“1”标志今日之前可选
+	});
+});
+</script>
+</head>
+
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：日记分类</div>
+      <div class="center_r_z">
+        <form method="POST" name="search_form" id="search_form" action=""  >
+          <label>工长</label>
+          <select id="uid" name="uid" class="choose">
+              <option value="">请选择</option>
+              <volist id="vo" name="gzlist">
+                  <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if>>{$vo.a_name}[{$vo.truename}]</option>
+              </volist>
+          </select>
+          <label>名称</label>
+          <input type="text" class="input1" name="cname" id="cname" value=""  />
+          <input name="sub" type="submit"  value="添加" class="sub1" />
+        </form>
+          
+        <div class="theme-popover"> </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      
+      
+      <div class="center_r_z">
+        <form method="GET" name="search_form1" id="search_form1" action=""  >
+          <label>工长</label>
+          <select id="uid" name="uid" class="choose">
+              <option value="">请选择</option>
+              <volist id="vo" name="gzlist">
+                  <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if>>{$vo.a_name}[{$vo.truename}]</option>
+              </volist>
+          </select>
+          <label>名称</label>
+          <input type="text" class="input1" name="cname" id="cname" value=""  />
+          <input name="sub" type="submit"  value="搜索" class="sub1" />
+        </form>
+          
+        <div class="theme-popover"> </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      
+      
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        <tr class="center_t_t">
+          <td class="td1" width="135">编号</td>
+          <td width="135">名称</td>
+          <td width="135">工长</td>
+          <td class="td2" width="135">操作</td>
+        </tr>
+        <volist id="vo" name="list">
+          <tr class="center_t_d">
+            <td class="td1" width="135">{$vo.cid}</td>
+            <td width="135" ondblclick="dj('{$vo.cid}','{$vo.cname}')" id="tpname_{$vo.cid}">{$vo.cname}</td>
+            <td class="td1" width="135">{$vo.mname}[{$vo.truename}]</td>
+            <td width="135"><a name="{$vo.cname}" link="{:U('Gongzhang/del_cate_rj',array('id'=>$vo[cid]))}" style="cursor:pointer" class="del">删除</a></td>
+          </tr>
+        </volist>
+      </table>
+      <div class="paging">
+        <div class="paging_l">{$page}</div>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+<script>
+//删除
+$(".del").click(function(){
+    var n=$(this).attr("name");
+    if(confirm("您确定要删除会员["+n+"]吗？")){
+        window.location.href=$(this).attr("link");
+    }
+});
+function dj(id,sname){
+	$("#tpname_"+id).html("<input type='text' class='tuji' name='tpnames_"+id+"' id='tpnames_"+id+"' value='"+sname+"' onblur='gbdj(this.value,"+id+")'  />");
+}
+function gbdj(namestr,id){
+	$.ajax({
+		data:"id="+id+"&name="+namestr,	
+		type:"POST",
+		dataType:"JSON",
+		url:"{:U('Gongzhang/ajaxupdate_cate_rj')}",
+		success: function(msg){
+			$("#tpname_"+id).html(namestr);
+		}
+	});
+}
+
+	    
+</script>
+</body>
+</html>
