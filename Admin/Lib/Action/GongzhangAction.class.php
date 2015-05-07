@@ -145,7 +145,12 @@ class GongzhangAction extends CommonAction {
             $this->assign("step", 2);
             $this->display();
         } else {
+            
             $gzid = $_GET['gzid'];
+            if(empty($gzid)){
+                $this->error("请选择工长！");
+                exit;
+            }
             $this->assign("gzid", $gzid);
             $this->assign("step", $step);
             $conf = include_once './Common/config2.php';
@@ -573,6 +578,10 @@ class GongzhangAction extends CommonAction {
            exit;
         }else{
             $uid=$_GET['gzid'];
+            if(empty($uid)){
+                $this->error("请选择工长！");
+                exit;
+            }
             $this->assign("rijicategory",  $this->getrijicategory($uid));
             $pc=$this->getprovcity($uid);
             $this->assign("p_id",$pc['p_id']);
@@ -737,6 +746,57 @@ class GongzhangAction extends CommonAction {
     public function list_case(){
         parent::_initalize();
         $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("gzlist", $this->getgzh()); #工长
+        $cmod = new CityModel();
+        $pro_list = $cmod->getcity(1);
+        $this->assign("pro_list", $pro_list);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $this->assign("is_qx", $is_qx);
+        if ($is_qx == 0) {
+            $p_id = $_GET['province'];
+            $c_id = $_GET['city'];
+        } else {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+        }
+        $keys = $_GET['keys'];
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+        $uid = $_GET['uid'];
+
+        $this->assign("keys", $keys);
+        $this->assign("uid", $uid);
+        $this->assign("p_id", $p_id);
+        $this->assign("c_id", $c_id);
+        $this->assign("cityname", $cmod->getname($c_id));
+        
+        import("ORG.Util.Page");
+        $where = "cases.type=1 ";
+        if (!empty($p_id))
+            $where.=" and cases.p_id=" . $p_id;
+        if (!empty($c_id))
+            $where.=" and cases.c_id=" . $c_id;
+        if (!empty($keys))
+            $where.=" and cases.title like '%" . $keys . "%'";
+        if (!empty($uid))
+            $where.=" and cases.uid=" . $uid;
+        
+
+        $M = D("CaseView");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("cases.addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        
+
+        $this->assign("page", $p->show());
+        $inf = include_once './Common/config2.php';
+        foreach ($list as $k => $v) {
+            $list[$k]['is_jds'] = $v['is_jd']==1?"经典":"普通";
+            $list[$k]['status_f'] = $v['status'] == 1 ? "已审核" : "未审核";
+        }
+        $this->assign("list", $list);
+        $this->assign("jd", $inf['zxjd']);
+      
+        
         $this->display();
     }
     /**
@@ -744,6 +804,83 @@ class GongzhangAction extends CommonAction {
      * 添加
      */
     public function add_case(){
+        if(IS_POST){
+            $p_id=$_POST['p_id'];
+            $c_id=$_POST['c_id'];
+            $gzid=$_POST['gzid'];
+            $type=1;
+            $title=trim($_POST['title']);
+            $is_jd=$_POST['is_jd'];
+            $hid=$_POST['hid'];
+            $fid=$_POST['fid'];
+            $price=trim($_POST['price']);
+            $mianji=trim($_POST['mianji']);
+            $description=trim($_POST['description']);
+            $keywords=trim($_POST['keywords']);
+            $goods=trim($_POST['goods']);
+            $comments=trim($_POST['comments']);
+            $status=$_POST['status'];
+            $fengmian=$_POST['fengmian'];
+            $jianjie=trim($_POST['jianjie']);
+            
+            
+            $m = M("Case");
+            $cou = $m->where("title='" . $title . "'")->count();
+            if ($cou > 0) {
+                $this->error("该案例已经存在！");
+                exit;
+            }
+            
+            
+            $tpjhlist = $this->gettpjhlist(); #图片集合分类
+            $tjarr = $this->gettjkeys($tpjhlist); #图片集合的key值
+            $tjinfo = $this->gettjarr($tpjhlist); #
+            
+            $path = "/Uploads/product/";
+            $info = $this->upload("." . $path);
+            $tj = array();
+
+            if (!empty($info)) {
+                foreach ($info as $k => $v) {
+                    if (in_array($v['key'], $tjarr)) {
+                        $i = explode("_", $v['key']);
+                        $tj[$i[1]]["title"] = $tjinfo[$v['key']];
+                        $tj[$i[1]]["img"][] = $path . $v['savename'];
+                    }
+                }
+                $tuji = json_encode($tj);
+            }
+            
+            $data=array();
+            if (!empty($fengmian))
+                $data['fmimg'] = $path . $fengmian;
+            if(!empty($tuji))
+                $data['img']=$tuji;
+            $data['type']=1;
+            $data['title']=$title;
+            $data['is_jd']=$is_jd;
+            $data['hid']=$hid;
+            $data['fid']=$fid;
+            $data['price']=$price;
+            $data['mianji']=$mianji;
+            $data['description']=$description;
+            $data['keywords']=$keywords;
+            $data['goods']=$goods;
+            $data['comments']=$comments;
+            $data['jianjie']=$jianjie;
+            $data['p_id']=$p_id;
+            $data['c_id']=$c_id;
+            $data['uid']=$gzid;
+            $data['adduid']=$_SESSION['my_info']['a_id'];
+            $data['addtime']=time();
+            $data['status']=$status;
+            $rs=$m->add($data);
+            if($rs)
+                $this->success ("操作成功!");
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
         parent::_initalize();
         $this->assign("systemConfig",$this->systemConfig);
         $step=$_GET['step'];
@@ -752,6 +889,21 @@ class GongzhangAction extends CommonAction {
             $this->assign("list",  $this->getgzh());
             $this->display();
         }else{
+            $uid=$_GET['gzid'];
+            if(empty($uid)){
+                $this->error("请选择工长！");
+                exit;
+            }
+            
+            $pc=$this->getprovcity($uid);
+            $this->assign("p_id",$pc['p_id']);
+            $this->assign("c_id",$pc['c_id']);
+            $this->assign("gzid",$uid);
+            $this->assign("step",$step);
+            
+            $this->assign("hxcategory",  $this->gethxlist());#户型
+            $this->assign("fgcategory",  $this->getfglist());#风格
+            $this->assign("tpjhlist",$this->gettpjhlist());#图集分类
             $this->display("add_case2");
         }
         
@@ -763,6 +915,16 @@ class GongzhangAction extends CommonAction {
     public function edit_case(){
         parent::_initalize();
         $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("hxcategory",  $this->gethxlist());#户型
+        $this->assign("fgcategory",  $this->getfglist());#风格
+        $this->assign("tpjhlist",$this->gettpjhlist());#图集分类
+        $id=$_GET['id'];
+        $M=M("Case");
+        $info=$M->where("id=".$id)->find();
+        $this->assign("info",$info);
+        
+        
+        
         $this->display();
     }
     /**
@@ -770,9 +932,46 @@ class GongzhangAction extends CommonAction {
      * 删除
      */
     public function del_case(){
+        $id=$_GET['id'];
+        $m = M("Case");
+        $info = $m->where("id=" . $id)->field("img,fmimg")->find();
+        if (!empty($info['fmimg'])) {
+            unlink("." . $info['fmimg']);
+        }
+        if (!empty($info['img'])) {
+            $imgjx = json_decode($info['img']);
+            #print_r($imgjx);
+            foreach ($imgjx as $k => $v) {
+                foreach ($v->img as $k1 => $v1) {
+                    unlink("." . $v1);
+                }
+            }
+        }
+
+        $rs = $m->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功!");
+        else
+            $this->error("操作失败!");
         
     }
-
+    /**
+     * 修改装修案例状态
+     */
+public function casetatus(){
+    $id=$_GET['id'];
+    $status=$_GET['status'];
+    if($status==1)
+        $statuss=0;
+    else
+        $statuss=1;
+    $M=M("Case");
+    $rs=$M->where("id=".$id)->save(array("status"=>$statuss));
+    if($rs)
+        $this->success ("操作成功!");
+    else
+        $this->error ("操作失败！");
+}
 
 //--------------------------------------------------
 
@@ -793,6 +992,14 @@ class GongzhangAction extends CommonAction {
     private function gethxlist() {
         $hxmod = M("Hxcategory");
         $hxlist = $hxmod->where(1)->select();
+        return $hxlist;
+    }
+    /**
+     * 风格
+     */
+    private function getfglist(){
+        $fgmod = M("Fgcategory");
+        $hxlist = $fgmod->where(1)->select();
         return $hxlist;
     }
 
