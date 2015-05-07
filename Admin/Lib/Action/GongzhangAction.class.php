@@ -393,6 +393,23 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("修改失败！");
     }
+    /**
+     * 修改状态
+     */
+    public function rijistatus(){
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        if ($status == 1)
+            $status_u = 0;
+        if ($status == 0)
+            $status_u = 1;
+        $M = M("Riji");
+        $rs = $M->where("id=" . $id)->save(array("status" => $status_u));
+        if ($rs)
+            $this->success("修改成功！");
+        else
+            $this->error("修改失败！");
+    }
 
     /**
      * 修改排序
@@ -402,6 +419,21 @@ class GongzhangAction extends CommonAction {
         $id = $_POST['id'];
         $m = M("Shigongdt");
         $rs = $m->where("id=" . $id)->save(array("sort" => $sort));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
+    /**
+     * 快速修改
+     * 日记 点击次数
+     * 
+     */
+    public function ajaxupdate_rj_click(){
+        $sort = $_POST['sort'];
+        $id = $_POST['id'];
+        $m = M("Riji");
+        $rs = $m->where("id=" . $id)->save(array("click" => $sort));
         if ($rs)
             echo 1;
         else
@@ -460,7 +492,6 @@ class GongzhangAction extends CommonAction {
         $where="1";
         @import("ORG.Util.Page");
         
-        
         $M=D("RijicategoryView");
         $cou=$M->where($where)->order("cid desc")->count();
         $page=new Page($cou, 10);
@@ -486,23 +517,161 @@ class GongzhangAction extends CommonAction {
      * 添加装修日记
      */
     public function add_riji(){
+        if(IS_POST){
+            $gzid=$_POST['gzid'];
+            $p_id=$_POST['p_id'];
+            $c_id=$_POST['c_id'];
+            $adduid=$_SESSION['my_info']['a_id'];
+            $title=trim($_POST['title']);
+            if(empty($title)){
+                $this->error("标题不能为空！");
+                exit;
+            }
+            if($this->rj_exist($title)){
+                $this->error("日记标题已经存在！");
+                exit;
+            }
+            $jianjie=  trim($_POST['jianjie']);
+            $description=  trim($_POST['description']);
+            $keywords=  trim($_POST['keywords']);
+            $classid=$_POST['classid'];
+            $click=$_POST['click'];
+            $content=$_POST['content'];
+            $source=$_POST['source'];
+            
+            $data=array();
+            $data['title']=$title;
+            $data['fmimg']="/Uploads/product/".$_POST['fengmian'];
+            $data["jianjie"]=$jianjie;
+            $data['description']=$description;
+            $data['keywords']=$keywords;
+            $data['classid']=$classid;
+            $data['click']=$click;
+            $data['addtime']=  time();
+            $data['content']=$content;
+            $data['p_id']=$p_id;
+            $data['c_id']=$c_id;
+            $data['uid']=$gzid;
+            $data['adduid']=$adduid;
+            $data['source']=$source;
+            $M=M("Riji");
+            $rs=$M->add($data);
+            if($rs)
+                $this->success ("操作成功",U("Gongzhang/list_riji"));
+            else
+                $this->error ("操作失败");
+            exit;
+        }
         parent::_initalize();
         $this->assign("systemConfig",$this->systemConfig);
-        $this->display();
+        $this->assign("list",$this->getgzh()); #工长列表
+        $step=$_GET['step'];
+        $step=  empty($step)?1:$step;
+        if($step==1){
+            
+           $this->display();
+           exit;
+        }else{
+            $uid=$_GET['gzid'];
+            $this->assign("rijicategory",  $this->getrijicategory($uid));
+            $pc=$this->getprovcity($uid);
+            $this->assign("p_id",$pc['p_id']);
+            $this->assign("c_id",$pc['c_id']);
+            $this->assign("gzid",$uid);
+            $this->assign("step",$step);
+            $this->display("add_riji2");
+        }
+        
     }
     /**
      * 编辑装修日记
      */
     public  function edit_riji(){
+        if(IS_POST){
+            $id=$_POST['id'];
+            $M=M("Riji");
+            $info=$M->where("id=".$id)->find();
+            $content=trim($_POST['content']);
+            $uid=$_POST['uid'];
+            $title=  trim($_POST['title']);
+            $description=  trim($_POST['description']);
+            $keywords=trim($_POST['keywords']);
+            $jianjie=trim($_POST['jianjie']);
+            $classid=$_POST['classid'];
+            $click=  trim($_POST['click']);
+            $source=  trim($_POST['source']);
+            $shoucang=  trim($_POST['shoucang']);
+            $status=trim($_POST['status']);
+            $fengmian=  trim($_POST['fengmian']);
+            
+            
+            $data=array();
+            if(empty($title)){
+                $this->error("标题不能为空！");exit;
+            }
+            if(!empty($fengmian)){
+                $fengmians="/Uploads/product/".$fengmian;
+                $data['fmimg']=$fengmians;
+            }
+            
+            if($info['title']!=$title)
+                $data['title']=$title;
+            if($info['jianjie']!=$jianjie)
+                $data['jianjie']=$jianjie;
+            if($info['description']!=$description)
+                $data['description']=$description;
+            if($info['keywords']!=$keywords)
+                $data['keywords']=$keywords;
+            if($info['classid']!=$classid)
+                $data['classid']=$classid;
+            if($info['click'!=$click])
+                $data['click']=$click;
+            if($info['content']!=$content)
+                $data['content']=$content;
+            if($info['uid']!=$uid)
+                $data['uid']=$uid;
+            if($info['source']!=$source)
+                $data['source']=$source;
+            if($info['shoucang']!=$shoucang)
+                $data['shoucang']=$shoucang;
+            
+            if($info['status']!=$status)
+                $data['status']=$status;
+            
+            $data['addtime']=  time();
+            
+            $rs=$M->where("id=".$id)->save($data);
+            if($rs)
+                $this->success ("操作成功！",U("Gongzhang/list_riji"));
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
         parent::_initalize();
         $this->assign("systemConfig",$this->systemConfig);
-        $this->display("add_riji");
+        $id=$_GET['id'];
+        $M=M("Riji");
+        $info=$M->where("id=".$id)->find();
+        $this->assign("gzlist",$this->getgzh()); #工长列表
+        $this->assign("rijicategory",  $this->getrijicategory($info["uid"]));
+        $this->assign("info",$info);
+        $this->display();
     }
     /**
      * 删除装修日记
      */
     public function del_riji(){
-        
+        $id=$_GET['id'];
+        $M=M("Riji");
+        $fmimg=$M->where("id=".$id)->field("fmimg")->find();
+        if(!empty($fmimg)){
+            unlink(".".$fmimg['fmimg']);
+        }
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功");
+        else
+            $this->error ("操作失败");
     }
     /**
      * 列表 
@@ -511,11 +680,98 @@ class GongzhangAction extends CommonAction {
     public function list_riji(){
         parent::_initalize();
         $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("gzlist", $this->getgzh()); #工长
+        $cmod = new CityModel();
+        $pro_list = $cmod->getcity(1);
+        $this->assign("pro_list", $pro_list);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $this->assign("is_qx", $is_qx);
+        if ($is_qx == 0) {
+            $p_id = $_GET['province'];
+            $c_id = $_GET['city'];
+        } else {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+        }
+        $keys = $_GET['keys'];
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+        $uid = $_GET['uid'];
+
+        $this->assign("keys", $keys);
+        $this->assign("uid", $uid);
+        $this->assign("p_id", $p_id);
+        $this->assign("c_id", $c_id);
+        $this->assign("cityname", $cmod->getname($c_id));
+        
+        import("ORG.Util.Page");
+        $where = "1";
+        if (!empty($p_id))
+            $where.=" and Riji.p_id=" . $p_id;
+        if (!empty($c_id))
+            $where.=" and Riji.c_id=" . $c_id;
+        if (!empty($keys))
+            $where.=" and Riji.title like '%" . $keys . "%'";
+        if (!empty($uid))
+            $where.=" and Riji.uid=" . $uid;
+        
+
+        $M = D("RijiView");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("Riji.addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        #echo $M->getLastSql();
+
+        $this->assign("page", $p->show());
+        
+        foreach ($list as $k => $v) {
+            $list[$k]['status_f'] = $v['status'] == 1 ? "已审核" : "未审核";
+        }
+        $this->assign("list", $list);
+        
         $this->display();
     }
-
-
-
+    /**
+     * 装修案例
+     * 列表
+     */
+    public function list_case(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->display();
+    }
+    /**
+     * 装修案例
+     * 添加
+     */
+    public function add_case(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $step=$_GET['step'];
+        $step=empty($step)?1:$step;
+        if($step==1){
+            $this->assign("list",  $this->getgzh());
+            $this->display();
+        }else{
+            $this->display("add_case2");
+        }
+        
+    }
+    /**
+     * 装修案例
+     * 编辑
+     */
+    public function edit_case(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->display();
+    }
+    /**
+     * 装修案例
+     * 删除
+     */
+    public function del_case(){
+        
+    }
 
 
 //--------------------------------------------------
@@ -604,5 +860,28 @@ class GongzhangAction extends CommonAction {
         else
             return 0;
     }
-    
+    /**
+     * 检查日记标题是否存在
+     */
+    private function rj_exist($title){
+        $m=M("Riji");
+        $rs=$m->where("title='".$title."'")->count();
+        if($rs>0)
+            return 1;
+        else
+            return 0;
+    }
+
+    /**
+     * 根据uid
+     * 获取
+     * 日记分类
+     * 
+     */
+    private function getrijicategory($uid){
+       $M=M("Rijicategory");
+       $list=$M->where("uid=".$uid)->select();
+       
+       return $list;
+    }
 }
