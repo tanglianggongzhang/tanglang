@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    <title>添加-设计案例-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+    <meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+    <include file="Common:comHead" />
+    <link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+    <link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+    <link href="__ROOT__/Public/css/theme.css" rel="stylesheet" />
+    <script src="__ROOT__/Public/tuxcj/js/jquery-1.7.2.min.js"></script>
+    <script src="__ROOT__/Public/js/jquery.validate.js"></script>
+
+    <!--上传组件start-->
+    <link rel="stylesheet" type="text/css" href="__ROOT__/Public/tuxcj/css/jquery.Jcrop.min.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__ROOT__/Public/tuxcj/js/uploadify-v3.1/uploadify.css" media="all">
+    <script type="text/javascript" src="__ROOT__/Public/tuxcj/js/uploadify-v3.1/jquery.uploadify-3.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/tuxcj/js/jquery.Jcrop.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/tuxcj/js/ThinkBox/jquery.ThinkBox.js"></script>
+    <link rel="stylesheet" type="text/css" href="__ROOT__/Public/tuxcj/js/ThinkBox/css/ThinkBox.css" media="all">
+    <!--上传组件 end-->
+    <style type="text/css">
+.main {
+	margin: 0 auto;
+	padding: 15px;
+	width: 750px;
+	font-family: "microsoft yahei";
+	background-color: #F5F5F5;
+}
+.cf:before, .cf:after {
+	display: table;
+	content: "";
+	line-height: 0;
+}
+.cf:after {
+	clear: both;
+}
+.cf {
+ *zoom: 1;
+}
+.upload-area {
+	position: relative;
+	float: left;
+	margin-right: 30px;
+	width: 200px;
+	height: 200px;
+	background-color: #F5F5F5;
+	border: 2px solid #E1E1E1;
+}
+.upload-area .file-tips {
+	position: absolute;
+	top: 90px;
+	left: 0;
+	padding: 0 15px;
+	width: 170px;
+	line-height: 1.4;
+	font-size: 12px;
+	color: #A8A8A3;
+	text-align: center;
+}
+.userup-icon {
+	display: inline-block;
+	margin-right: 3px;
+	width: 16px;
+	height: 16px;
+	vertical-align: -2px;
+	background: url("__ROOT__/Public/tuxcj/img/userup_icon.png") no-repeat;
+}
+.uploadify-button {
+	line-height: 120px!important;
+	text-align: center;
+}
+.preview-area {
+	float: left;
+}
+.tcrop {
+	clear: right;
+	font-size: 14px;
+	font-weight: bold;
+}
+.update-pic .crop {
+	background: url("__ROOT__/Public/tuxcj/img/mystery.png") no-repeat scroll center center #EEEEEE;
+	float: left;
+	margin-bottom: 20px;
+	margin-top: 10px;
+	overflow: hidden;
+}
+.crop100 {
+	height: 100px;
+	width: 100px;
+}
+.crop60 {
+	height: 60px;
+	margin-left: 20px;
+	width: 60px;
+}
+.update-pic .save-pic {
+	clear: left;
+	margin-right: 20px;
+}
+.update-pic .uppic-btn {
+	background-color: #348FD4;
+	color: #FFFFFF;
+	display: block;
+	float: left;
+	font-size: 16px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	vertical-align: middle;
+	width: 89px;
+}
+.preview {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 11;
+	width: 200px;
+	height: 200px;
+	overflow: hidden;
+	background: #fff;
+	display: none;
+}
+</style>
+    <style>
+.rowtpjh {
+	border: 1px solid #0081C2;
+	margin: 5px;
+	padding: 5px;
+}
+</style>
+    <script language="javascript" src="__PUBLIC__/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/ckfinder/ckfinder.js"></script>
+    </head>
+    <body>
+    <div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
+      <div class="center_r">
+        <div class="center">
+          <div class="center_r_t"> 您的位置：<a href="{:U('Sheji/index')}" class="a1">设计案例</a>>> <a href="{:U('Sheji/add_sj_case')}" class="a1">添加设计案例step1</a>>>添加设计案例step2 </div>
+          <div class="center_t">
+            <form action="" method="POST" id="form1" name="form1" enctype="multipart/form-data" >
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab center_t">
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">标题</td>
+                  <td align="left"><input type="text" size="100" name="title" id="title" value="" /></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">是否是经典案例</td>
+                  <td align="left"><label>
+                      <input type="radio" name="is_jd" id="is_jd" value="1" />
+                      经典</label>
+                    <label>
+                      <input type="radio" name="is_jd" id="is_jd" value="0" />
+                      普通</label></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">户型</td>
+                  <td align="left"><select id="hid" name="hid">
+                      <option value="">请选择</option>
+                      <volist id="vo" name="hxcategory">
+                      <option value="{$vo.id}" >{$vo.name}</option>
+                    </volist>
+                    </select></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">风格</td>
+                  <td align="left"><select id="hid" name="fid">
+                      <option value="">请选择</option>
+                      <volist id="vo" name="fgcategory">
+                      <option value="{$vo.id}" >{$vo.name}</option>
+                    </volist>
+                    </select></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">价格 
+                  </td>
+                  <td align="left"><input type="text" size="30" name="price" id="price" value="" />
+                    元 </td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">面积 
+                  </td>
+                  <td align="left"><input type="text" size="30" name="mianji" id="mianji" value="" />
+                    平方米 </td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">描述 [description]</td>
+                  <td align="left"><textarea id="description" name="description" rows="10" cols="50"></textarea></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">关键字 [keywords]</td>
+                  <td align="left"><input type="text" size="100" name="keywords" id="keywords" value="" /></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">好评数</td>
+                  <td align="left"><input type="text" size="10" name="goods" id="goods" value="" /></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">评论数目</td>
+                  <td align="left"><input type="text" size="10" name="comments" id="comments" value="" /></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">状态</td>
+                  <td align="left"><label>
+                      <input type="radio" name="status" id="status" value="1" />
+                      已经审核</label>
+                    <label>
+                      <input type="radio" name="status" id="status" value="0" />
+                      未审核</label></td>
+                </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">上传封面图片：</td>
+                  <td align="left"><input id="file_upload" name="file_upload" type="file" multiple="true">
+                    <div id="some_file_queue"> </div>
+                    <div class="imgList" id="image"></div>
+                    <input type="hidden" name="fengmian" id="yingyezhizhao" value="{$info.yingyezhizhao}" />
+                    <if condition="!empty($info[yingyezhizhao])"> <img src="__ROOT__/Uploads/product/{$info.yingyezhizhao}" height="100" /> </if></td>
+                </tr>
+                <volist id="vo" name="tpjhlist" key="k">
+                  <tr align="left"  class="center_t_d">
+                    <td width="20%">{$vo.name}--图片集合 <a href="javascript:addimgrow('{$vo.id}');" class="btn submit">添加</a></td>
+                    <td align="left"><div id="tpjh_{$vo.id}">
+                        <div class="rowtpjh">
+                        <input type="file" name="imgsrc_{$vo.id}[]" id="imgsrc[]" value="" />
+                      </div>
+                      </div></td>
+                  </tr>
+                </volist>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">简介</td>
+                  <td align="left"><textarea id="jianjie" name="jianjie" rows="10" cols="50"></textarea></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><input type="hidden" name="step" id="step" value="{$step}" />
+                    <input type="hidden" name="gzid" id="gzid" value="{$gzid}" />
+                    <input type="hidden" name="p_id" id="p_id" value="{$p_id}" />
+                    <input type="hidden" name="c_id" id="c_id" value="{$c_id}" />
+                    <input type="submit" class="btn submit" id="sub" name="sub" value="完成"/></td>
+                </tr>
+              </table>
+            </form>
+          </div>
+        </div>
+        <div class="foot"> <include file="Common:foot" /> </div>
+      </div>
+    </div>
+</body>
+</html>
+<script>
+     var k=1;
+        function addimgrow(id){
+            
+            var str="";
+            str+='<div  class="rowtpjh">';
+            str+='            <input type="file" name="imgsrc_'+id+'[]" id="imgsrc[]" value="" />';
+            str+='            </div>';
+            $("#tpjh_"+id).append(str);
+            k++;
+        }
+</script>
+<script>
+            $(function() {
+			$('#file_upload').uploadify({
+				'swf'      : '__ROOT__/Public/uploadimg/uploadify.swf',
+				'uploader' : '{:U("Member/scimg")}',
+				'auto':true, //自动上传
+				'buttonClass':'submit',//给上传按钮一个样式名称
+				'buttonImage':'__ROOT__/avatar/shangchuan.png',//上传按钮加上图片
+				//'buttonText':'增加图片',
+				'height':28,//按钮的高度,
+				'width':83,
+				//'checkExisting':'{:U("paicar/check-exists")}',
+				//'debug':true,
+				//'fileObjName':'the_files',
+				'fileSizeLimit':'2048KB',
+				'fileTypeDesc':'Image Files',
+				'fileTypeExts':'*.gif;*.jpg;*.png',
+				//'formData':{'someKey':'11','someOne':'bb'},
+				//'itemTemplate':'<div id="${fileID}" class="uploadify-queue-item">\
+//					<div class="cancel">\
+//						<a href="javascript:$(\'#${instanceID}\').uploadify(\'cancel\', \'${fileID}\')">X</a>\
+//					</div>\
+//					<span class="fileName">${fileName} (${fileSize})</span><span class="data"></span>\
+//					</div>',
+				'method':'post',
+				'multi':true,//是否允许多个文件上传,
+				'queueID'  : 'some_file_queue',
+				'queueSizeLimit':22,	
+				//'removeCompleted':false,	
+				//'removeTimeout':10,//从队列中删除已完成的上传文件，延迟几秒
+				'requeueErrors':true,
+				'onUploadStart':function(file){
+				//	console.log('Attempting to upload: ' + file.name);
+				}
+				,
+				'successTimeout':5,//等待服务器响应几秒提示成功,
+				'uploadLimit':1,//上传文件最大值
+				'onCancel':function(file){
+					//alert('the file '+file.name+' was cancelled');
+				},
+				'onClearQueue' : function(queueItemCount) {
+            		//alert(queueItemCount + ' file(s) were removed from the queue');
+        		},
+				'onUploadComplete':function(file){
+					//console.log(file);
+				},
+				'onUploadSuccess':function (file, data, response) {
+					if(response){
+						//console.log(data);
+						$("#image").html("<image src=__ROOT__/Uploads/product/"+data+" height=100 />");	
+						var yy=$("#yingyezhizhao").val();
+                                                if(yy!='')
+                                                $("#yingyezhizhao").val(yy+","+data);
+                                                else
+                                                    $("#yingyezhizhao").val(data);
+						
+					}else{
+						alert('图片'+file.name+"上传失败");
+					}
+					//console.log(data);
+					//console.log(response);
+					//console.log(file);
+					//alert('The file ' + data + ' was successfully uploaded with a response of ' + response + ':' + data);
+				},
+				'onQueueComplete' : function(queueData) {
+					//console.log(queueData);
+					//alert(queueData.uploadsSuccessful + ' files were successfully uploaded.');
+				}
+				
+				
+			});
+		});
+</script>
+<script type="text/javascript">
+CKEDITOR.replace( 'jianjie',
+{
+filebrowserBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html',
+filebrowserImageBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Images',
+filebrowserFlashBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Flash',
+filebrowserUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+filebrowserImageUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
+filebrowserFlashUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
+});
+</script>

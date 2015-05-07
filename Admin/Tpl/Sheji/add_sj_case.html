@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>设计案例-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+</head>
+<body>
+<div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：<a href="{:U('Sheji/index')}" class="a1">设计案例</a>>>添加设计案例step1</div>
+      <div class="center_t">
+          <form action="" method="GET" id="form1" name="form1" >
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
+            <tr align="left"  class="center_t_d">
+                <td width="20%">选择设计师</td>
+                <td align="left">
+                    <input type="text" size="100" name="gname" id="gname" value="" onchange="xzgz()" placeholder="在此输入登录名进行搜索设计师" /><br/>
+                    
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%"></td>
+                <td align="left">
+                    
+                    <select id="gzid" name="gzid">
+                        <option value="">选择设计师</option>
+                        <volist id="vo" name="list">
+                            <option value="{$vo.a_id}">{$vo.a_name}[{$vo.truename}]</option>
+                        </volist>
+                    </select>
+                </td>
+            </tr>
+                
+            <tr align="left"  class="center_t_d">
+              <td colspan="2">
+                  <input type="hidden" name="step" id="step" value="2" />
+                <input type="submit" class="btn submit" value="下一步" id="sub" name="sub" /></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+    <script>
+    function xzgz(){
+        var gname=$("#gname").val();
+        $.ajax({
+            data:"gname="+gname,
+            cache:false,
+            type:"post",
+            datatype:"json",
+            url:"{:U('Sheji/ajaxgetsj')}",
+            success:function(msg){
+                var msg=eval("("+msg+")");
+                if(msg.status==1){
+                    $("#gzid").empty();
+                    var str="";
+                    var len=msg.data.length;
+                    var i=0;
+                    for(i=0;i<len;i++){
+                        str+="<option value='"+msg.data[i].a_id+"'>"+msg.data[i].a_name+"["+msg.data[i].truename+"]</option>";
+                    }
+                    $("#gzid").append(str);
+                }
+                
+            }
+        });
+    }
+    </script>
+</body>
+</html>
