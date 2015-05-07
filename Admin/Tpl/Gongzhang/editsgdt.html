@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
     <head>
-        <title>添加-施工动态-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+        <title>编辑施工动态-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
@@ -145,42 +145,49 @@
   <div class="center_r">
     <div class="center">
       <div class="center_r_t">
-      您的位置：<a href="{:U('Gongzhang/index')}" class="a1">施工动态</a>>>
-            <a href="{:U('Gongzhang/addsgdt')}" class="a1">添加施工动态step1</a>>>添加施工动态step2
+      您的位置：<a href="{:U('Gongzhang/index')}" class="a1">施工动态</a>>>编辑施工动态
       </div>
       <div class="center_t">
           <form action="" method="POST" id="form1" name="form1" enctype="multipart/form-data" >
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab center_t">
                 
+            <tr align="left"  class="center_t_d">
+                <td width="20%">工长</td>
+                <td align="left">
+                    
+                    <select id="uid" name="uid">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="gzlist">
+                            <option value="{$vo.a_id}" <if condition="$info[uid]==$vo[a_id]">selected</if>>{$vo.a_name}</option>
+                        </volist>
+                    </select>
+                </td>
+            </tr>
                  
             <tr align="left"  class="center_t_d">
                 <td width="20%">标题</td>
                 <td align="left">
-                    <input type="text" size="100" name="title" id="title" value="" />
+                    <input type="text" size="100" name="title" id="title" value="{$info.title}" />
                 </td>
             </tr>
             <tr align="left"  class="center_t_d">
                 <td width="20%">概述</td>
                 <td align="left">
-                    <textarea id="gaishu" name="gaishu" rows="10" cols="50">
-                        
-                    </textarea>
+                    <textarea id="gaishu" name="gaishu" rows="10" cols="50">{$info.gaishu}</textarea>
                    
                 </td>
             </tr>
             <tr align="left"  class="center_t_d">
                 <td width="20%">描述 [description]</td>
                 <td align="left">
-                    <textarea id="description" name="description" rows="10" cols="50">
-                        
-                    </textarea>
+                    <textarea id="description" name="description" rows="10" cols="50">{$info.description}</textarea>
                    
                 </td>
             </tr>
             <tr align="left"  class="center_t_d">
                 <td width="20%">关键字 [keywords]</td>
                 <td align="left">
-                     <input type="text" size="100" name="keywords" id="keywords" value="" />
+                     <input type="text" size="100" name="keywords" id="keywords" value="{$info.keywords}" />
                    
                 </td>
             </tr>    
@@ -190,7 +197,7 @@
                     <select name="huxing" id="huxing">
                         <option value="">请选择</option>
                         <volist id="vo" name="hxlist">
-                            <option value="{$vo.id}">{$vo.name}</option>
+                            <option value="{$vo.id}" <if condition="$vo[id]==$info[huxing]">selected</if>>{$vo.name}</option>
                         </volist>
                    </select>
                 </td>
@@ -198,19 +205,19 @@
             <tr align="left"  class="center_t_d">
                 <td width="20%">面积</td>
                 <td align="left">
-                    <input type="text" size="10" name="mianji" id="mianji" value="" />平米
+                    <input type="text" size="10" name="mianji" id="mianji" value="{$info.mianji}" />平米
                 </td>
             </tr>    
             <tr align="left"  class="center_t_d">
                 <td width="20%">预算</td>
                 <td align="left">
-                    <input type="text" size="10" name="yusuan" id="yusuan" value="" />万元
+                    <input type="text" size="10" name="yusuan" id="yusuan" value="{$info.yusuan}" />万元
                 </td>
             </tr>  
             <tr align="left"  class="center_t_d">
                 <td width="20%">业主姓名</td>
                 <td align="left">
-                    <input type="text" size="10" name="yezhu" id="yezhu" value="" />
+                    <input type="text" size="10" name="yezhu" id="yezhu" value="{$info.yezhu}" />
                 </td>
             </tr> 
             <tr align="left"  class="center_t_d">
@@ -219,7 +226,7 @@
                     
                     <select id="jieduan" name="jieduan">
                         <volist id="vo" key="k" name="jd">
-                        <option value="{$k}">{$vo}</option>
+                            <option value="{$k}" <if condition="$info[jieduan]==$k">selected</if> >{$vo}</option>
                         </volist>
                     </select>
                 </td>
@@ -227,7 +234,7 @@
             <tr align="left"  class="center_t_d">
                 <td width="20%">排序</td>
                 <td align="left">
-                    <input type="text" size="10" name="sort" id="sort" value="" />
+                    <input type="text" size="10" name="sort" id="sort" value="{$info.sort}" />
                     
                 </td>
             </tr>
@@ -235,8 +242,8 @@
                 <td width="20%">状态</td>
                 <td align="left">
                     
-                    <label><input type="radio" name="status" id="status" value="1" />已经审核</label>
-                    <label><input type="radio" name="status" id="status" value="0" />未审核</label>
+                    <label><input type="radio" name="status" id="status" value="1" <if condition="$info[status]==1"> checked</if> />已经审核</label>
+                    <label><input type="radio" name="status" id="status" value="0" <if condition="$info[status]==0"> checked</if> />未审核</label>
                     
                 </td>
             </tr>                   
@@ -250,8 +257,8 @@
             </div>
             <div class="imgList" id="image"></div>
             <input type="hidden" name="fengmian" id="yingyezhizhao" value="{$info.yingyezhizhao}" />
-            <if condition="!empty($info[yingyezhizhao])">
-            <img src="__ROOT__/Uploads/product/{$info.yingyezhizhao}" height="100" />
+            <if condition="!empty($info[fmimg])">
+            <img src="__ROOT__{$info.fmimg}" height="100" />
             </if>
                     </td>
                 </tr>
@@ -264,6 +271,10 @@
                         <input type="file" name="imgsrc_{$vo.id}[]" id="imgsrc[]" value="" />
                         </div>
                     </div>
+                    <volist id="vo1" name="imglist[$k][img]">
+                        <img src="__ROOT__{$vo1}" width="100"/><br/> 
+                    </volist>
+                    
                     
                 </td>
             </tr>  
@@ -271,10 +282,10 @@
                 
                 <tr>
                     <td colspan="2">
-                        <input type="hidden" name="step" id="step" value="{$step}" />
-                  <input type="hidden" name="gzid" id="gzid" value="{$gzid}" />
-                  <input type="hidden" name="p_id" id="p_id" value="{$p_id}" />
-                  <input type="hidden" name="c_id" id="c_id" value="{$c_id}" />
+                      
+                  <input type="hidden" name="id" id="id" value="{$info.id}" />
+                  <input type="hidden" name="p_id" id="p_id" value="{$info.p_id}" />
+                  <input type="hidden" name="c_id" id="c_id" value="{$info.c_id}" />
                         <input type="submit" class="btn submit" id="sub" name="sub" value="完成"/></td>
                     
                 </tr>

@@ -19,7 +19,57 @@ class GongzhangAction extends CommonAction {
     public function index() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
+        $this->assign("gzlist", $this->getgzh()); #工长
+        $cmod = new CityModel();
+        $pro_list = $cmod->getcity(1);
+        $this->assign("pro_list", $pro_list);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $this->assign("is_qx", $is_qx);
+        if ($is_qx == 0) {
+            $p_id = $_GET['province'];
+            $c_id = $_GET['city'];
+        } else {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+        }
+        $keys = $_GET['keys'];
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+        $uid = $_GET['uid'];
 
+        $this->assign("keys", $keys);
+        $this->assign("uid", $uid);
+        $this->assign("p_id", $p_id);
+        $this->assign("c_id", $c_id);
+        $this->assign("cityname", $cmod->getname($c_id));
+        $jieduan = $_GET['jieduan'];
+        import("ORG.Util.Page");
+        $where = "1";
+        if (!empty($p_id))
+            $where.=" and Shigongdt.p_id=" . $p_id;
+        if (!empty($c_id))
+            $where.=" and Shigongdt.c_id=" . $c_id;
+        if (!empty($keys))
+            $where.=" and Shigongdt.title like '%" . $keys . "%'";
+        if (!empty($uid))
+            $where.=" and Shigongdt.uid=" . $uid;
+        if (!empty($jieduan))
+            $where.=" and Shigongdt.jieduan=" . $jieduan;
+
+        $M = D("ShigongdtView");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("Shigongdt.sort desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        #echo $M->getLastSql();
+
+        $this->assign("page", $p->show());
+        $inf = include_once './Common/config2.php';
+        foreach ($list as $k => $v) {
+            $list[$k]['jieduans'] = $inf["zxjd"][$v['jieduan']];
+            $list[$k]['status_f'] = $v['status'] == 1 ? "已审核" : "未审核";
+        }
+        $this->assign("list", $list);
+        $this->assign("jd", $inf['zxjd']);
+        $this->assign("jieduan", $jieduan);
         $this->display();
     }
 
@@ -28,20 +78,21 @@ class GongzhangAction extends CommonAction {
      */
     public function addsgdt() {
         if (IS_POST) {
-            $title=  trim($_POST['title']);
-            if(empty($title)){
+            $title = trim($_POST['title']);
+            if (empty($title)) {
                 $this->error("标题名称不能为空！");
                 exit;
             }
-            $m=M("Shigongdt");
-            $cou=$m->where("title='".$title."'")->count();
-            if($cou>0){
+            $m = M("Shigongdt");
+            $cou = $m->where("title='" . $title . "'")->count();
+            if ($cou > 0) {
                 $this->error("该施工动态已经存在！");
                 exit;
             }
             $tpjhlist = $this->gettpjhlist(); #图片集合分类
             $tjarr = $this->gettjkeys($tpjhlist); #图片集合的key值
             $tjinfo = $this->gettjarr($tpjhlist); #
+
             $path = "/Uploads/product/";
             $info = $this->upload("." . $path);
             $tj = array();
@@ -56,32 +107,33 @@ class GongzhangAction extends CommonAction {
                 }
                 $tuji = json_encode($tj);
             }
+
             $data = array();
             $data["p_id"] = $_POST['p_id'];
             $data["c_id"] = $_POST['c_id'];
             $data['uid'] = $_POST['gzid'];
-          
+
             $fm = $_POST['fengmian'];
             if (!empty($fm))
                 $data['fmimg'] = $path . $fm;
-            $sort=  trim($_POST['sort']);
-            $data['sort']=$sort;
-            $status=$_POST['status'];
-            $data['status']=$status;
-            $data['adduid']=$_SESSION['my_info']['a_id'];
-            $data['img']=$tuji;
-            $data['jieduan']=$_POST['jieduan'];
-            $data['yezhu']=$_POST['yezhu'];
-            $data['yusuan']=$_POST['yusuan'];
-            $data['mianji']=$_POST['mianji'];
-            $data['huxing']=$_POST['huxing'];
-            $data['keywords']=trim($_POST['keywords']);
-            $data['description']=trim($_POST['description']);
-            $data['gaishu']=  trim($_POST['gaishu']);
-            $data['title']=$title;
-            $rs=$m->add($data);
-            if($rs)
-                $this->success ("操作成功",U("Gongzhang/index"));
+            $sort = trim($_POST['sort']);
+            $data['sort'] = $sort;
+            $status = $_POST['status'];
+            $data['status'] = $status;
+            $data['adduid'] = $_SESSION['my_info']['a_id'];
+            $data['img'] = $tuji;
+            $data['jieduan'] = $_POST['jieduan'];
+            $data['yezhu'] = $_POST['yezhu'];
+            $data['yusuan'] = $_POST['yusuan'];
+            $data['mianji'] = $_POST['mianji'];
+            $data['huxing'] = $_POST['huxing'];
+            $data['keywords'] = trim($_POST['keywords']);
+            $data['description'] = trim($_POST['description']);
+            $data['gaishu'] = trim($_POST['gaishu']);
+            $data['title'] = $title;
+            $rs = $m->add($data);
+            if ($rs)
+                $this->success("操作成功", U("Gongzhang/index"));
             exit;
         }
         parent::_initalize();
@@ -89,10 +141,7 @@ class GongzhangAction extends CommonAction {
         $step = $_REQUEST['step'];
         $step = empty($step) ? 1 : $step;
         if ($step == 1) {
-            #工长
-            $M = M("Foremanview");
-            $list = $M->where("1")->field("a_id,a_name,truename")->select();
-            $this->assign("list", $list);
+            $this->assign("list", $this->getgzh()); #工长
             $this->assign("step", 2);
             $this->display();
         } else {
@@ -116,16 +165,127 @@ class GongzhangAction extends CommonAction {
      * 编辑施工动态
      */
     public function editsgdt() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $M1 = M("Shigongdt");
+            $info = $M1->where("id=" . $id)->find();
+
+            $title = trim($_POST['title']);
+            $gaishu = trim($_POST['gaishu']);
+            $description = trim($_POST['description']);
+            $keywords = trim($_POST['keywords']);
+            $huxing = $_POST['huxing'];
+            $mianji = trim($_POST['mianji']);
+            $yusuan = trim($_POST['yusuan']);
+            $yezhu = trim($_POST['yezhu']);
+            $jieduan = $_POST['jieduan'];
+            $sort = $_POST['sort'];
+            $status = $_POST['status'];
+            $fengmian = $_POST['fengmian']; #封面
+
+            $tpjhlist = $this->gettpjhlist(); #图片集合分类
+            $tjarr = $this->gettjkeys($tpjhlist); #图片集合的key值
+            $tjinfo = $this->gettjarr($tpjhlist); #
+            $path = "/Uploads/product/";
+            $info = $this->upload("." . $path);
+            $tj = array();
+
+            if (!empty($info)) {
+                foreach ($info as $k => $v) {
+                    if (in_array($v['key'], $tjarr)) {
+                        $i = explode("_", $v['key']);
+                        $tj[$i[1]]["title"] = $tjinfo[$v['key']];
+                        $tj[$i[1]]["img"][] = $path . $v['savename'];
+                    }
+                }
+                $tuji = json_encode($tj);
+            }
+            $data = array();
+            if (!empty($fengmian))
+                $data['fmimg'] = $fengmian;
+            if (!empty($tuji))
+                $data['img'] = $tuji;
+            if ($title != $info['title'] && !empty($title))
+                $data['title'] = $title;
+            if ($gaishu != $info['gaishu'] && !empty($gaishu))
+                $data['gaishu'] = $gaishu;
+            if ($description != $info['description'] && !empty($description))
+                $data['description'] = $description;
+            if ($keywords != $info['keywords'] && !empty($keywords))
+                $data['keywords'] = $keywords;
+            if ($huxing != $info['huxing'] && !empty($huxing))
+                $data['huxing'] = $huxing;
+            if ($mianji != $info['mianji'] && !empty($mianji))
+                $data['mianji'] = $mianji;
+            if ($yusuan != $info['yusuan'] && !empty($yusuan))
+                $data['yusuan'] = $yusuan;
+            if ($yezhu != $info['yezhu'] && !empty($yezhu))
+                $data['yezhu'] = $yezhu;
+            if ($jieduan != $info['jieduan'] && !empty($jieduan))
+                $data['jieduan'] = $jieduan;
+            if ($sort != $info['sort'] && !empty($sort))
+                $data['sort'] = $sort;
+            if ($uid != $info['uid'] && !empty($uid))
+                $data['uid'] = $uid;
+            if ($status != $info['status'])
+                $data['status'] = $status;
+            $res = $M1->where("id=" . $id)->save($data);
+            if ($res) {
+                $this->success("操作成功!", U("Gongzhang/index"));
+            } else {
+                $this->error("操作失败!");
+            }
+            exit;
+        }
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
-        $this->display("addsgdt");
+        $id = $_GET['id'];
+        $M = M("Shigongdt");
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+        if (!empty($info['img']))
+            $imgsrc = json_decode($info['img']);
+
+        $imglist = array();
+        foreach ($imgsrc as $k => $v) {
+            $imglist[$k]['img'] = $v->img;
+        }
+        $this->assign("imglist", $imglist);
+
+        $this->assign("hxlist", $this->gethxlist()); #户型列表
+        $conf = include_once './Common/config2.php';
+        $jd = $conf['zxjd'];
+        $this->assign("jd", $jd);
+        $this->assign("tpjhlist", $this->gettpjhlist()); #图片集合分类
+        $this->assign("gzlist", $this->getgzh());
+        $this->display();
     }
 
     /**
      * 删除施工动态
      */
     public function delsgtd() {
-        
+        $id = $_GET['id'];
+        $m = M("Shigongdt");
+        $info = $m->where("id=" . $id)->field("img,fmimg")->find();
+        if (!empty($info['fmimg'])) {
+            unlink("." . $info['fmimg']);
+        }
+        if (!empty($info['img'])) {
+            $imgjx = json_decode($info['img']);
+            #print_r($imgjx);
+            foreach ($imgjx as $k => $v) {
+                foreach ($v->img as $k1 => $v1) {
+                    unlink("." . $v1);
+                }
+            }
+        }
+
+        $rs = $m->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功!");
+        else
+            $this->error("操作失败!");
     }
 
     /**
@@ -217,6 +377,38 @@ class GongzhangAction extends CommonAction {
     }
 
     /**
+     * 修改状态
+     */
+    public function sgdtstatus() {
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        if ($status == 1)
+            $status_u = 0;
+        if ($status == 0)
+            $status_u = 1;
+        $M = M("Shigongdt");
+        $rs = $M->where("id=" . $id)->save(array("status" => $status_u));
+        if ($rs)
+            $this->success("修改成功！");
+        else
+            $this->error("修改失败！");
+    }
+
+    /**
+     * 修改排序
+     */
+    public function ajaxupdatesort() {
+        $sort = $_POST['sort'];
+        $id = $_POST['id'];
+        $m = M("Shigongdt");
+        $rs = $m->where("id=" . $id)->save(array("sort" => $sort));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
+
+    /**
      * 图片集合
      * 
      */
@@ -269,6 +461,24 @@ class GongzhangAction extends CommonAction {
         $m = M("Foremanview");
         $info = $m->where("a_id=" . $uid)->field("p_id,c_id")->find();
         return $info;
+    }
+
+    /**
+     * 获取工长列表
+     */
+    private function getgzh() {
+        $is_qx=$_SESSION['my_info']['role'];
+        $where ="1";
+        if($is_qx==1){
+            $p_id=$_SESSION['my_info']['proid'];
+            $c_id=$_SESSION['my_info']['cityid'];
+            
+            $where.=" and p_id=".$p_id;
+            $where.=" and c_id=".$c_id;
+        }
+        $M = M("Foremanview");
+        $list = $M->where($where)->field("a_id,a_name,truename")->select();
+        return $list;
     }
 
 }
