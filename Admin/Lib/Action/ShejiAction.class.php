@@ -12,13 +12,14 @@
  * @author 李雪莲 <lixuelianlk@163.com>
  */
 class ShejiAction extends CommonAction {
+
     /**
      * 设计师案例
      */
-    public function index(){
+    public function index() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
-        $this->assign("gzlist", $this->getgzh()); #工长
+        $this->assign("gzlist", $this->getgzh()); #设计师
         $cmod = new CityModel();
         $pro_list = $cmod->getcity(1);
         $this->assign("pro_list", $pro_list);
@@ -53,7 +54,7 @@ class ShejiAction extends CommonAction {
             $where.=" and cases.uid=" . $uid;
 
 
-        $M = D("CaseView");
+        $M = D("SjcaseView");
         $totalRows = $M->where($where)->count();
         $p = new Page($totalRows, 10);
         $list = $M->where($where)->order("cases.addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
@@ -71,11 +72,12 @@ class ShejiAction extends CommonAction {
 
         $this->display();
     }
+
     /**
      * 添加
      * 设计师
      */
-    public function add_sj_case(){
+    public function add_sj_case() {
         if (IS_POST) {
             $p_id = $_POST['p_id'];
             $c_id = $_POST['c_id'];
@@ -148,7 +150,7 @@ class ShejiAction extends CommonAction {
             $data['status'] = $status;
             $rs = $m->add($data);
             if ($rs)
-                $this->success("操作成功!",U('Sheji/index'));
+                $this->success("操作成功!", U('Sheji/index'));
             else
                 $this->error("操作失败！");
             exit;
@@ -180,6 +182,144 @@ class ShejiAction extends CommonAction {
         }
     }
 
+    /**
+     * 修改状态
+     */
+    public function casetatus() {
+        $status = $_GET['status'];
+        $id = $_GET['id'];
+        $M = M("Case");
+        if ($status == 1)
+            $ups = 0;
+        else
+            $ups = 1;
+
+        $rs = $M->where("id=" . $id)->save(array("status" => $ups));
+        if ($rs) {
+            $this->success("操作成功！");
+        } else {
+            $this->error("操作失败！");
+        }
+    }
+
+    /**
+     * 删除案例
+     */
+    public function del_case() {
+        $id = $_GET['id'];
+        $M = M("Case");
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+    /**
+     * 编辑案例
+     */
+    public function edit_case(){
+        if(IS_POST){
+            $id = $_POST['id'];
+            $title = trim($_POST['title']);
+            $is_jd = $_POST['is_jd'];
+            $hid = $_POST['hid'];
+            $fid = $_POST['fid'];
+            $description = trim($_POST['description']);
+            $keywords = trim($_POST['keywords']);
+            $mianji = trim($_POST['mianji']);
+            $price = trim($_POST['price']);
+            $goods = trim($_POST["goods"]);
+            $comments = trim($_POST['comments']);
+            $status = trim($_POST['status']);
+            $jianjie = $_POST['jianjie'];
+            $fengmian = $_POST['fengmian']; #封面
+            $uid = $_POST['uid'];
+            $tpjhlist = $this->gettpjhlist(); #图片集合分类
+            $tjarr = $this->gettjkeys($tpjhlist); #图片集合的key值
+            $tjinfo = $this->gettjarr($tpjhlist); #
+            $path = "/Uploads/product/";
+            $info = $this->upload("." . $path);
+            $tj = array();
+
+            if (!empty($info)) {
+                foreach ($info as $k => $v) {
+                    if (in_array($v['key'], $tjarr)) {
+                        $i = explode("_", $v['key']);
+                        $tj[$i[1]]["title"] = $tjinfo[$v['key']];
+                        $tj[$i[1]]["img"][] = $path . $v['savename'];
+                    }
+                }
+                $tuji = json_encode($tj);
+            }
+            $data = array();
+            $M = M("Case");
+            $info1 = $M->where("id=" . $id)->find();
+            if (!empty($fengmian)) {
+                $data['fmimg'] = $path . $fengmian;
+                unlink("." . $path . $info1['fmimg']);
+            }
+            if (!empty($tuji))
+                $data['img'] = $tuji;
+            if ($title != $info1['title'])
+                $data['title'] = $title;
+            if ($is_jd != $info1['is_jd'])
+                $data['is_jd'] = $is_jd;
+            if ($hid != $info1['hid'])
+                $data['hid'] = $hid;
+            if ($fid != $info1['fid'])
+                $data['fid'] = $fid;
+
+            if ($price != $info1['price'])
+                $data['price'] = $price;
+            if ($mianji != $info1['mianji'])
+                $data['mianji'] = $mianji;
+            if ($description != $info1['description'])
+                $data['description'] = $description;
+            if ($keywords != $info1['keywords'])
+                $data['keywords'] = $keywords;
+            if ($goods != $info1['goods'])
+                $data['goods'] = $goods;
+            if ($comments != $info1['comments'])
+                $data['comments'] = $comments;
+            if ($jianjie != $info1['jianjie'])
+                $data['jianjie'] = $jianjie;
+            if ($uid != $info1['uid'])
+                $data['uid'] = $uid;
+            if ($status != $info1['status'])
+                $data['status'] = $status;
+            $data['addtime'] = time();
+            $rs = $M->where("id=" . $id)->save($data);
+            if ($rs)
+                $this->success("操作成功！",U('Sheji/index'));
+            else
+                $this->error("操作失败！");
+            
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        if(empty($id)){
+            $this->error("请选择要编辑的案例");exit;
+        }
+        $M=M("Case");
+        $info=$M->where("id=".$id)->find();
+        $this->assign("info",$info);
+        
+        $this->assign("gzlist",$this->getgzh());#工长
+        $this->assign("hxcategory",$this->gethxlist());#户型
+        $this->assign("fgcategory",  $this->getfglist());#风格
+        $this->assign("tpjhlist", $this->gettpjhlist()); #图集分类
+        if (!empty($info['img']))
+            $imgsrc = json_decode($info['img']);
+
+        $imglist = array();
+        foreach ($imgsrc as $k => $v) {
+            $imglist[$k]['img'] = $v->img;
+        }
+        $this->assign("imglist", $imglist);
+        $this->display();
+    }
 
     //------------------------------------------------------------------
     /**
@@ -199,6 +339,7 @@ class ShejiAction extends CommonAction {
         $list = $M->where($where)->field("a_id,a_name,truename")->select();
         return $list;
     }
+
     /**
      * 根据用户id 获取用户所属的省市
      * 
@@ -208,6 +349,7 @@ class ShejiAction extends CommonAction {
         $info = $m->where("a_id=" . $uid)->field("p_id,c_id")->find();
         return $info;
     }
+
     /**
      * 户型
      */
@@ -225,6 +367,7 @@ class ShejiAction extends CommonAction {
         $hxlist = $fgmod->where(1)->select();
         return $hxlist;
     }
+
     /**
      * 图片集合
      * 
@@ -235,6 +378,7 @@ class ShejiAction extends CommonAction {
         $tpjhlist = $tpjhm->where("1")->select();
         return $tpjhlist;
     }
+
     /**
      * 获取图片集合分类的key值
      */
@@ -259,12 +403,13 @@ class ShejiAction extends CommonAction {
         }
         return $arr;
     }
+
     //-------------------------------------------------------------------
     /**
      * ajax 
      * 获取设计师
      */
-    public function ajaxgetsj(){
+    public function ajaxgetsj() {
         header('Content-Type:application/json; charset=utf-8');
         $gname = trim($_POST['gname']);
         if (!empty($gname)) {
@@ -284,4 +429,5 @@ class ShejiAction extends CommonAction {
         }
         echo json_encode($data);
     }
+
 }

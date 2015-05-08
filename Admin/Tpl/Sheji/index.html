@@ -22,11 +22,6 @@ jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
 		window.location.href="{:U('Sheji/add_sj_case')}";
 	})
-	
-		
-		
-	
-
 })
 function close_win(){
 	$(".theme-popover").html("");
@@ -59,12 +54,12 @@ $(function(){
   <!--左边end-->
   <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：装修案例</div>
+      <div class="center_r_t">您的位置：设计案例</div>
       <div class="center_r_z">
       <form method="get" name="search_form" id="search_form" action=""  >
         <label>关键字</label>
         <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
-        <label>工长</label>
+        <label>设计师</label>
         <select id="uid" name="uid" class="choose">
             <option value="">请选择</option>
             <volist id="vo" name="gzlist">
@@ -95,19 +90,19 @@ $(function(){
         
         <if condition="$is_qx==0">
             <if condition="!empty($p_id)||!empty($c_id)||!empty($keys)||!empty($uid)">
-                <a href="{:U('Gongzhang/list_case')}">取消查询</a>
+                <a href="{:U('Sheji/index')}">取消查询</a>
             </if>
         </if>
         <if condition="$is_qx==1">
             <if condition="!empty($keys)||!empty($uid)">
-                <a href="{:U('Gongzhang/list_case')}">取消查询</a>
+                <a href="{:U('Sheji/index')}">取消查询</a>
             </if>
         </if>
         
         <input name="sub" type="submit"  value="查询" class="sub1" />
         
         
-        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加装修案例</a>
+        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加设计案例</a>
         </form>
         <div class="theme-popover">
           
@@ -117,7 +112,7 @@ $(function(){
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
         <tr class="center_t_t">
           <td class="td1" width="135">编号</td>
-          <td width="135">工长名</td>
+          <td width="135">设计师</td>
           <td width="135">添加人</td>
           <td width="135">装修案例标题</td>
           <td width="135">封面</td>
@@ -138,9 +133,9 @@ $(function(){
           <td width="135">{$vo.status_f}</td>
           
           <td width="135">
-              <a name="{$vo.truename}" link="{:U('Gongzhang/casetatus',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
-              <a aid="{$vo.a_id}" href="{:U('Gongzhang/edit_case',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
-              <a name="{$vo.truename}" link="{:U('Gongzhang/del_case',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+              <a name="{$vo.truename}" link="{:U('Sheji/casetatus',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
+              <a aid="{$vo.a_id}" href="{:U('Sheji/edit_case',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
+              <a name="{$vo.truename}" link="{:U('Sheji/del_case',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
           </td>
         </tr>
         </volist>
