@@ -320,6 +320,176 @@ class ShejiAction extends CommonAction {
         $this->assign("imglist", $imglist);
         $this->display();
     }
+    
+    /**
+     * 添加幻灯片
+     */
+    public function add_hdp(){
+        if(IS_POST){
+            $name=trim($_POST['name']);
+            $iminf=  $this->upload();
+            if(!empty($iminf[0]['savename'])){
+                $img="/Uploads/product/".$iminf[0]['savename'];
+            }
+            $link=trim($_POST['link']);
+            $uid=$_POST['gzid'];
+            $addtime=  time();
+            $status=$_POST['status'];
+            
+            $M=M("Hdpmember");
+            $data=array(
+                "name"=>$name,
+                "img"=>$img,
+                "link"=>$link,
+                "uid"=>$uid,
+                "addtime"=>$addtime,
+                "status"=>$status,
+                    "type"=>1
+            );
+            $rs=$M->add($data);
+            if($rs)
+                $this->success ("操作成功！");
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("sjlist",$this->getgzh());
+        $this->display();
+    }
+    /**
+     * 幻灯片
+     * 列表
+     */
+    public function list_hdp(){
+        
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $this->assign("gzlist", $this->getgzh()); #设计师
+        
+        $keys = $_GET['keys'];
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+        $uid = $_GET['uid'];
+
+        $this->assign("keys", $keys);
+        $this->assign("uid", $uid);
+        
+        import("ORG.Util.Page");
+        $where = "Hdp.type=1 ";
+        
+        if (!empty($keys))
+            $where.=" and Hdp.name like '%" . $keys . "%'";
+        if (!empty($uid))
+            $where.=" and Hdp.uid=" . $uid;
+
+
+        $M = D("HdpView");
+        $totalRows = $M->where($where)->count();
+        
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("Hdp.addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+
+
+        $this->assign("page", $p->show());
+        $inf = include_once './Common/config2.php';
+        foreach ($list as $k => $v) {
+            
+            $list[$k]['status_f'] = $v['status'] == 1 ? "已审核" : "未审核";
+        }
+        $this->assign("list", $list);
+        $this->assign("jd", $inf['zxjd']);
+
+
+        $this->display();
+    }
+    /**
+     * 删除幻灯片
+     */
+    public function del_hpd(){
+        $id = $_GET['id'];
+        $M = M("Hdpmember");
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+    /**
+     * 编辑
+     * 幻灯片
+     */
+    public function edit_hpd(){
+        
+        if(IS_POST){
+            $id = $_POST['id'];
+            $name = trim($_POST['name']);
+            $gzid = $_POST['gzid'];
+            $status = trim($_POST['status']);
+            $link = $_POST['link'];
+            $imgi=  $this->upload();
+            if(!empty($imgi[0]['savename'])){
+                $img="/Uploads/product/".$imgi[0]['savename'];
+            }
+            
+            $data = array();
+            
+            $M = M("Hdpmember");
+            $info1 = $M->where("id=" . $id)->find();
+            if (!empty($img)) {
+                $data['img'] = $img;
+                unlink("." . $info1['img']);
+            }
+            if (!empty($name))
+                $data['name'] = $name;
+            if ($link != $info1['link'])
+                $data['link'] = $link;
+            if ($gzid != $info1['uid'])
+                $data['uid'] = $gzid;
+            if ($status != $info1['status'])
+                $data['status'] = $status;
+            $data['addtime'] = time();
+            $rs = $M->where("id=" . $id)->save($data);
+            if ($rs)
+                $this->success("操作成功！",U('Sheji/list_hdp'));
+            else{
+                
+                $this->error("操作失败！");
+            }
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        if(empty($id)){
+            $this->error("请选择要编辑的幻灯片");exit;
+        }
+        $M=M("Hdpmember");
+        $info=$M->where("id=".$id)->find();
+        $this->assign("info",$info);
+        $gzlist=$this->getgzh();
+        $this->assign("sjlist",$gzlist);#工长
+        
+        $this->display("add_hdp");
+    }
+    /**
+     * 快速修改状态
+     * 幻灯片
+     */
+    public function status_hdp(){
+        $id=$_GET['id'];
+        $status=$_GET['status'];
+        if($status==0)
+            $statusf=1;
+        else
+            $statusf=0;
+        $M=M("Hdpmember");
+        $rs=$M->where("id=".$id)->save(array("status"=>$statusf));
+        if($rs)
+            $this->success ("操作成功");
+        else
+            $this->error ("操作失败！");
+    }
 
     //------------------------------------------------------------------
     /**
@@ -337,6 +507,7 @@ class ShejiAction extends CommonAction {
         }
         $M = M("Shejiview");
         $list = $M->where($where)->field("a_id,a_name,truename")->select();
+       
         return $list;
     }
 
