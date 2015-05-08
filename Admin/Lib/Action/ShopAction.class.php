@@ -28,10 +28,10 @@ class ShopAction extends CommonAction {
     public function shopcategory() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
-        $cmod=new ShopcategoryModel();
-        $list=$cmod->getcategory();
-        $this->assign("list",$list);
-        
+        $cmod = new ShopcategoryModel();
+        $list = $cmod->getcategory();
+        $this->assign("list", $list);
+
         $this->display();
     }
 
@@ -53,25 +53,25 @@ class ShopAction extends CommonAction {
             }
             $cmod = new ShopcategoryModel();
             $data = array();
-            $pid=$_POST['pid'];
+            $pid = $_POST['pid'];
             $data['cname'] = $cname;
             $data['clogo'] = $clogo;
             $data['pid'] = $pid;
-            if($cmod->checkname($cname)){
+            if ($cmod->checkname($cname)) {
                 $this->error("商品分类已经存在！");
                 exit;
             }
-            
+
             if ($pid == 0) {
                 $data['level'] = 0;
             } else {
-                $data['level']=$cmod->getlevel($pid);
+                $data['level'] = $cmod->getlevel($pid);
                 $data['level']+=1;
             }
-            $res=$cmod->add($data);
-            if($res){
-                $this->success("操作成功!",U("Shop/shopcategory"));
-            }else{
+            $res = $cmod->add($data);
+            if ($res) {
+                $this->success("操作成功!", U("Shop/shopcategory"));
+            } else {
                 $this->error("操作失败!");
             }
             exit;
@@ -83,76 +83,280 @@ class ShopAction extends CommonAction {
         $this->assign("sclist", $sclist);
         $this->display();
     }
+
     /**
      * 编辑分类
      */
-    public function editshopcategory(){
-        if(IS_POST){
-            $cid=$_POST['cid'];
-            $scmod=new ShopcategoryModel();
-            $info=$scmod->where("cid=".$cid)->find();
-            
-            $cname=trim($_POST['cname']);
-            if(!empty($_FILES['clogo']['name'])){
-                
+    public function editshopcategory() {
+        if (IS_POST) {
+            $cid = $_POST['cid'];
+            $scmod = new ShopcategoryModel();
+            $info = $scmod->where("cid=" . $cid)->find();
+
+            $cname = trim($_POST['cname']);
+            if (!empty($_FILES['clogo']['name'])) {
+
                 $path = "/Uploads/shangjia/";
-                
-                
+
+
                 $imgsrc = $this->upload("." . $path);
-                if (!empty($imgsrc[0]['savename'])){
+                if (!empty($imgsrc[0]['savename'])) {
                     $clogo = $path . $imgsrc[0]['savename'];
-                    unlink(".".$path.$info['clogo']);
+                    unlink("." . $path . $info['clogo']);
                 }
             }
-            $pid=$_POST['pid'];
+            $pid = $_POST['pid'];
             if ($pid == 0) {
                 $level = 0;
             } else {
-                $level=$scmod->getlevel($pid);
+                $level = $scmod->getlevel($pid);
                 $level+=1;
             }
-            
-            $data=array(
-                "cname"=>$cname,
-                "clogo"=>$clogo,
-                "pid"=>$pid,
-                "level"=>$level
+
+            $data = array(
+                "cname" => $cname,
+                "clogo" => $clogo,
+                "pid" => $pid,
+                "level" => $level
             );
-            $where="cid=".$cid;
-            $res=$scmod->where($where)->save($data);
-            if($res){
-                $this->success("操作成功!",U("Shop/shopcategory"));
-            }else{
+            $where = "cid=" . $cid;
+            $res = $scmod->where($where)->save($data);
+            if ($res) {
+                $this->success("操作成功!", U("Shop/shopcategory"));
+            } else {
                 $this->error("操作失败!");
             }
             exit;
         }
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        $cid=$_GET['cid'];
-        $scmod=new ShopcategoryModel();
-        $info=$scmod->getinfo($cid);
-        $this->assign("info",$info);
+        $this->assign("systemConfig", $this->systemConfig);
+        $cid = $_GET['cid'];
+        $scmod = new ShopcategoryModel();
+        $info = $scmod->getinfo($cid);
+        $this->assign("info", $info);
         #分类
-        $sclist=$scmod->getcategory();
-        $this->assign("sclist",$sclist);
-        
+        $sclist = $scmod->getcategory();
+        $this->assign("sclist", $sclist);
+
         $this->display("addshopcategory");
     }
+
     /**
      * 删除分类
      */
-    public function  delshopcategory(){
-        $cid=$_GET['cid'];
-        $scmod=new ShopcategoryModel();
-        $info=$scmod->getinfo($cid);
-        if(!empty($info['clogo'])){
-            unlink(".".$info['clogo']);
+    public function delshopcategory() {
+        $cid = $_GET['cid'];
+        $scmod = new ShopcategoryModel();
+        $info = $scmod->getinfo($cid);
+        if (!empty($info['clogo'])) {
+            unlink("." . $info['clogo']);
         }
-        $rs=$scmod->where("cid=".$cid)->delete();
-        if($rs)
-            $this->success ("操作成功!");
+        $rs = $scmod->where("cid=" . $cid)->delete();
+        if ($rs)
+            $this->success("操作成功!");
         else
-            $this->error ("操作失败!");
+            $this->error("操作失败!");
+    }
+
+    /**
+     * 添加幻灯片
+     */
+    public function add_hdp() {
+        if (IS_POST) {
+            $name = trim($_POST['name']);
+            $iminf = $this->upload();
+            if (!empty($iminf[0]['savename'])) {
+                $img = "/Uploads/product/" . $iminf[0]['savename'];
+            }
+            $link = trim($_POST['link']);
+            $uid = $_POST['gzid'];
+            $addtime = time();
+            $status = $_POST['status'];
+
+            $M = M("Hdpmember");
+            $data = array(
+                "name" => $name,
+                "img" => $img,
+                "link" => $link,
+                "uid" => $uid,
+                "addtime" => $addtime,
+                "status" => $status,
+                "type" => 2
+            );
+            $rs = $M->add($data);
+            if ($rs)
+                $this->success("操作成功！");
+            else
+                $this->error("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $this->assign("sjlist", $this->getgzh());
+        $this->display();
+    }
+    /**
+     * 幻灯片
+     * 列表
+     */
+    public function list_hdp(){
+        
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $this->assign("gzlist", $this->getgzh()); #设计师
+        
+        $keys = $_GET['keys'];
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+        $uid = $_GET['uid'];
+
+        $this->assign("keys", $keys);
+        $this->assign("uid", $uid);
+        
+        import("ORG.Util.Page");
+        $where = "Hdp.type=2 ";
+        
+        if (!empty($keys))
+            $where.=" and Hdp.name like '%" . $keys . "%'";
+        if (!empty($uid))
+            $where.=" and Hdp.uid=" . $uid;
+
+
+        $M = D("HdpshopView");
+        $totalRows = $M->where($where)->count();
+        
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("Hdp.addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+
+
+        $this->assign("page", $p->show());
+        
+        foreach ($list as $k => $v) {
+            
+            $list[$k]['status_f'] = $v['status'] == 1 ? "已审核" : "未审核";
+        }
+        $this->assign("list", $list);
+       
+        $this->display();
+    }
+    /**
+     * 删除幻灯片
+     */
+    public function del_hpd(){
+        $id = $_GET['id'];
+        $M = M("Hdpmember");
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+    /**
+     * 编辑
+     * 幻灯片
+     */
+    public function edit_hpd(){
+        
+        if(IS_POST){
+            $id = $_POST['id'];
+            $name = trim($_POST['name']);
+            $gzid = $_POST['gzid'];
+            $status = trim($_POST['status']);
+            $link = $_POST['link'];
+            $imgi=  $this->upload();
+            if(!empty($imgi[0]['savename'])){
+                $img="/Uploads/product/".$imgi[0]['savename'];
+            }
+            
+            $data = array();
+            
+            $M = M("Hdpmember");
+            $info1 = $M->where("id=" . $id)->find();
+            if (!empty($img)) {
+                $data['img'] = $img;
+                unlink("." . $info1['img']);
+            }
+            if (!empty($name))
+                $data['name'] = $name;
+            if ($link != $info1['link'])
+                $data['link'] = $link;
+            if ($gzid != $info1['uid'])
+                $data['uid'] = $gzid;
+            if ($status != $info1['status'])
+                $data['status'] = $status;
+            $data['addtime'] = time();
+            $rs = $M->where("id=" . $id)->save($data);
+            if ($rs)
+                $this->success("操作成功！",U('Shop/list_hdp'));
+            else{
+                
+                $this->error("操作失败！");
+            }
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        if(empty($id)){
+            $this->error("请选择要编辑的幻灯片");exit;
+        }
+        $M=M("Hdpmember");
+        $info=$M->where("id=".$id)->find();
+        $this->assign("info",$info);
+        $gzlist=$this->getgzh();
+        $this->assign("sjlist",$gzlist);#工长
+        
+        $this->display("add_hdp");
+    }
+    
+    /**
+     * 快速修改状态
+     * 幻灯片
+     */
+    public function status_hdp(){
+        $id=$_GET['id'];
+        $status=$_GET['status'];
+        if($status==0)
+            $statusf=1;
+        else
+            $statusf=0;
+        $M=M("Hdpmember");
+        $rs=$M->where("id=".$id)->save(array("status"=>$statusf));
+        if($rs)
+            $this->success ("操作成功");
+        else
+            $this->error ("操作失败！");
+    }
+    
+    //-----------------------------
+    /**
+     * 获取设计师列表
+     */
+    private function getgzh() {
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $where = "1";
+        if ($is_qx == 1) {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+
+            $where.=" and p_id=" . $p_id;
+            $where.=" and c_id=" . $c_id;
+        }
+        $M = M("Dianpumember");
+        $list = $M->where($where)->field("a_id,a_name,lxrname,company")->select();
+       
+        return $list;
+    }
+    //------------------
+    public function ajaxgetsj(){
+        header('Content-Type:application/json; charset=utf-8');
+        $gname=$_POST['gname'];
+        $m=M("Dianpumember");
+        $where="company like '%".$gname."%' or a_name like '%".$gname."%' or lxrname like '%".$gname."%'";
+        $rs=$m->where($where)->select();
+        if($rs)
+            $data=array("status"=>1,"data"=>$rs);
+        else
+            $data=array("status"=>0,"data"=>"");
+        echo json_encode($data);
     }
 }
