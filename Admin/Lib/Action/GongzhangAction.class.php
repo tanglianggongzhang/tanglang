@@ -1067,7 +1067,42 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
+    /**
+     * 添加工地
+     */
+    public function add_gd(){
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        
+        $step = $_GET['step'];
+        $step = empty($step) ? 1 : $step;
+        if ($step == 1) {
+            $this->assign("list", $this->getgzh());
+            $this->display();
+        } else {
+            $uid = $_GET['gzid'];
+            if (empty($uid)) {
+                $this->error("请选择工长！");
+                exit;
+            }
 
+            $pc = $this->getprovcity($uid);
+            $this->assign("p_id", $pc['p_id']);
+            $this->assign("c_id", $pc['c_id']);
+            $this->assign("gzid", $uid);
+            $this->assign("step", $step);
+
+            $this->assign("hxcategory", $this->gethxlist()); #户型
+            $this->assign("fgcategory", $this->getfglist()); #风格
+            $this->assign("tpjhlist", $this->gettpjhlist()); #图集分类
+            $this->display("add_gd2");
+        }
+        
+        
+        
+    }
+    
+    
 //--------------------------------------------------
 
     /**
