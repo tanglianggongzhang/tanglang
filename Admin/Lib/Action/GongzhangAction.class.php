@@ -885,7 +885,7 @@ class GongzhangAction extends CommonAction {
             $data['status'] = $status;
             $rs = $m->add($data);
             if ($rs)
-                $this->success("操作成功!",U('Gongzhang/list_case'));
+                $this->success("操作成功!", U('Gongzhang/list_case'));
             else
                 $this->error("操作失败！");
             exit;
@@ -994,7 +994,7 @@ class GongzhangAction extends CommonAction {
             $data['addtime'] = time();
             $rs = $M->where("id=" . $id)->save($data);
             if ($rs)
-                $this->success("操作成功！",U('Gongzhang/list_case'));
+                $this->success("操作成功！", U('Gongzhang/list_case'));
             else
                 $this->error("操作失败！");
             exit;
@@ -1067,13 +1067,61 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
+
     /**
      * 添加工地
      */
-    public function add_gd(){
+    public function add_gd() {
+        if (IS_POST) {
+            $name = trim($_POST['name']);
+            if (empty($name)) {
+                $this->error("施工工地名称不能为空！");
+                exit;
+            }
+            $fengmian = $_POST['fengmian'];
+            $p_id=$_POST['p_id'];
+            $c_id=$_POST['c_id'];
+            $gzid=$_POST['gzid'];
+            $status=$_POST['status'];
+            $data = array();
+            if (!empty($fengmian)) {
+                $data['fmimg'] = "/Uploads/product/".$fengmian;
+            }
+            if (!empty($name)) {
+                $data['name'] = $name;
+            }
+            $iminfo = $this->upload();
+            $imarr = array();
+            if (!empty($iminfo)) {
+                $k = 0;
+                foreach ($iminfo as $k => $v) {
+                    if (!empty($v['savename'])) {
+                        $imarr[$k] = "/Uploads/product/" . $v['savename'];
+                        $k++;
+                    }
+                }
+                if (!empty($imarr))
+                    $imstr = json_encode($imarr);
+            }
+            if (!empty($imstr))
+                $data['gdimg'] = $imstr;
+            $data['addtime']=time();
+            $data['p_id']=$p_id;
+            $data['c_id']=$c_id;
+            $data['uid']=$gzid;
+            $data['adduid']=$_SESSION['my_info']['a_id'];
+            $data['status']=$status;
+            $M=M("Gongdi");
+            $rs=$M->add($data);
+            if($rs)
+                $this->success ("操作成功！",U("Gongzhang/list_gd"));
+            else
+                $this->error ("操作失败!");
+            exit;
+        }
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
-        
+
         $step = $_GET['step'];
         $step = empty($step) ? 1 : $step;
         if ($step == 1) {
@@ -1097,12 +1145,181 @@ class GongzhangAction extends CommonAction {
             $this->assign("tpjhlist", $this->gettpjhlist()); #图集分类
             $this->display("add_gd2");
         }
-        
-        
-        
     }
-    
-    
+    /**
+     * 工地列表
+     */
+    public function list_gd(){
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $this->assign("gzlist", $this->getgzh()); #工长
+        $cmod = new CityModel();
+        $pro_list = $cmod->getcity(1);
+        $this->assign("pro_list", $pro_list);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $this->assign("is_qx", $is_qx);
+        if ($is_qx == 0) {
+            $p_id = $_GET['province'];
+            $c_id = $_GET['city'];
+        } else {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+        }
+        $keys = $_GET['keys'];
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+        $uid = $_GET['uid'];
+
+        $this->assign("keys", $keys);
+        $this->assign("uid", $uid);
+        $this->assign("p_id", $p_id);
+        $this->assign("c_id", $c_id);
+        $this->assign("cityname", $cmod->getname($c_id));
+
+        import("ORG.Util.Page");
+        $where = "1 ";
+        if (!empty($p_id))
+            $where.=" and Gongdi.p_id=" . $p_id;
+        if (!empty($c_id))
+            $where.=" and Gongdi.c_id=" . $c_id;
+        if (!empty($keys))
+            $where.=" and Gongdi.name like '%" . $keys . "%'";
+        if (!empty($uid))
+            $where.=" and Gongdi.uid=" . $uid;
+
+
+        $M = D("GongdiView");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("Gongdi.addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+
+
+        $this->assign("page", $p->show());
+     
+        foreach ($list as $k => $v) {
+            $list[$k]['status_f'] = $v['status'] == 1 ? "已审核" : "未审核";
+        }
+        $this->assign("list", $list);
+        
+
+
+        $this->display();
+    }
+    /**
+     * 修改状态
+     * 施工工地
+     */
+    public function gdstatus(){
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        if ($status == 1)
+            $statuss = 0;
+        else
+            $statuss = 1;
+        $M = M("Gongdi");
+        $rs = $M->where("id=" . $id)->save(array("status" => $statuss));
+        if ($rs)
+            $this->success("操作成功!");
+        else
+            $this->error("操作失败！");
+    }
+    /**
+     * 编辑
+     * 工地
+     */
+    public function edit_gd(){
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $name = trim($_POST['name']);
+            $status = trim($_POST['status']);
+            $fengmian = $_POST['fengmian']; #封面
+            $uid = $_POST['uid'];
+            
+            $path = "/Uploads/product/";
+            $iminfo = $this->upload("." . $path);
+            $imarr = array();
+            if (!empty($iminfo)) {
+                $k = 0;
+                foreach ($iminfo as $k => $v) {
+                    if (!empty($v['savename'])) {
+                        $imarr[$k] = "/Uploads/product/" . $v['savename'];
+                        $k++;
+                    }
+                }
+                if (!empty($imarr))
+                    $imstr = json_encode($imarr);
+            }
+            
+            $data = array();
+            $M = M("Gongdi");
+            $info1 = $M->where("id=" . $id)->find();
+            if (!empty($fengmian)) {
+                $data['fmimg'] = $path . $fengmian;
+                unlink("." . $info1['fmimg']);
+            }
+            if (!empty($imstr)){
+                $gdimg=json_decode($info1['gdimg']);
+                foreach($gdimg as $k=>$v){
+                    unlink(".".$v);
+                }
+                $data['gdimg'] = $imstr;
+            }
+            
+            
+            if ($name != $info1['name'])
+                $data['name'] = $name;
+           
+            if ($uid != $info1['uid'])
+                $data['uid'] = $uid;
+            if ($status != $info1['status'])
+                $data['status'] = $status;
+            $data['addtime'] = time();
+            $rs = $M->where("id=" . $id)->save($data);
+            if ($rs)
+                $this->success("操作成功！", U('Gongzhang/list_gd'));
+            else
+                $this->error("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $M = M("Gongdi");
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+        $this->assign("gzlist", $this->getgzh());
+        if (!empty($info['gdimg']))
+            $gdimg = json_decode($info['gdimg']);
+        
+        
+        $this->assign("imglist", $gdimg);
+
+
+        $this->display();
+    }
+    /**
+     * 删除
+     * 工地
+     */
+    public function del_gd(){
+        $id=$_GET['id'];
+        $M=M("Gongdi");
+        $rss=$M->where("id=".$id)->find();
+        if(!empty($rss['gdimg'])){
+            $imgarr=json_decode($rss['gdimg']);
+            foreach($imgarr as $k=>$v){
+                unlink(".".$v);
+            }
+        }
+        if(!empty($rss['fmimg'])){
+            unlink(".".$rss['fmimg']);
+        }
+        
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功!");
+        else
+            $this->error ("操作失败!");
+    }
 //--------------------------------------------------
 
     /**
