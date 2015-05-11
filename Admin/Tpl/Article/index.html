@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
 <head>
-<title>用户中心-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<title>文章列表-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
@@ -20,7 +20,7 @@ and open the template in the editor.
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
-		window.location.href="{:U('Member/addpt')}";
+		window.location.href="{:U('Article/add_art')}";
 	})
 	
 		
@@ -59,64 +59,16 @@ $(function(){
   <!--左边end-->
   <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：用户列表</div>
+      <div class="center_r_t">您的位置：文章列表</div>
       <div class="center_r_z">
       <form method="get" name="search_form" id="search_form" action=""  >
         <label>关键字</label>
-        <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
-        <label>日期</label>
-        <input type="text" name="start_date" value="{$start_date}" readonly class="doubledate ipticon"/>
-        <label>-</label>
-        <input type="text" name="end_date" readonly value="{$end_date}" class="doubledate ipticon"/>
-        <if condition="$is_qx==0">
-        
-        <select name="province" id="province_s" class="choose" onChange="getcity('province_s','city_s')">
-          <option value="" >请选择省</option>
-          
-			<volist id="vo" name="pro_list">
-            	<option value="{$vo.region_id}" <if condition="$vo[region_id]==$province">selected</if>>{$vo.region_name}</option>
-			</volist>
-          
-        </select>
-       
-        <select name="city" id="city_s" class="choose" onChange="getdiqu('province_s','city_s','q_s')">
-          <option value="" >请选择城市</option>
-          <if condition="!empty($city)">
-                    <option value="{$city}" selected="selected">{$cityname}</option>
-                    </if>
-        </select>
-        <select name="qu" id="q_s" class="choose">
-          <option value="" >请选择区</option>
-            <if condition="!empty($qu)">
-                    <option value="{$qu}" selected="selected">{$quname}</option>
-            </if>
-        </select>  
-        </if>
-        <if condition="$is_qx==1">
-         <select name="qu" id="q_s" class="choose">
-          <option value="" >请选择区</option>
-          <volist id="vo" name="qlist">
-              <option value="{$vo.region_id}" <if condition="$vo[region_id]==$qu">selected</if>>{$vo.region_name}</option>
-          </volist>
-         </select>  
-        </if>
-        
-        
-        <if condition="$is_qx==0">
-            <if condition="!empty($province)||!empty($city)||!empty($qu)||!empty($keys)||!empty($start_date)||!empty($end_date)">
-                <a href="{:U('Member/index')}">取消查询</a>
-            </if>
-        </if>
-        <if condition="$is_qx==1">
-            <if condition="!empty($qu)||!empty($keys)||!empty($start_date)||!empty($end_date)">
-                <a href="{:U('Member/index')}">取消查询</a>
-            </if>
-        </if>
-        
+        <input type="text" class="input1" size="100" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
         <input name="sub" type="submit"  value="查询" class="sub1" />
-        
-        
-        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加用户</a>
+        <if condition='!empty($keys)'>
+            <a href="{:U('Article/index')}"> 取消查询</a>
+        </if>
+        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加文章</a>
         </form>
         <div class="theme-popover">
           
@@ -125,26 +77,30 @@ $(function(){
       </div>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
         <tr class="center_t_t">
-          <td class="td1" width="135">登录名</td>
-          <td width="135">真实姓名</td>
-          <td width="135">注册时间</td>
-          <td width="135">登录时间</td>
-          <td width="135">手机</td>
-          <td width="100">性别</td>
+          <td class="td1" width="135">编号</td>
+          <td width="135">标题</td>
+          <td width="135">是否是推荐</td>
+          <td width="135">状态</td>
+          <td width="135">会员</td>
+          <td width="120">添加时间</td>
           
           <td class="td2" width="135">操作</td>
         </tr>
         <volist id="vo" name="list">
         <tr class="center_t_d">
-          <td class="td1" width="135">{$vo.a_name}</td>
-          <td width="135">{$vo.truename}</td>
-          <td width="135">{$vo.create_time}</td>
-          <td width="135">{$vo.last_login}</td>
-          <td width="135">{$vo.movphone}</td>
-          <td width="100">{$vo.sex}</td>
-          <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a>
-              <a aid="{$vo.a_id}" href="{:U('Member/editpt',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a>
-              <a name="{$vo.truename}" link="{:U('Member/del',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
+          <td class="td1" width="135">{$vo.id}</td>
+          <td width="135">{$vo.title}</td>
+          <td width="135">{$vo.is_tj_f}</td>
+          <td width="135">{$vo.status_f}</td>
+          <td width="135">{$vo.uname}</td>
+          <td width="100">{$vo.addtime_f}</td>
+          <td width="135">
+              <a aid="{$vo.a_id}" href="{:U('Article/edit_status',array('id'=>$vo[id],'status'=>$vo['status']))}" style="cursor:pointer">修改状态</a>
+              <Br/>
+              <a aid="{$vo.a_id}" href="{:U('Article/edit_tj',array('id'=>$vo[id],'is_tj'=>$vo['is_tj']))}" style="cursor:pointer">修改推荐状态</a>
+              <Br/>
+              <a aid="{$vo.a_id}" href="{:U('Article/edit_art',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
+              <a name="{$vo.title}" link="{:U('Article/del_art',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a></td>
         </tr>
         </volist>
       </table>
