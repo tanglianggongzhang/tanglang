@@ -1,0 +1,422 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <title>编辑-图库-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+	<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+        <include file="Common:comHead" />
+        
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet" />
+
+
+
+<script src="__ROOT__/Public/tuxcj/js/jquery-1.7.2.min.js"></script>
+<script src="__ROOT__/Public/js/jquery.validate.js"></script>
+
+<!--上传组件start-->
+<link rel="stylesheet" type="text/css" href="__ROOT__/Public/tuxcj/css/jquery.Jcrop.min.css" media="all">
+<link rel="stylesheet" type="text/css" href="__ROOT__/Public/tuxcj/js/uploadify-v3.1/uploadify.css" media="all">
+
+<script type="text/javascript" src="__ROOT__/Public/tuxcj/js/uploadify-v3.1/jquery.uploadify-3.1.min.js"></script>
+
+<script type="text/javascript" src="__ROOT__/Public/tuxcj/js/jquery.Jcrop.min.js"></script>
+<script type="text/javascript" src="__ROOT__/Public/tuxcj/js/ThinkBox/jquery.ThinkBox.js"></script>
+
+<link rel="stylesheet" type="text/css" href="__ROOT__/Public/tuxcj/js/ThinkBox/css/ThinkBox.css" media="all">
+<!--上传组件 end-->
+<style type="text/css">
+.main{
+	margin: 0 auto;
+	padding: 15px;
+	width: 750px;
+	font-family: "microsoft yahei";
+	background-color: #F5F5F5;
+}
+.cf:before,.cf:after {
+	display: table;
+	content: "";
+	line-height: 0;
+}
+.cf:after {
+	clear: both;
+}
+.cf {
+	*zoom: 1;
+}
+.upload-area {
+	position: relative;
+	float: left;
+	margin-right: 30px;
+	width: 200px;
+	height: 200px;
+	background-color: #F5F5F5;
+    border: 2px solid #E1E1E1;
+}
+.upload-area .file-tips {
+	position: absolute;
+	top: 90px;
+	left: 0;
+    padding: 0 15px;
+    width: 170px;
+    line-height: 1.4;
+    font-size: 12px;
+	color: #A8A8A3;
+    text-align: center;
+}
+.userup-icon {
+    display: inline-block;
+    margin-right: 3px;
+    width: 16px;
+    height: 16px;
+    vertical-align: -2px;
+	background: url("__ROOT__/Public/tuxcj/img/userup_icon.png") no-repeat;
+}
+.uploadify-button {
+	line-height: 120px!important;
+	text-align: center;
+}
+.preview-area {
+	float: left;
+}
+.tcrop {
+    clear: right;
+    font-size: 14px;
+    font-weight: bold;
+}
+.update-pic .crop {
+    background: url("__ROOT__/Public/tuxcj/img/mystery.png") no-repeat scroll center center #EEEEEE;
+    float: left;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+.crop100 {
+    height: 100px;
+    width: 100px;
+}
+.crop60 {
+    height: 60px;
+    margin-left: 20px;
+    width: 60px;
+}
+.update-pic .save-pic {
+    clear: left;
+    margin-right: 20px;
+}
+.update-pic .uppic-btn {
+    background-color: #348FD4;
+    color: #FFFFFF;
+    display: block;
+    float: left;
+    font-size: 16px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    vertical-align: middle;
+    width: 89px;
+}
+.preview {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 11;
+	width: 200px;
+	height: 200px;
+	overflow: hidden;
+	background:#fff;
+	display: none;
+}
+</style>
+<style>
+        .rowtpjh{ border: 1px solid #0081C2; margin: 5px; padding: 5px;}
+    </style>
+    
+<script language="javascript" src="__PUBLIC__/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ckfinder/ckfinder.js"></script>
+
+    </head>
+    <body>
+        <div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">
+      您的位置：<a href="{:U('Tuku/index')}" class="a1">图库列表</a>>>编辑图库
+      </div>
+      <div class="center_t">
+          <form action="" method="POST" id="form1" name="form1" enctype="multipart/form-data" >
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab center_t">
+                
+                 
+            <tr align="left"  class="center_t_d">
+                <td width="20%">标题</td>
+                <td align="left">
+                    <input type="text" size="100" name="title" id="title" value="{$info.title}" />
+                </td>
+            </tr>
+            
+            <tr align="left"  class="center_t_d">
+                <td width="20%">描述 [description]</td>
+                <td align="left">
+                    <textarea id="description" name="description" rows="10" cols="50">{$info.description}</textarea>
+                   
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%">关键字 [keywords]</td>
+                <td align="left">
+                     <input type="text" size="100" name="keywords" id="keywords" value="{$info.keywords}" />
+                   
+                </td>
+            </tr>    
+            <tr align="left"  class="center_t_d">
+                <td width="20%">户型</td>
+                <td align="left">
+                    <select name="hxid" id="hxid">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="hxlist">
+                            <option value="{$vo.id}" <if condition="$vo[id]==$info[hxid]">selected</if>>{$vo.name}</option>
+                        </volist>
+                   </select>
+                </td>
+            </tr>
+            <tr align="left"  class="center_t_d">
+                <td width="20%">局部</td>
+                <td align="left">
+                    <select name="jbid" id="jbid">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="jubucategory">
+                            <option value="{$vo.id}" <if condition="$vo[id]==$info[jbid]">selected</if>>{$vo.name}</option>
+                        </volist>
+                   </select>
+                </td>
+            </tr>    
+             <tr align="left"  class="center_t_d">
+                <td width="20%">色系</td>
+                <td align="left">
+                    <select name="sxid" id="sxid">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="sexi">
+                            <option value="{$vo.id}" <if condition="$vo[id]==$info[sxid]">selected</if>>{$vo.name}</option>
+                        </volist>
+                   </select>
+                </td>
+            </tr>   
+              <tr align="left"  class="center_t_d">
+                <td width="20%">风格</td>
+                <td align="left">
+                    <select name="fgid" id="fgid">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="fglist">
+                            <option value="{$vo.id}" <if condition="$vo[id]==$info[fgid]">selected</if>>{$vo.name}</option>
+                        </volist>
+                   </select>
+                </td>
+            </tr>   
+                <tr align="left"  class="center_t_d">
+                <td width="20%">空间</td>
+                <td align="left">
+                    <select name="kjid" id="kjid">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="kjlist">
+                            <option value="{$vo.id}" <if condition="$vo[id]==$info[kjid]">selected</if>>{$vo.name}</option>
+                        </volist>
+                   </select>
+                </td>
+            </tr>   
+             
+            <tr align="left"  class="center_t_d">
+                <td width="20%">预算</td>
+                <td align="left">
+                    <select id="ysid" name="ysid">
+                        <option value="">请选择</option>
+                        <volist id="vo" name="yslist">
+                            <option value="{$vo.ysid}" <if condition="$vo[ysid]==$info[ysid]">selected</if>>{$vo.name}</option>
+                        </volist>
+                    </select>
+                </td>
+            </tr>  
+            <tr align="left"  class="center_t_d">
+                <td width="20%">收藏数目</td>
+                <td align="left">
+                    <input type="text" size="10" name="shoucang" id="shoucang" value="{$info.shoucang}" />
+                </td>
+            </tr> 
+                <tr align="left"  class="center_t_d">
+                <td width="20%">点击</td>
+                <td align="left">
+                    <input type="text" size="10" name="click" id="click" value="{$info.click}" />
+                </td>
+            </tr> 
+            
+            <tr align="left"  class="center_t_d">
+                <td width="20%">状态</td>
+                <td align="left">
+                    
+                    <label><input type="radio" name="status" id="status" value="1" <if condition="1==$info[status]">checked</if> />已经审核</label>
+                    <label><input type="radio" name="status" id="status" value="0" <if condition="0==$info[status]">checked</if> />未审核</label>
+                    
+                </td>
+            </tr> 
+            <tr align="left"  class="center_t_d">
+                <td width="20%">推荐</td>
+                <td align="left">
+                    
+                    <label><input type="radio" name="is_tj" id="is_tj" value="1" <if condition="1==$info[is_tj]">checked</if>  />推荐</label>
+                    <label><input type="radio" name="is_tj" id="is_tj" value="0" <if condition="0==$info[is_tj]">checked</if>  />普通</label>
+                    
+                </td>
+            </tr>  
+                
+                <tr align="left"  class="center_t_d">
+                    <td width="20%">上传封面图片：</td>
+                    <td align="left">
+                        <input id="file_upload" name="file_upload" type="file" multiple="true">
+            <div id="some_file_queue">
+
+            </div>
+            <div class="imgList" id="image"></div>
+            <input type="hidden" name="fengmian" id="yingyezhizhao" value="{$info.fmimg}" />
+            <if condition="!empty($info[fmimg])">
+            <img src="__ROOT__{$info.fmimg}" height="100" />
+            </if>
+                    </td>
+                </tr>
+                 
+            <tr align="left"  class="center_t_d">
+                  <td width="20%">图片集合 <a href="javascript:addimgrow();" class="btn submit">添加</a> </td>
+                <td align="left">
+                    <div id="tpjh">
+                        <div class="rowtpjh">
+                           <volist id="vo" name="tplist">
+                                <img src="__ROOT__{$vo}" width="100" /><br/>
+                            </volist><br/>
+                        <input type="file" name="imgsrc[]" id="imgsrc[]" value="" />
+                         
+                        </div>
+                    </div>
+                    
+                </td>
+            </tr>  
+                
+                <tr>
+                    <td colspan="2">
+                  <input type="hidden" name="uid" id="uid" value="{$info.uid}" />
+                  <input type="hidden" name="p_id" id="p_id" value="{$info.p_id}" />
+                  <input type="hidden" name="c_id" id="c_id" value="{$info.c_id}" />
+                  <input type="hidden" name="id" id="id" value="{$info.id}" />
+                  <input type="submit" class="btn submit" id="sub" name="sub" value="完成"/></td>
+                    
+                </tr>
+                
+            </table>
+            
+        </form>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+        
+    
+    </body>
+</html>
+<script>
+     var k=1;
+        function addimgrow(){
+            
+            var str="";
+            str+='<div  class="rowtpjh">';
+            str+='            <input type="file" name="imgsrc[]" id="imgsrc[]" value="" />';
+            str+='            </div>';
+            $("#tpjh").append(str);
+            k++;
+        }
+</script>
+
+<script>
+            $(function() {
+			$('#file_upload').uploadify({
+				'swf'      : '__ROOT__/Public/uploadimg/uploadify.swf',
+				'uploader' : '{:U("Member/scimg")}',
+				'auto':true, //自动上传
+				'buttonClass':'submit',//给上传按钮一个样式名称
+				'buttonImage':'__ROOT__/avatar/shangchuan.png',//上传按钮加上图片
+				//'buttonText':'增加图片',
+				'height':28,//按钮的高度,
+				'width':83,
+				//'checkExisting':'{:U("paicar/check-exists")}',
+				//'debug':true,
+				//'fileObjName':'the_files',
+				'fileSizeLimit':'2048KB',
+				'fileTypeDesc':'Image Files',
+				'fileTypeExts':'*.gif;*.jpg;*.png',
+				//'formData':{'someKey':'11','someOne':'bb'},
+				//'itemTemplate':'<div id="${fileID}" class="uploadify-queue-item">\
+//					<div class="cancel">\
+//						<a href="javascript:$(\'#${instanceID}\').uploadify(\'cancel\', \'${fileID}\')">X</a>\
+//					</div>\
+//					<span class="fileName">${fileName} (${fileSize})</span><span class="data"></span>\
+//					</div>',
+				'method':'post',
+				'multi':true,//是否允许多个文件上传,
+				'queueID'  : 'some_file_queue',
+				'queueSizeLimit':22,	
+				//'removeCompleted':false,	
+				//'removeTimeout':10,//从队列中删除已完成的上传文件，延迟几秒
+				'requeueErrors':true,
+				'onUploadStart':function(file){
+				//	console.log('Attempting to upload: ' + file.name);
+				}
+				,
+				'successTimeout':5,//等待服务器响应几秒提示成功,
+				'uploadLimit':1,//上传文件最大值
+				'onCancel':function(file){
+					//alert('the file '+file.name+' was cancelled');
+				},
+				'onClearQueue' : function(queueItemCount) {
+            		//alert(queueItemCount + ' file(s) were removed from the queue');
+        		},
+				'onUploadComplete':function(file){
+					//console.log(file);
+				},
+				'onUploadSuccess':function (file, data, response) {
+					if(response){
+						//console.log(data);
+						$("#image").html("<image src=__ROOT__/Uploads/product/"+data+" height=100 />");	
+						var yy=$("#yingyezhizhao").val();
+                                               
+                                                    $("#yingyezhizhao").val("/Uploads/product/"+data);
+						
+					}else{
+						alert('图片'+file.name+"上传失败");
+					}
+					//console.log(data);
+					//console.log(response);
+					//console.log(file);
+					//alert('The file ' + data + ' was successfully uploaded with a response of ' + response + ':' + data);
+				},
+				'onQueueComplete' : function(queueData) {
+					//console.log(queueData);
+					//alert(queueData.uploadsSuccessful + ' files were successfully uploaded.');
+				}
+				
+				
+			});
+		});
+</script>
+<script type="text/javascript">
+CKEDITOR.replace( 'gaishu',
+{
+filebrowserBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html',
+filebrowserImageBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Images',
+filebrowserFlashBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Flash',
+filebrowserUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+filebrowserImageUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
+filebrowserFlashUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
+});
+</script>
