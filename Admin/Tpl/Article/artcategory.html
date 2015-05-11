@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>文章分类-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+<script>
+jQuery(document).ready(function($) {
+	$('.theme-login').click(function(){
+		window.location.href="{:U('Member/addpt')}";
+	})
+	
+		
+		
+	
+
+})
+function close_win(){
+	$(".theme-popover").html("");
+		
+	$('.theme-popover-mask').fadeOut(100);
+	$('.theme-popover').slideUp(200);
+}
+
+</script>
+<style>
+.fontb{ display:block; float:right; margin-right:56px;}
+</style>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.doubledate').kuiDate({
+		className:'doubledate',
+		isDisabled: "1"  // isDisabled为可选参数，“0”表示今日之前不可选，“1”标志今日之前可选
+	});
+});
+</script>
+</head>
+
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：用户列表</div>
+      <div class="center_r_z">
+      <form method="post" name="search_form" id="search_form" action=""  >
+        <label>分类名称</label>
+        <input type="text" class="input1" name="cname" id="cname" />
+        <label>上级id</label>
+        <select id="pid" class="choose" name="pid">
+            <option value="0">顶级分类</option>
+            <volist id="vo" name="list">
+            <option value="{$vo.cid}">{$vo.fullname}</option>
+            </volist>
+        </select>
+        
+        
+        <input name="sub" type="submit"  value="添加" class="sub1" />
+        
+        </form>
+        <div class="theme-popover">
+          
+        </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        <tr class="center_t_t">
+          <td class="td1" width="135">编号</td>
+          <td width="135">名称</td>
+          <td width="135">[双击]编辑名称</td>
+          <td class="td2" width="135">操作</td>
+        </tr>
+        <volist id="vo" name="list">
+        <tr class="center_t_d">
+          <td class="td1" width="135">{$vo.cid}</td>
+          <td width="135">{$vo.fullname}</td>
+          <td width="135" ondblclick="xg('{$vo.cid}','{$vo.cname}')" id="x_{$vo.cid}">{$vo.cname}</td>
+          <td width="135">
+              
+              <a name="{$vo.cname}" link="{:U('Article/del_cat',array('cid'=>$vo[cid]))}" style="cursor:pointer" class="del">删除</a></td>
+        </tr>
+        </volist>
+      </table>
+      <div class="paging">
+        <div class="paging_l">{$page}</div>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+
+
+    <style>
+        .xguc{ border: 1px #00438a solid; height: 20px;}
+    </style>
+<script>
+//删除
+    $(".del").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要删除 分类 ["+n+"]吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+//编辑，显示文本框
+function xg(id,cname){
+    $("#x_"+id).html("<input type='text'size=80 class='xguc' onblur='gbxg("+id+")' name='xgname' id='xgname_"+id+"' value='"+cname+"' />");
+}
+//修改名称
+function gbxg(id){
+    var cname=$("#xgname_"+id).val();
+    $.ajax({
+        data:"cname="+cname+"&id="+id,
+        cache:false,
+        datatype:"JSON",
+        type:"POST",
+        url:"{:U('Article/xgcname')}",
+        success:function(msg){
+            $("#x_"+id).html(cname);
+        }
+    });
+}
+</script>
+</body>
+</html>
