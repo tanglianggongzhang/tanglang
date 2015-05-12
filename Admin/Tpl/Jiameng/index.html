@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>加盟列表-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+
+<style>
+.fontb{ display:block; float:right; margin-right:56px;}
+</style>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.doubledate').kuiDate({
+		className:'doubledate',
+		isDisabled: "1"  // isDisabled为可选参数，“0”表示今日之前不可选，“1”标志今日之前可选
+	});
+});
+</script>
+</head>
+
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：加盟列表</div>
+      <div class="center_r_z">
+      <form method="get" name="search_form" id="search_form" action=""  >
+        <label>关键字</label>
+        <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
+        
+            
+        <if condition="$is_qx==0">
+        
+        <select name="province" id="province_s" class="choose" onChange="getcity('province_s','city_s')">
+          <option value="" >请选择省</option>
+          
+			<volist id="vo" name="pro_list">
+            	<option value="{$vo.region_id}" <if condition="$vo[region_id]==$province">selected</if>>{$vo.region_name}</option>
+			</volist>
+          
+        </select>
+       
+        <select name="city" id="city_s" class="choose" onChange="getdiqu('province_s','city_s','q_s')">
+          <option value="" >请选择城市</option>
+          <if condition="!empty($city)">
+                    <option value="{$city}" selected="selected">{$cityname}</option>
+                    </if>
+        </select>
+        
+        </if>
+        
+        
+        <if condition="!empty($keys)||!empty($province)||!empty($city)">
+                <a href="{:U('Jiameng/index')}">取消查询</a>
+            </if>
+        
+        <input name="sub" type="submit"  value="查询" class="sub1" />
+        
+        </form>
+        <div class="theme-popover">
+          
+        </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        <tr class="center_t_t">
+          <td class="td1" width="135">编号</td>
+          <td width="135">公司名称</td>
+          <td width="135">营业执照</td>
+          <td width="100">地址</td>
+          <td width="100">电话</td>
+          <td width="100">邮箱</td>
+          <td width="100">姓名</td>
+          <td width="100">备注</td>
+          <td width="100">状态</td>
+          <td class="td2" width="135">操作</td>
+        </tr>
+        <volist id="vo" name="list">
+        <tr class="center_t_d">
+          <td class="td1" width="135">{$vo.id}</td>
+          
+          <td width="135">{$vo.company}</td>
+          <td width="135"><if condition="!empty($vo[yingyezhizhao])">
+            <a target="_blank" href="{$systemConfig.SITE_INFO.url}{$vo.yingyezhizhao}"><img src="{$systemConfig.SITE_INFO.url}{$vo.yingyezhizhao}" width="100" /></a></if></td>
+        
+        
+          <td width="100">{$vo.address}</td>
+          <td width="100">{$vo.movphone}</td>
+          <td width="100">{$vo.email}</td>
+          <td width="100">{$vo.name}</td>
+          <td width="100">{$vo.beizhu}</td>
+          <td width="100">{$vo.status_f}</td>
+          <td width="135">
+              <a name="{$vo.company}" link="{:U('Jiameng/edit_status',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
+              
+              <a name="{$vo.company}" link="{:U('Jiameng/del_jiameng',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+          </td>
+        </tr>
+        </volist>
+      </table>
+      <div class="paging">
+        <div class="paging_l">{$page}</div>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+
+    <style>
+        .sortpx{border: 1px solid #0070a9; width: 30px;}
+    </style>
+
+<script>
+    
+    function gbmember(tid){
+        if(tid==''){
+            alert("请选择会员类型！");
+        }
+        $.ajax({
+            data:"tid="+tid,
+            cache:false,
+            type:"post",
+            datatype:"json",
+            url:"{:U('Tuku/ajax_getulist')}",
+            success:function(msg){
+                var msg=eval("("+msg+")");
+                if(msg.status==1){
+                    $("#uid").empty();
+                    var str="";
+                    var len=msg.data.length;
+                    var i=0;
+                    for(i=0;i<len;i++){
+                        str+="<option value='"+msg.data[i].a_id+"'>"+msg.data[i].a_name+"["+msg.data[i].truename+"]</option>";
+                    }
+                    $("#uid").append(str);
+                }
+            
+            }
+        });
+    }
+    
+    
+    function updatesort(id,sort){
+        
+        $("#s_"+id).html("<input type='text' id='sv_"+id+"' class='sortpx' name='sv_"+id+"' onchange='gb(this.value,"+id+")' value='"+sort+"' />");
+    }
+    function gb(sort,id){
+        $.ajax({
+            data:"sort="+sort+"&id="+id,
+            url:"{:U('Gongzhang/ajaxupdatesort')}",
+            type:"POST",
+            datatype:"JSON",
+            cache:false,
+            success:function(msg){
+                $("#s_"+id).html(sort);
+            }
+        });
+    }
+//删除
+    $(".del").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要删除会员["+n+"]吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+    $(".sgdtstatus").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要修改会员["+n+"]的状态吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+//获取城市
+function getcity(proid,cityid){
+		var pid=$("#"+proid).val();
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"{:U('Member/getcity')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				msg=eval("("+msg+")");
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					for(l=0;l<len;l++){
+						citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+					}
+					
+					
+					$("#"+cityid).append(citystr);
+				}
+				
+			}
+					
+		});
+		
+			
+}
+
+
+
+//当鼠标在文本框中文字隐藏,当离开之后文字显示
+$(".input1").blur(function(){
+	if($(this).val()=="")
+	$(this).val("请输入关键字");
+	});
+$(".input1").focus(function(){
+	$(this).val("");
+	});
+
+
+
+
+    
+</script>
+</body>
+</html>
