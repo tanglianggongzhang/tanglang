@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
     <head>
-        <title>添加-视频-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+        <title>添加/编辑-视频-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
@@ -145,11 +145,19 @@
   <div class="center_r">
     <div class="center">
       <div class="center_r_t">
-      您的位置：<a href="{:U('Shipin/index')}" class="a1">视频列表</a>>>添加视频
+      您的位置：<a href="{:U('Shipin/index')}" class="a1">视频列表</a>>>添加/编辑视频
       </div>
       <div class="center_t">
           <form action="" method="POST" id="form1" name="form1" enctype="multipart/form-data" >
-            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab center_t">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab center_t">    
+                <if condition="$is_edit==1">
+                    <tr align="left"  class="center_t_d">
+                <td width="20%">会员</td>
+                <td align="left">
+                    {$uname}
+                </td>
+</tr>
+                <else />  
             <tr align="left"  class="center_t_d">
                 <td width="20%">会员</td>
                 <td align="left">
@@ -160,7 +168,7 @@
                         </volist>
                     </select>
                 </td>
-            </tr>   
+            </tr>
             <tr align="left"  class="center_t_d">
                 <td width="20%">选择会员</td>
                 <td align="left">
@@ -180,25 +188,25 @@
                     </select>
                 </td>
             </tr>
-                
+               </if> 
             <tr align="left"  class="center_t_d">
                 <td width="20%">标题</td>
                 <td align="left">
-                    <input type="text" size="100" name="title" id="title" value="" />
+                    <input type="text" size="100" name="title" id="title" value="{$info.title}" />
                 </td>
             </tr>
             
             <tr align="left"  class="center_t_d">
                 <td width="20%">描述 [description]</td>
                 <td align="left">
-                    <textarea id="description" name="description" rows="10" cols="50"></textarea>
+                    <textarea id="description" name="description" rows="10" cols="50">{$info.description}</textarea>
                    
                 </td>
             </tr>
             <tr align="left"  class="center_t_d">
                 <td width="20%">关键字 [keywords]</td>
                 <td align="left">
-                     <input type="text" size="100" name="keywords" id="keywords" value="" />
+                     <input type="text" size="100" name="keywords" id="keywords" value="{$info.keywords}" />
                    
                 </td>
             </tr>    
@@ -207,7 +215,7 @@
                 <tr align="left"  class="center_t_d">
                 <td width="20%">点击</td>
                 <td align="left">
-                    <input type="text" size="10" name="click" id="click" value="" />
+                    <input type="text" size="10" name="click" id="click" value="{$info.click}" />
                 </td>
             </tr> 
             
@@ -215,8 +223,8 @@
                 <td width="20%">状态</td>
                 <td align="left">
                     
-                    <label><input type="radio" name="status" id="status" value="1" />已经审核</label>
-                    <label><input type="radio" name="status" id="status" value="0" />未审核</label>
+                    <label><input type="radio" name="status" id="status" value="1" <if condition="$info[status]==1">checked</if> />已经审核</label>
+                    <label><input type="radio" name="status" id="status" value="0" <if condition="$info[status]==0">checked</if> />未审核</label>
                     
                 </td>
             </tr> 
@@ -224,13 +232,22 @@
                 <td width="20%">上传视频</td>
                 <td align="left">
                     
-                    <textarea id="spcontent" name="spcontent" placeholder="将优酷的视频代码复制到此处或者在下面上传视频" rows="10" cols="50"></textarea><br/>
+                    <textarea id="spcontent" name="spcontent" placeholder="将优酷的视频代码复制到此处或者在下面上传视频" rows="10" cols="50">{$info.spcontent}</textarea><br/>
                     <input type="file" name="spurl" id="spurl" />[只可上传flv格式文件]
-                    
+                    {$info.spurl}
                 </td>
-            </tr>    
+            </tr>
+                <tr align="left"  class="center_t_d">
+                  <td width="20%">上传封面图片：</td>
+                  <td align="left"><input id="file_upload" name="file_upload" type="file" multiple="true">
+                    <div id="some_file_queue"> </div>
+                    <div class="imgList" id="image"></div>
+                    <input type="hidden" name="fengmian" id="yingyezhizhao" value="{$info.fmimg}" />
+                    <if condition="!empty($info[fmimg])"> <img src="__ROOT__{$info.fmimg}" height="100" /> </if></td>
+                </tr>
                 <tr>
                     <td colspan="2">
+                        <input type="hidden" id="id" name="id" value="{$info.id}" />
                   <input type="submit" class="btn submit" id="sub" name="sub" value="完成"/></td>
                     
                 </tr>
@@ -303,4 +320,77 @@
             }
         });
     }
+</script>
+<script>
+            $(function() {
+			$('#file_upload').uploadify({
+				'swf'      : '__ROOT__/Public/uploadimg/uploadify.swf',
+				'uploader' : '{:U("Member/scimg")}',
+				'auto':true, //自动上传
+				'buttonClass':'submit',//给上传按钮一个样式名称
+				'buttonImage':'__ROOT__/avatar/shangchuan.png',//上传按钮加上图片
+				//'buttonText':'增加图片',
+				'height':28,//按钮的高度,
+				'width':83,
+				//'checkExisting':'{:U("paicar/check-exists")}',
+				//'debug':true,
+				//'fileObjName':'the_files',
+				'fileSizeLimit':'2048KB',
+				'fileTypeDesc':'Image Files',
+				'fileTypeExts':'*.gif;*.jpg;*.png',
+				//'formData':{'someKey':'11','someOne':'bb'},
+				//'itemTemplate':'<div id="${fileID}" class="uploadify-queue-item">\
+//					<div class="cancel">\
+//						<a href="javascript:$(\'#${instanceID}\').uploadify(\'cancel\', \'${fileID}\')">X</a>\
+//					</div>\
+//					<span class="fileName">${fileName} (${fileSize})</span><span class="data"></span>\
+//					</div>',
+				'method':'post',
+				'multi':true,//是否允许多个文件上传,
+				'queueID'  : 'some_file_queue',
+				'queueSizeLimit':22,	
+				//'removeCompleted':false,	
+				//'removeTimeout':10,//从队列中删除已完成的上传文件，延迟几秒
+				'requeueErrors':true,
+				'onUploadStart':function(file){
+				//	console.log('Attempting to upload: ' + file.name);
+				}
+				,
+				'successTimeout':5,//等待服务器响应几秒提示成功,
+				'uploadLimit':1,//上传文件最大值
+				'onCancel':function(file){
+					//alert('the file '+file.name+' was cancelled');
+				},
+				'onClearQueue' : function(queueItemCount) {
+            		//alert(queueItemCount + ' file(s) were removed from the queue');
+        		},
+				'onUploadComplete':function(file){
+					//console.log(file);
+				},
+				'onUploadSuccess':function (file, data, response) {
+					if(response){
+						//console.log(data);
+						$("#image").html("<image src=__ROOT__/Uploads/product/"+data+" height=100 />");	
+						var yy=$("#yingyezhizhao").val();
+                                               // if(yy!='')
+                                               // $("#yingyezhizhao").val(yy+","+data);
+                                              //  else
+                                                    $("#yingyezhizhao").val("/Uploads/product/"+data);
+						
+					}else{
+						alert('图片'+file.name+"上传失败");
+					}
+					//console.log(data);
+					//console.log(response);
+					//console.log(file);
+					//alert('The file ' + data + ' was successfully uploaded with a response of ' + response + ':' + data);
+				},
+				'onQueueComplete' : function(queueData) {
+					//console.log(queueData);
+					//alert(queueData.uploadsSuccessful + ' files were successfully uploaded.');
+				}
+				
+				
+			});
+		});
 </script>

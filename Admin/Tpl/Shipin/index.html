@@ -76,7 +76,7 @@ $(function(){
             
         </select>
             <if condition="!empty($keys)||!empty($uid)">
-                <a href="{:U('Tuku/index')}">取消查询</a>
+                <a href="{:U('Shipin/index')}">取消查询</a>
             </if>
         
         
@@ -95,7 +95,6 @@ $(function(){
           <td class="td1" width="135">编号</td>
           <td width="135">标题</td>
           <td width="135">封面</td>
-          <td width="135">收藏</td>
           <td width="100">点击</td>
           <td width="100">状态</td>
           <td class="td2" width="135">操作</td>
@@ -107,14 +106,14 @@ $(function(){
           <td width="135">{$vo.title}</td>
           <td width="135"><if condition="!empty($vo[fmimg])"><img src="{$systemConfig.SITE_INFO.url}{$vo.fmimg}" width="100" /></if></td>
         
-        <td width="135">{$vo.shoucang}</td>
+        
           <td width="135">{$vo.click}</td>
           <td width="135">{$vo.status_f}</td>
           
           <td width="135">
-              <a name="{$vo.title}" link="{:U('Tuku/edit_status',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
-              <a aid="{$vo.a_id}" href="{:U('Tuku/edit_tuku',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
-              <a name="{$vo.title}" link="{:U('Tuku/del_tuku',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+              <a name="{$vo.title}" link="{:U('Shipin/edit_status',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
+              <a aid="{$vo.a_id}" href="{:U('Shipin/edit_shipin',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
+              <a name="{$vo.title}" link="{:U('Shipin/del_shipin',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
           </td>
         </tr>
         </volist>
