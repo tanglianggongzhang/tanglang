@@ -7,11 +7,11 @@
  */
 
 /**
- * Description of JiamengAction
+ * Description of ZixunAction
  *
  * @author 李雪莲 <lixuelianlk@163.com>
  */
-class JiamengAction extends CommonAction {
+class ZixunAction extends CommonAction {
     /**
      * 加盟列表
      */
@@ -31,10 +31,10 @@ class JiamengAction extends CommonAction {
             $this->assign("pro_list", $pro_list);
 
             if (!empty($province)) {
-                $where.=" and p_id=" . $province;
+                $where.=" and Zixun.p_id=" . $province;
             }
             if (!empty($city)) {
-                $where.=" and c_id=" . $city;
+                $where.=" and Zixun.c_id=" . $city;
             }
             $this->assign("is_qx", $this->getqx($_SESSION['my_info']['role']));
             $this->assign("province",$province);
@@ -50,19 +50,20 @@ class JiamengAction extends CommonAction {
         $keys=$keys=="请输入关键字"?"":$keys;
         $uid=$_GET['uid'];
         if(!empty($keys))
-            $where.=" and company like '%".$keys."%'";
+            $where.=" and Zixun.name like '%".$keys."%'";
         
         $this->assign("keys",$keys);
         
-        $M=M("Jiameng");
+        $M=D("ZixunView");
         $cou=$M->where($where)->count();
         import("ORG.Util.Page");
         $p=new Page($cou,10);
-        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("addtime desc")->select();
-        
+        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("Zixun.addtime desc")->select();
+       
         $arr=array("未审核","已审核");
         foreach ($list as $k=>$v){
             $list[$k]['status_f']=$arr[$v['status']];
+            $list[$k]['addtime_f']=date("Y-m-d",$v['addtime']);
         }
         $this->assign("list",$list);
         $this->assign("page",$p->show());
@@ -73,13 +74,9 @@ class JiamengAction extends CommonAction {
     /**
      * 删除加盟
      */
-    public function del_jiameng(){
+    public function del_zixun(){
         $id=$_GET['id'];
-        $M=M("Jiameng");
-        $info=$M->where("id=".$id)->find();
-        if(!empty($info['yingyezhizhao']))
-            unlink (".".$info['yingyezhizhao']);
-       
+        $M=M("Zixun");
         $rs=$M->where("id=".$id)->delete();
         if($rs)
             $this->success ("删除成功！");
@@ -96,7 +93,7 @@ class JiamengAction extends CommonAction {
             $status_u=1;
         else
             $status_u=0;
-        $M=M("Jiameng");
+        $M=M("Zixun");
         $rs=$M->where("id=".$id)->save(array('status'=>$status_u));
         if($rs)
             $this->success ("操作成功！");
