@@ -191,9 +191,7 @@
             <tr align="left"  class="center_t_d">
                 <td width="20%">描述 [description]</td>
                 <td align="left">
-                    <textarea id="description" name="description" rows="10" cols="50">
-                        
-                    </textarea>
+                    <textarea id="description" name="description" rows="10" cols="50"></textarea>
                    
                 </td>
             </tr>
@@ -227,7 +225,7 @@
                 <td align="left">
                     
                     <textarea id="spcontent" name="spcontent" placeholder="将优酷的视频代码复制到此处或者在下面上传视频" rows="10" cols="50"></textarea><br/>
-                    <input type="file" name="spurl" id="spurl" />
+                    <input type="file" name="spurl" id="spurl" />[只可上传flv格式文件]
                     
                 </td>
             </tr>    
@@ -262,7 +260,7 @@
             datatype:"json",
             url:"{:U('Tuku/ajax_getulist')}",
             success:function(msg){
-                var msg=eval("("+msg+")");
+               // var msg=eval("("+msg+")");
                 if(msg.status==1){
                     $("#gzid").empty();
                     var str="";
@@ -290,7 +288,7 @@
             datatype:"json",
             url:"{:U('Tuku/ajax_getulist')}",
             success:function(msg){
-                var msg=eval("("+msg+")");
+               // var msg=eval("("+msg+")");
                 if(msg.status==1){
                     $("#gzid").empty();
                     var str="";

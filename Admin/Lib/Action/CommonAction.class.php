@@ -159,7 +159,28 @@ class CommonAction extends Action {
         $upload->maxSize = 1024 * 1024 * 1024 * 30; // 设置附件上传大小
         $upload->allowExts = array('jpg', 'gif', 'png', 'jpeg'); // 设置附件上传类型
         $upload->savePath = $path; // 设置附件上传目录
-       
+
+        $upload->thumb = true;
+        $upload->thumbRemoveOrigin = false;
+        #$upload->thumbMaxWidth=$thwidth;
+        # $upload->thumbMaxHeight=$thheight;
+
+        if (!$upload->upload()) {// 上传错误提示错误信息
+            #echo json_encode(array('status' => 0, 'info' => $upload->getErrorMsg()));
+            #echo $upload->getErrorMsg();
+            return "";
+        } else {// 上传成功 获取上传文件信息
+            return $info = $upload->getUploadFileInfo();
+        }
+    }
+
+    public function upload2($path = './Uploads/shipin/', $thwidth, $thheight) {
+        import('ORG.Net.UploadFile');
+        $upload = new UploadFile(); // 实例化上传类
+        $upload->maxSize = 1024 * 1024 * 1024 * 30; // 设置附件上传大小
+        $upload->allowExts = array('flv'); // 设置附件上传类型
+        $upload->savePath = $path; // 设置附件上传目录
+
         $upload->thumb = true;
         $upload->thumbRemoveOrigin = false;
         #$upload->thumbMaxWidth=$thwidth;
@@ -205,9 +226,9 @@ class CommonAction extends Action {
         } else {
             $m = M("Role");
             $info = $m->where("id=" . $roleid)->find();
-            if($info["pid"]==2){
+            if ($info["pid"] == 2) {
                 return 1;
-            }else{
+            } else {
                 return 0;
             }
         }
