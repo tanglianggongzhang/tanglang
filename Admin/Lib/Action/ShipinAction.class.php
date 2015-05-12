@@ -18,7 +18,31 @@ class ShipinAction extends CommonAction {
     public function index(){
         parent::_initalize();
         $this->assign("systemConfig",  $this->systemConfig);
+        $is_qx=$this->getqx($_SESSION['my_info']['role']);
+        
         $where="1";
+        if($is_qx==1){
+            $where.=" and p_id=".$_SESSION['my_info']['proid'];
+            $where.=" and c_id=".$_SESSION['my_info']['cityid'];
+        }else{
+            
+            $citymod=new CityModel();
+            $plist=$citymod->getprovince(1);
+            $this->assign("plist",$plist);
+            
+            $p_id=$_GET['p_id'];
+            $c_id=$_GET['c_id'];
+            
+            if(!empty($p_id))
+                $where.=" and p_id=".$p_id;
+            if(!empty($c_id))
+                $where.=" and c_id=".$c_id;
+            $this->assign("p_id",$p_id);
+            $this->assign("c_id",$c_id);
+            $this->assign("cname",  $citymod->getname($c_id));
+        }
+        $this->assign("is_qx",$is_qx);
+        
         $keys=$_GET['keys'];
         $keys=$keys=="请输入关键字"?"":$keys;
         $uid=$_GET['uid'];

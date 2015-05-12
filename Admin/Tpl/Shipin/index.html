@@ -75,7 +75,22 @@ $(function(){
             <option value="">请选择</option>
             
         </select>
-            <if condition="!empty($keys)||!empty($uid)">
+        <label>省</label>
+        <select id="p_id" name="p_id" class="choose" onChange="getcity('p_id','c_id')">
+            <option value="">请选择</option>
+            <volist id="vo" name="plist">
+                <option value="{$vo.region_id}" <if condition="$vo[region_id]==$p_id">selected</if> >{$vo.region_name}</option>
+            </volist>
+        </select>
+        <label>市</label>
+        <select id="c_id" name="c_id" class="choose">
+            <option value="">请选择</option>
+            <if condition="!empty($c_id)">
+                <option value="{$c_id}" selected>{$cname}</option>
+            </if>
+        </select>
+        
+            <if condition="!empty($keys)||!empty($uid)||!empty($p_id)||!empty($c_id)">
                 <a href="{:U('Shipin/index')}">取消查询</a>
             </if>
         
