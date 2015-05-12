@@ -72,7 +72,7 @@ class ZixunAction extends CommonAction {
     }
     
     /**
-     * 删除加盟
+     * 删除咨询
      */
     public function del_zixun(){
         $id=$_GET['id'];
