@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
 <head>
-<title>工长预约-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<title>设计师设计-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
@@ -41,7 +41,7 @@ $(function(){
   <!--左边end-->
   <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：工长预约</div>
+      <div class="center_r_t">您的位置：设计师设计</div>
       <div class="center_r_z">
       <form method="get" name="search_form" id="search_form" action=""  >
         <label>关键字</label>
@@ -70,7 +70,7 @@ $(function(){
         
         
         <if condition="!empty($keys)||!empty($p_id)||!empty($c_id)">
-                <a href="{:U('Yuyue/index')}">取消查询</a>
+                <a href="{:U('Yuyue/gzyy')}">取消查询</a>
             </if>
         
         <input name="sub" type="submit"  value="查询" class="sub1" />
@@ -84,7 +84,7 @@ $(function(){
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
         <tr class="center_t_t">
           <td class="td1" width="135">编号</td>
-          <td width="135">预约会员</td>
+          <td width="135">设计会员</td>
           <td width="135">姓名</td>
           <td width="135">类型</td>
           <td width="100">区域</td>
@@ -108,9 +108,9 @@ $(function(){
           <td width="100">{$vo.status_f}</td>
           
           <td width="135">
-              <a name="{$vo.name}" link="{:U('Yuyue/edit_status',array('id'=>$vo[id],'status'=>$vo[status],'is_gz'=>1))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
+              <a name="{$vo.name}" link="{:U('Yuyue/edit_status',array('id'=>$vo[id],'status'=>$vo[status],'is_gz'=>0))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
               
-              <a name="{$vo.name}" link="{:U('Yuyue/del_yuyue',array('id'=>$vo[id],'is_gz'=>1))}" style="cursor:pointer" class="del">删除</a>
+              <a name="{$vo.name}" link="{:U('Yuyue/del_yuyue',array('id'=>$vo[id],'is_gz'=>0))}" style="cursor:pointer" class="del">删除</a>
           </td>
         </tr>
         </volist>
