@@ -20,7 +20,7 @@ and open the template in the editor.
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
-		window.location.href="{:U('Shop/add_hdp')}";
+		window.location.href="{:U('Shop/add_yhq')}";
 	})
 })
 function close_win(){
@@ -36,15 +36,20 @@ function close_win(){
 </style>
 <script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
 
-<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
-<script type="text/javascript">
-$(function(){
-	$('.doubledate').kuiDate({
-		className:'doubledate',
-		isDisabled: "1"  // isDisabled为可选参数，“0”表示今日之前不可选，“1”标志今日之前可选
-	});
-});
-</script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/datepicker/css/jquery-ui.css" />
+<style>
+    
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }  
+.ui-timepicker-div dl { text-align: left; }  
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }  
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }  
+.ui-timepicker-div td { font-size: 90%; }  
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }  
+    
+</style>
+<script type="text/javascript" src="__PUBLIC__/datepicker/js/jquery-ui-datepicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/datepicker/js/jquery-ui-timepicker-addon.js"></script>
+
 </head>
 
 <body>
@@ -57,21 +62,28 @@ $(function(){
       <div class="center_r_t">您的位置：优惠券</div>
       <div class="center_r_z">
       <form method="get" name="search_form" id="search_form" action=""  >
-        <label>关键字</label>
-        <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
-        <label>商城</label>
-        <select id="uid" name="uid" class="choose">
-            <option value="">请选择</option>
-            <volist id="vo" name="gzlist">
-                <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if> >{$vo.a_name}[{$vo.lxrname}][{$vo.company}]</option>
+        <label>开始时间</label>
+        <input type="text" class="input1" id="startdate" value="{$startdate}" name="startdate" />-<input type="text" class="input1" id="startdate1" name="startdate1" value="{$startdate1}" />
+        <label>结束时间</label>
+        <input type="text" class="input1" id="enddate" name="enddate" value='{$enddate}' />-<input type="text" value='{$enddate1}' class="input1" id="enddate1" name="enddate1" />
+        <if condition="$is_qx==0">
+        
+        <select id="p_id" name="p_id" class="choose" onchange="getcity('p_id','c_id')">
+            <option value="">请选择省</option>
+            <volist id="vo" name="plist">
+                <option value="{$vo.region_id}" <if condition="$vo[region_id]==$p_id">selected</if>>{$vo.region_name}</option>
             </volist>
-            
-            
         </select>
-        
-        
-            <if condition="!empty($keys)||!empty($uid)">
-                <a href="{:U('Shop/list_hdp')}">取消查询</a>
+     
+        <select id="c_id" name="c_id" class="choose">
+            <option value="">请选择市</option>
+            <if condition="!empty($c_id)">
+                <option value="{$c_id}" selected >{$cname}</option>
+            </if>
+        </select>
+        </if>
+            <if condition="!empty($startdate)||!empty($enddate)||!empty($p_id)||!empty($c_id)">
+                <a href="{:U('Shop/list_yhq')}">取消查询</a>
             </if>
         
         
@@ -88,25 +100,33 @@ $(function(){
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
         <tr class="center_t_t">
           <td class="td1" width="135">编号</td>
-          <td width="135">公司名称</td>
-          <td width="135">标题</td>
-          <td width="135">封面</td>
-          <td width="100">状态</td>
+          <td width="135">优惠券名称</td>
+          <td width="135">是否推荐</td>
+          <td width="135">抵用价格</td>
+          <td width="135">需消费</td>
+          <td width="135">优惠券数目</td>
+          <td width="50">已使用?张</td>
+          <td width="150">开始日期-结束日期</td>
+          <td width="50">状态</td>
           <td class="td2" width="135">操作</td>
         </tr>
         <volist id="vo" name="list">
         <tr class="center_t_d">
           <td class="td1" width="135">{$vo.id}</td>
-          <td width="135">{$vo.company}</td>
-          <td width="135"><a href="{$vo.link}" target="_blank">{$vo.name}</a></td>
-          <td width="135"><if condition="!empty($vo[img])"><img src="{$systemConfig.SITE_INFO.url}{$vo.img}" width="100" /></if></td>
-        
-          <td width="135">{$vo.status_f}</td>
+          <td width="135">{$vo.name}</td>
+          <td width="135">{$vo.is_tj_f}</td>
+          <td width="135">{$vo.dyprice}</td>
+          <td width="135">{$vo.xyprice}</td>
+          <td width="135">{$vo.yhqnum}</td>
+          <td width="50">{$vo.ysy}</td>
+          <td width="150">{$vo.startdate}<br/>-<br/>{$vo.enddate}</td>
+          <td width="50">{$vo.status_f}</td>
           
           <td width="135">
-              <a name="{$vo.company}" link="{:U('Shop/status_hdp',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
-              <a aid="{$vo.a_id}" href="{:U('Shop/edit_hpd',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
-              <a name="{$vo.company}" link="{:U('Shop/del_hpd',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+              <a name="{$vo.name}" link="{:U('Shop/edit_status_yhq',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
+              <a name="{$vo.name}" href="{:U('Shop/list_xx_yhq',array('id'=>$vo[id]))}" style="cursor:pointer">查看优惠券</a><br/>
+              <a aid="{$vo.a_id}" href="{:U('Shop/edit_yhq',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
+              <a name="{$vo.name}" link="{:U('Shop/del_yhq',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
           </td>
         </tr>
         </volist>
@@ -212,19 +232,11 @@ function getdays(){
 	});	
 }
 
-//当鼠标在文本框中文字隐藏,当离开之后文字显示
-$(".input1").blur(function(){
-	if($(this).val()=="")
-	$(this).val("请输入关键字");
-	});
-$(".input1").focus(function(){
-	$(this).val("");
-	});
 
-
-
-
-    
+$("#startdate").datetimepicker();
+$("#enddate").datetimepicker();
+$("#startdate1").datetimepicker();
+$("#enddate1").datetimepicker(); 
 </script>
 </body>
 </html>

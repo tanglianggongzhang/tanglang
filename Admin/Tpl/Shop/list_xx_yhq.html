@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
 <head>
-<title>幻灯片-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<title>优惠券使用列表-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
@@ -20,7 +20,7 @@ and open the template in the editor.
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
-		window.location.href="{:U('Shop/add_hdp')}";
+		window.location.href="{:U('Shop/add_yhq')}";
 	})
 })
 function close_win(){
@@ -36,15 +36,7 @@ function close_win(){
 </style>
 <script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
 
-<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
-<script type="text/javascript">
-$(function(){
-	$('.doubledate').kuiDate({
-		className:'doubledate',
-		isDisabled: "1"  // isDisabled为可选参数，“0”表示今日之前不可选，“1”标志今日之前可选
-	});
-});
-</script>
+
 </head>
 
 <body>
@@ -54,31 +46,22 @@ $(function(){
   <!--左边end-->
   <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：幻灯片</div>
+        <div class="center_r_t">您的位置：<a href="{:U('Shop/list_yhq')}" class="a1" >优惠券列表</a> >>优惠券使用列表</div>
       <div class="center_r_z">
       <form method="get" name="search_form" id="search_form" action=""  >
-        <label>关键字</label>
-        <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
-        <label>商城</label>
-        <select id="uid" name="uid" class="choose">
-            <option value="">请选择</option>
-            <volist id="vo" name="gzlist">
-                <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if> >{$vo.a_name}[{$vo.lxrname}][{$vo.company}]</option>
-            </volist>
-            
-            
-        </select>
-        
-        
-            <if condition="!empty($keys)||!empty($uid)">
-                <a href="{:U('Shop/list_hdp')}">取消查询</a>
+          <label>优惠券使用状况</label>
+          <select class="choose" id="issy" name="issy">
+              <option value="">请选择</option>
+              <option value="1" <if condition='$issy==1'>selected</if>>已使用</option>
+              <option value="2" <if condition='$issy==2'>selected</if>>未使用</option>
+          </select>
+            <if condition="$issy==2||$issy==1">
+                <a href="{:U('Shop/list_xx_yhq',array('id'=>$id))}">取消查询</a>
             </if>
-        
-        
         <input name="sub" type="submit"  value="查询" class="sub1" />
         
         
-        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加幻灯片</a>
+        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加优惠券</a>
         </form>
         <div class="theme-popover">
           
@@ -87,26 +70,25 @@ $(function(){
       </div>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
         <tr class="center_t_t">
-          <td class="td1" width="135">编号</td>
-          <td width="135">公司名称</td>
-          <td width="135">标题</td>
-          <td width="135">封面</td>
-          <td width="100">状态</td>
+          <td width="135">编号</td>
+          <td width="135">优惠券密码</td>
+          <td width="135">是否使用</td>
           <td class="td2" width="135">操作</td>
         </tr>
         <volist id="vo" name="list">
         <tr class="center_t_d">
-          <td class="td1" width="135">{$vo.id}</td>
-          <td width="135">{$vo.company}</td>
-          <td width="135"><a href="{$vo.link}" target="_blank">{$vo.name}</a></td>
-          <td width="135"><if condition="!empty($vo[img])"><img src="{$systemConfig.SITE_INFO.url}{$vo.img}" width="100" /></if></td>
-        
-          <td width="135">{$vo.status_f}</td>
+          <td width="135">{$vo.yid}</td>
+          <td width="135">{$vo.yhqpwd}</td>
+          <td width="135">{$vo.issy_f}</td>
           
           <td width="135">
-              <a name="{$vo.company}" link="{:U('Shop/status_hdp',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
-              <a aid="{$vo.a_id}" href="{:U('Shop/edit_hpd',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
-              <a name="{$vo.company}" link="{:U('Shop/del_hpd',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+        <if condition='$vo[issy]==0'>
+              <a name="{$vo.id}" href="{:U('Shop/edit_status_xxyhq',array('yid'=>$vo[yid]))}" style="cursor:pointer" >设为已使用</a><br/>
+              
+              <a name="{$vo.id}" link="{:U('Shop/del_xx_yhq',array('id'=>$vo[yid]))}" style="cursor:pointer" class="del">删除</a>
+              <else/>
+              <a href="{:U('Shop/yhqjl',array('yid'=>$vo[yid],'id'=>$id))}">查看使用会员</a>
+              </if>
           </td>
         </tr>
         </volist>
@@ -143,7 +125,7 @@ $(function(){
 //删除
     $(".del").click(function(){
         var n=$(this).attr("name");
-        if(confirm("您确定要删除会员["+n+"]吗？")){
+        if(confirm("您确定要删除["+n+"]吗？")){
             window.location.href=$(this).attr("link");
         }
     });
@@ -212,19 +194,7 @@ function getdays(){
 	});	
 }
 
-//当鼠标在文本框中文字隐藏,当离开之后文字显示
-$(".input1").blur(function(){
-	if($(this).val()=="")
-	$(this).val("请输入关键字");
-	});
-$(".input1").focus(function(){
-	$(this).val("");
-	});
 
-
-
-
-    
 </script>
 </body>
 </html>

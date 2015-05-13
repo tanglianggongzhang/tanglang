@@ -411,31 +411,31 @@ class ShopAction extends CommonAction {
                 "sytj" => $sytj,
                 "status" => $status
             );
-            
+
             $rs = $M->add($data);
-            $M2=M("YhqXiangxi");
+            $M2 = M("YhqXiangxi");
             if ($rs) {
                 //生成优惠券密码
-               
-                $id=$M->getLastInsID();
+
+                $id = $M->getLastInsID();
                 for ($y = 0; $y < $yhqnum; $y++) {
-                    $pwd=$this->shengchengpwd();
-                    $data1=array(
-                        "id"=>$id,
-                        "yhqpwd"=>$pwd,
-                        "issy"=>0
+                    $pwd = $this->shengchengpwd();
+                    $data1 = array(
+                        "id" => $id,
+                        "yhqpwd" => $pwd,
+                        "issy" => 0
                     );
                     $M2->add($data1);
                 }
             }
-            $this->success("操作成功！",U('Shop/list_yhq'));
+            $this->success("操作成功！", U('Shop/list_yhq'));
             exit;
         }
-       
+
         parent::_initalize();
         $this->assign('systemConfig', $this->systemConfig);
         $this->assign("sjlist", $this->getgzh());
-        
+
         $this->display();
     }
 
@@ -445,6 +445,80 @@ class ShopAction extends CommonAction {
     public function list_yhq() {
         parent::_initalize();
         $this->assign('systemConfig', $this->systemConfig);
+        import("ORG.Util.Page");
+        $M = M("Yhq");
+        $where = '1';
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        if ($is_qx == 1) {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+        } else {
+            $p_id = $_GET['p_id'];
+            $c_id = $_GET['c_id'];
+            $this->assign("p_id", $p_id);
+            $this->assign("c_id", $c_id);
+            $citymod = new CityModel();
+            $plist = $citymod->getprovince(1);
+            $this->assign("plist", $plist);
+            $this->assign("cname", $citymod->getname($c_id));
+        }
+        $this->assign("is_qx", $is_qx);
+        $startdate = $_GET['startdate'];
+        $startdate1 = $_GET['startdate1'];
+        $enddate = $_GET['enddate'];
+        $enddate1 = $_GET['enddate1'];
+
+        $this->assign("startdate", $startdate);
+        $this->assign("startdate1", $startdate1);
+
+        $this->assign("enddate", $enddate);
+        $this->assign("enddate1", $enddate1);
+
+        if (!empty($startdate)) {
+            $starttime = strtotime($startdate);
+        }
+        if (!empty($startdate1)) {
+            $starttime1 = strtotime($startdate1);
+        }
+        if (!empty($enddate)) {
+            $endtime = strtotime($enddate);
+        }
+        if (!empty($enddate1)) {
+            $endtime1 = strtotime($enddate1);
+        }
+        if ($starttime > $starttime1) {
+            $this->error("开始时间第一个不能大于第二个");
+            exit;
+        }
+        if ($endtime > $endtime1) {
+            $this->error("结束时间第一个不能大于第二个");
+            exit;
+        }
+        if (!empty($p_id))
+            $where.=" and p_id=" . $p_id;
+        if (!empty($c_id))
+            $where.=" and c_id=" . $c_id;
+        if (!empty($starttime) && !empty($starttime1)) {
+            $where.=" and (startdate between '" . $starttime . "' and '" . $starttime1 . "' )";
+        }
+        if (!empty($endtime) && !empty($endtime1)) {
+            $where.=" and (enddate between '" . $endtime . "' and '" . $endtime1 . "' )";
+        }
+
+
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order(" addtime desc ")->limit($p->firstRow . "," . $p->listRows)->select();
+        $arr = array("普通", '推荐');
+        $arr1 = array("未审核", "已审核");
+        foreach ($list as $k => $v) {
+            $list[$k]['is_tj_f'] = $arr[$v['is_tj']];
+            $list[$k]['status_f'] = $arr1[$v['status']];
+            $list[$k]['startdate'] = date("Y-m-d H:i", $v['startdate']);
+            $list[$k]['enddate'] = date("Y-m-d H:i", $v['enddate']);
+        }
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
         $this->display();
     }
 
@@ -452,15 +526,99 @@ class ShopAction extends CommonAction {
      * 删除优惠券
      */
     public function del_yhq() {
-        
+        $id = $_GET['id'];
+        #删除详细
+        $Mx = M("YhqXiangxi");
+        $rs1 = $Mx->where("id=" . $id)->delete();
+
+        $M = M("Yhq");
+        $inf = $M->where("id=" . $id)->find();
+        if (!empty($inf)) {
+            unlink("." . $inf['yhimg']);
+        }
+        $rs = $M->where("id=" . $id)->delete();
+
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
     }
 
     /**
      * 编辑优惠券
      */
     public function edit_yhq() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $name = trim($_POST['name']);
+            $img_inf = $this->upload();
+            if (!empty($img_inf)) {
+                $img = $img_inf[0]['savename'];
+                if (!empty($img)) {
+                    $img = "/Uploads/product/" . $img;
+                }
+            }
+            $status = $_POST['status'];
+            $is_tj = $_POST['is_tj'];
+            $dyprice = trim($_POST['dyprice']);
+            $xyprice = trim($_POST['xyprice']);
+            $startdate = trim($_POST['startdate']);
+            $enddate = trim($_POST['enddate']);
+            $czsm = trim($_POST['czsm']);
+            $sytj = trim($_POST['sytj']);
+            if (empty($startdate)) {
+                $this->error("开始日期不能为空！");
+                exit;
+            }
+            if (empty($enddate)) {
+                $this->error("结束日期不能为空！");
+                exit;
+            }
+            if (!empty($startdate) && !empty($enddate)) {
+                $starttime = strtotime($startdate);
+                $endtime = strtotime($enddate);
+            }
+
+            $M = M("Yhq");
+            $inf2 = $M->where("id=" . $id)->find();
+            $data = array();
+            if ($inf2['name'] != $name)
+                $data['name'] = $name;
+            if ($inf2['is_tj'] != $is_tj)
+                $data['is_tj'] = $is_tj;
+            if ($inf2['yhimg'] != $img)
+                $data['yhimg'] = $img;
+            if ($inf2['dyprice'] != $dyprice)
+                $data['dyprice'] = $dyprice;
+            if ($inf2['xyprice'] != $xyprice)
+                $data['xyprice'] = $xyprice;
+            if ($inf2['startdate'] != $starttime)
+                $data['startdate'] = $starttime;
+            if ($inf2['enddate'] != $endtime)
+                $data['enddate'] = $endtime;
+            if ($inf2['czsm'] != $czsm)
+                $data['czsm'] = $czsm;
+            if ($inf2['sytj'] != $sytj)
+                $data['sytj'] = $sytj;
+            if ($inf2['status'] != $status)
+                $data['status'] = $status;
+            $rs = $M->where("id=" . $id)->save($data);
+            if ($rs)
+                $this->success("操作成功！", U("Shop/list_yhq"));
+            else
+                $this->error("操作失败！");
+            exit;
+        }
         parent::_initalize();
         $this->assign('systemConfig', $this->systemConfig);
+        $id = $_GET['id'];
+        $M = M("Yhq");
+        $info = $M->where("id=" . $id)->find();
+        $info['startdate'] = date("Y-m-d H:i", $info['startdate']);
+        $info['enddate'] = date("Y-m-d H:i", $info['enddate']);
+        $this->assign("info", $info);
+        $this->assign("is_edit", 1);
+        $this->assign("comname", $this->getnamebyuid($info['uid']));
         $this->display("add_yhq");
     }
 
@@ -470,30 +628,154 @@ class ShopAction extends CommonAction {
     public function list_xx_yhq() {
         parent::_initalize();
         $this->assign('systemConfig', $this->systemConfig);
+        $M = M("YhqXiangxi");
+        $id = $_GET['id'];
+        
+        $this->assign("id",$id);
+        $issy=$_GET['issy'];
+        $this->assign("issy",$issy);
+        $wh="id=" . $id;
+        if($issy==2)
+            $wh.=" and issy=0";
+        elseif($issy==1)
+            $wh.=" and issy=".$issy;
+        
+        $list = $M->where($wh)->select();
+        
+        $arr = array("未使用", "已使用");
+        foreach ($list as $k => $v) {
+            $list[$k]['issy_f'] = $arr[$v['issy']];
+        }
+        $this->assign("list", $list);
+
         $this->display();
     }
-
     /**
      * 优惠券 删除详细表
      */
     public function del_xx_yhq() {
-        
+        $yid = $_GET['id'];
+        $M = M("YhqXiangxi");
+        $info = $M->where("yid=" . $yid)->find();
+        $id = $info['id'];
+        $M2 = M("Yhq");
+        if ($info['yhqnum'] <= 1) {
+            $rs1 = $M2->where("id=" . $id)->delete();
+        } else {
+            $yhqnum = $info['yhqnum'] - 1;
+            $rs1 = $M2->where("id=" . $id)->save(array("yhqnum" => $yhqnum));
+        }
+        $rs = $M->where("yid=" . $yid)->delete();
+        if ($rs && $rs1)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
     }
 
     /**
      * 设置优惠券 附加表 状态
      */
     public function edit_status_xxyhq() {
+        if(IS_POST){
+            $gzid=$_POST['gzid'];
+            $movphone=$_POST['movphone'];
+            if(empty($gzid)){
+                $this->error("请选择客户！");exit;
+            }
+            if(empty($movphone)){
+                $this->error("请填写领取的手机号！");exit;
+            }
+            $yhqid=$_POST['yhqid'];#优惠券id
+            $mdid=$_POST['mdid'];#门店id
+            $yid=$_POST['yid'];#优惠券密码id
+            $pc=  $this->getprocity_kh($gzid);
+            $data=array(
+                "uid"=>$gzid,
+                "addtime"=>  time(),
+                "mdid"=>$mdid,
+                "movphone"=>$movphone,
+                "yhqid"=>$yhqid,
+                "yid"=>$yid,
+                "p_id"=>$pc['p_id'],
+                "c_id"=>$pc['c_id']
+            );
+            $M=M("Yhjjl");
+            $M1=M("Yhq");
+            $M2=M("YhqXiangxi");
+            $rs=$M->add($data);//添加一条记录
+            $rs1=$M2->where("yid=".$yid)->save(array("issy"=>1));//设置优惠券密码记录为已使用
+            
+            $inf=$M1->where("id=".$yhqid)->field("ysy")->find();//增加一张张优惠券 使用状态
+            $ysy=$inf['ysy']+1;
+            $rs2=$M1->where("id=".$yhqid)->save(array("ysy"=>$ysy));
+            
+            if($rs&&$rs1&&$rs2)
+                $this->success ("操作成功！",U("Shop/list_xx_yhq",array('id'=>$yhqid)));
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $yid = $_GET['yid'];#密码id
+        $this->assign("khlist",  $this->getkehu());
+        $this->assign("yid",$yid);#优惠券密码id
+        $M=M("YhqXiangxi");
         
+        $info=$M->where("yid=".$yid)->find();
+        $this->assign("yhqid",$info['id']);#优惠券id
+        $M2=M("Yhq");
+        $info2=$M2->where("id=".$info['id'])->field("uid")->find();
+        $this->assign("mdid",$info2['uid']);#门店id
+        $this->display();
     }
 
     /**
      * 设置优惠券 主表 状态
      */
     public function edit_status_yhq() {
-        
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        if ($status == 1)
+            $status_f = 0;
+        else
+            $status_f = 1;
+        $M = M("Yhq");
+        $rs = $M->where("id=" . $id)->save(array("status" => $status_f));
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败!");
     }
-
+    /**
+     * 查看优惠券记录
+     */
+    public function yhqjl(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $yid=$_GET['yid'];
+        $id=$_GET['id'];
+        $this->assign("id",$id);
+        $M=M("Yhjjl");
+        $info=$M->where("yid=".$yid)->find();
+        $info['addtime']=date("Y-m-d H:i:s",$info['addtime']);
+        $M1=M("YhqXiangxi");
+        $info2=$M1->where("yid=".$info['yid'])->field("yhqpwd")->find();
+        $this->assign("yhqpwd",$info2['yhqpwd']);
+        $this->assign("info",$info);
+        $M2=M("Yhq");
+        $info3=$M2->where("id=".$info['yhqid'])->field("name")->find();
+        $this->assign("yhqname",$info3['name']);
+        $M3=M("Dianpumember");
+        $info3=$M3->where("a_id=".$info['mdid'])->field("a_name,company")->find();
+        $this->assign("mname",$info3['a_name']."[".$info3['company']."]");
+        $M4=M("Kehuview");
+        $info4=$M4->where("a_id=".$info['uid'])->field("a_name,truename")->find();
+        ##echo $M4->getLastSql();
+        $this->assign("kename",$info4['a_name']."[".$info4['truename']."]");
+        
+        $this->display();
+    }
     //----------------------private-------
     /**
      * 获取设计师列表
@@ -510,6 +792,24 @@ class ShopAction extends CommonAction {
         }
         $M = M("Dianpumember");
         $list = $M->where($where)->field("a_id,a_name,lxrname,company")->select();
+
+        return $list;
+    }
+    /**
+     * 获取客户列表
+     */
+    private function getkehu() {
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $where = "1";
+        if ($is_qx == 1) {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+
+            $where.=" and p_id=" . $p_id;
+            $where.=" and c_id=" . $c_id;
+        }
+        $M = M("Kehuview");
+        $list = $M->where($where)->field("a_id,a_name,truename")->select();
 
         return $list;
     }
@@ -539,6 +839,10 @@ class ShopAction extends CommonAction {
             return false;
     }
 
+    /**
+     * 生成密码
+     * @return string
+     */
     private function shengchengpwd() {
         do {
             $sj1 = rand(65, 90);
@@ -554,13 +858,37 @@ class ShopAction extends CommonAction {
             $sj7 = rand(0, 9);
             $sj8 = rand(0, 9);
             $yhqpwd = $or1 . $or2 . $or3 . $or4 . "_" . $sj8 . $sj5 . $sj6 . $sj7;
-            $tf=$this->ischeck($yhqpwd);
-            
+            $tf = $this->ischeck($yhqpwd);
         } while ($tf);
         return $yhqpwd;
     }
 
+    /**
+     * 根据用户id
+     * 商城名称
+     */
+    private function getnamebyuid($uid) {
+        $M = M("Dianpu");
+        $rs = $M->where("a_id=" . $uid)->field("company")->find();
+        return $rs['company'];
+    }
+    /**
+     * 根据用户id
+     * 获取省和市
+     */
+    private function getprocity_kh($uid) {
+
+        $where = "a_id=" . $uid;
+
+        $M = M("Webmember");
+        $list = $M->where($where)->field("p_id,c_id")->find();
+        return $list;
+    }
+
     //------------------ajax
+    /**
+     * ajax 获取 设计师
+     */
     public function ajaxgetsj() {
         header('Content-Type:application/json; charset=utf-8');
         $gname = $_POST['gname'];
@@ -573,5 +901,20 @@ class ShopAction extends CommonAction {
             $data = array("status" => 0, "data" => "");
         echo json_encode($data);
     }
-
+    /**
+     * ajax
+     * 获取 客户
+     */
+    public function ajaxgetkehu(){
+        header('Content-Type:application/json; charset=utf-8');
+        $gname = $_POST['gname'];
+        $m = M("Kehuview");
+        $where = "truename like '%" . $gname . "%' or a_name like '%" . $gname . "%'";
+        $rs = $m->where($where)->select();
+        if ($rs)
+            $data = array("status" => 1, "data" => $rs);
+        else
+            $data = array("status" => 0, "data" => "");
+        echo json_encode($data);
+    }
 }

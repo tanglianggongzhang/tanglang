@@ -37,7 +37,16 @@
       <div class="center_t">
           <form action="" method="POST" enctype="multipart/form-data" id="form1" name="form1" >
           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
-            <tr align="left"  class="center_t_d">
+              <if condition='$is_edit==1'>
+                  <tr align="left"  class="center_t_d">
+                <td width="20%">商城</td>
+                <td align="left">
+                    {$comname}
+                    
+                </td>
+            </tr>
+                  <else />
+                  <tr align="left"  class="center_t_d">
                 <td width="20%">选择商城</td>
                 <td align="left">
                     <input type="text" size="100" name="gname" id="gname" value="" onchange="xzgz()" placeholder="在此输入登录名进行搜索设计师" /><br/>
@@ -56,6 +65,8 @@
                     </select>
                 </td>
             </tr>
+              </if>
+            
               
              <tr align="left"  class="center_t_d">
                 <td width="20%">名称</td>
@@ -113,7 +124,12 @@
             <tr align="left"  class="center_t_d">
                 <td width="20%">优惠券数目</td>
                 <td align="left">
-                    <input type="text" name="yhqnum" id="yhqnum" size="20" value="{$info.yhqnum}" />
+                    <if condition='$is_edit==1'>
+                        {$info.yhqnum}
+                        <else />
+                        <input type="text" name="yhqnum" id="yhqnum" size="20" value="{$info.yhqnum}" />
+                    </if>
+                    
                 </td>
             </tr>  
             <tr align="left"  class="center_t_d">
@@ -130,7 +146,7 @@
             </tr>    
             <tr align="left"  class="center_t_d">
               <td colspan="2">
-                  <input type="hidden" name="step" id="step" value="2" />
+                  
                   <input type="hidden" name="id" id="id" value="{$info.id}" />
                 <input type="submit" class="btn submit" value="提交" id="sub" name="sub" /></td>
             </tr>
