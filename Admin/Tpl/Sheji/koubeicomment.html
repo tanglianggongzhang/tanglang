@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>口碑点评-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+
+<style>
+.fontb{ display:block; float:right; margin-right:56px;}
+</style>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.doubledate').kuiDate({
+		className:'doubledate',
+		isDisabled: "1"  // isDisabled为可选参数，“0”表示今日之前不可选，“1”标志今日之前可选
+	});
+});
+</script>
+</head>
+
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+      <div class="center_r_t">您的位置：口碑点评</div>
+      <div class="center_r_z">
+      <form method="get" name="search_form" id="search_form" action=""  >
+        <label>是否回复</label>
+        <select id="is_hf" name="is_hf" class="choose">
+            <option value="">请选择</option>
+            <option value="2" <if condition="$is_hf==2">selected</if> >未回复</option>
+            <option value="1" <if condition="$is_hf==1">selected</if> >已回复</option>
+        </select>
+        <label>设计</label>
+        <select id="uid" name="uid" class="choose">
+            <option value="">请选择</option>
+            <volist id="vo" name="gzlist">
+                <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if> >{$vo.a_name}[{$vo.truename}]</option>
+            </volist>
+        </select>
+            <if condition="!empty($keys)||!empty($uid)">
+                <a href="{:U('Gongzhang/koubeicomment')}">取消查询</a>
+            </if>
+        <input name="sub" type="submit"  value="查询" class="sub1" />
+        
+        </form>
+        <div class="theme-popover">
+          
+        </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        <tr class="center_t_t">
+          <td class="td1" width="135">编号</td>
+          <td width="135">服务分数</td>
+          <td width="135">品质分数</td>
+          <td width="135">性价比</td>
+          <td width="100">是否好评</td>
+          <td width="100">是否回复</td>
+          <td width="100">状态</td>
+          <td class="td2" width="135">操作</td>
+        </tr>
+        <volist id="vo" name="list">
+        <tr class="center_t_d">
+          <td class="td1" width="135">{$vo.id}</td>
+          <td width="135">{$vo.fwnum}</td>
+          <td width="135">{$vo.pznum}</td>
+          <td width="135">{$vo.xjnum}</td>
+          <td width="100">{$vo.is_good}</td>
+          <td width="100">{$vo.is_hf_f}</td>
+          <td width="100">{$vo.status_f}</td>
+          <td width="135">
+              <a link="{:U('Sheji/status_koubei',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
+        <if condition="$vo[is_hf]==0">
+              <a aid="{$vo.a_id}" href="{:U('Sheji/hf',array('id'=>$vo[id]))}" style="cursor:pointer">回复</a>
+        </if>
+              <a link="{:U('Sheji/del_koubei',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+          </td>
+        </tr>
+        </volist>
+      </table>
+      <div class="paging">
+        <div class="paging_l">{$page}</div>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+
+    <style>
+        .sortpx{border: 1px solid #0070a9; width: 30px;}
+    </style>
+
+<script>
+    function updatesort(id,sort){
+        
+        $("#s_"+id).html("<input type='text' id='sv_"+id+"' class='sortpx' name='sv_"+id+"' onchange='gb(this.value,"+id+")' value='"+sort+"' />");
+    }
+    function gb(sort,id){
+        $.ajax({
+            data:"sort="+sort+"&id="+id,
+            url:"{:U('Gongzhang/ajaxupdatesort')}",
+            type:"POST",
+            datatype:"JSON",
+            cache:false,
+            success:function(msg){
+                $("#s_"+id).html(sort);
+            }
+        });
+    }
+//删除
+    $(".del").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要删除吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+    $(".sgdtstatus").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要修改状态吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+	//获取城市
+	  function getcity(proid,cityid){
+		var pid=$("#"+proid).val();
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"{:U('Member/getcity')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				msg=eval("("+msg+")");
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					for(l=0;l<len;l++){
+						citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+					}
+					
+					
+					$("#"+cityid).append(citystr);
+				}
+				
+			}
+					
+		});
+		
+			
+}
+
+
+//获取日期 
+
+function getdays(){
+	var mon=$("#month").val();
+	var year=$("#year").val();
+	$.ajax({
+		data:"year="+year+"&mon="+mon,
+		cache:false,
+		url:"{:U('Member/getdays')}",
+		type:"POST",
+		dataType:"JSON",
+		success: function(msg){
+			msg=eval("("+msg+")");
+			$("#day").empty();
+			var l;
+			var htm="";
+			for(l=0;l<msg.length;l++){
+				htm+="<option value='"+msg[l]+"'>"+msg[l]+"</option>";
+			}
+			$("#day").append(htm);	
+			
+		}
+	});	
+}
+
+//当鼠标在文本框中文字隐藏,当离开之后文字显示
+$(".input1").blur(function(){
+	if($(this).val()=="")
+	$(this).val("请输入关键字");
+	});
+$(".input1").focus(function(){
+	$(this).val("");
+	});
+
+
+
+
+    
+</script>
+</body>
+</html>

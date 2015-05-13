@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>口碑点评-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+<script>
+jQuery(document).ready(function($) {
+	$('.theme-login').click(function(){
+		window.location.href="{:U('Shop/add_yhq')}";
+	})
+})
+function close_win(){
+	$(".theme-popover").html("");
+		
+	$('.theme-popover-mask').fadeOut(100);
+	$('.theme-popover').slideUp(200);
+}
+
+</script>
+<style>
+.fontb{ display:block; float:right; margin-right:56px;}
+</style>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+
+<script language="javascript" src="__PUBLIC__/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ckfinder/ckfinder.js"></script>
+</head>
+
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+        <div class="center_r_t">您的位置：<a href="{:U('Shop/koubeicomment')}" class="a1" >口碑点评列表</a> >>回复口碑点评</div>
+      <div class="center_r_z">
+     
+        <div class="theme-popover">
+          
+        </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+        <form name="form1" id="form1" action="" method="POST">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        
+        
+        <tr class="center_t_d">
+          <td width="135">客户：</td>
+          <td>{$khmem}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">评价时间：</td>
+          <td>{$addtime}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">服务分数：</td>
+          <td>{$info.fwnum}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">品质分数：</td>
+          <td>{$info.pznum}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">性价比：</td>
+          <td>{$info.xjnum}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">是否是好评：</td>
+          <td>{$is_good_f}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">评价内容：</td>
+          <td>{$info.content}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">工长：</td>
+          <td>{$sjmem}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">状态：</td>
+          <td>{$status_f}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">点赞数目：</td>
+          <td>{$info.good_num}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td width="135">回复：</td>
+          <td><textarea name="hf_content" id="hf_content"></textarea></td>
+        </tr>
+        <tr class="center_t_d">
+            <td colspan='2'>
+                <input type="hidden" id="id" name="id" value="{$info.id}" />
+                <input type='submit' id="sub" class="btn submit" name='sub' value='提交' /></td>
+        </tr>
+      </table>
+        </form>
+      
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+
+    <style>
+        .sortpx{border: 1px solid #0070a9; width: 30px;}
+    </style>
+
+<script>
+CKEDITOR.replace( 'hf_content',
+{
+filebrowserBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html',
+filebrowserImageBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Images',
+filebrowserFlashBrowseUrl : '__PUBLIC__/ckfinder/ckfinder.html?Type=Flash',
+filebrowserUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+filebrowserImageUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
+filebrowserFlashUploadUrl : '__PUBLIC__/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
+});
+
+</script>
+</body>
+</html>
