@@ -776,6 +776,94 @@ class ShopAction extends CommonAction {
         
         $this->display();
     }
+    /**
+     * 查看门店
+     */
+    public function ck_mendian(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->display();
+    }
+    /**
+     * 添加门店
+     */
+    public function add_mendian(){
+        if(IS_POST){
+            $mdname=  trim($_POST['mdname']);
+            if(empty($mdname)){
+                $this->error("优惠券门店名称不能为空");exit;
+            }
+            $M=M("Yhqmd");
+            $id=$_POST['id'];
+            $p_id=$_POST['p_id'];
+            $c_id=$_POST['c_id'];
+            
+            $data=array(
+                "yhqid"=>$id,
+                "mdname"=>$mdname,
+                "p_id"=>$p_id,
+                "c_id"=>$c_id
+            );
+            $rs=$M->add($data);
+            if($rs)
+                $this->success ("操作成功！",U('Shop/list_yhq'));
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        $p_id=$_GET['p_id'];
+        $c_id=$_GET['c_id'];
+        $this->assign("id",$id);
+        $this->assign("p_id",$p_id);
+        $this->assign("c_id",$c_id);
+        
+        $this->display();
+    }
+    /**
+     * 删除门店
+     */
+    public function del_mendian(){
+        $id=$_GET['id'];
+        $M=M("Yhqmd");
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+    /**
+     * 修改门店
+     */
+    public function edit_mendian(){
+        if(IS_POST){
+            $id=$_POST['id'];
+            $mdname=trim($_POST['mdname']);
+            if(empty($mdname)){
+                $this->error("门店名称不能为空！");
+                exit;
+            }
+            $M=M("Yhqmd");
+            $rs=$M->where("id=".$id)->save(array("mdname"=>$mdname));
+            if($rs)
+                $this->success ("操作成功！");
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        $M=M("Yhqmd");
+        $info=$M->where("id=".$id)->find();
+        $this->assign("info",$info);
+        
+        $this->display();
+    }
+
+
     //----------------------private-------
     /**
      * 获取设计师列表
@@ -917,4 +1005,7 @@ class ShopAction extends CommonAction {
             $data = array("status" => 0, "data" => "");
         echo json_encode($data);
     }
+    
+    
+    
 }

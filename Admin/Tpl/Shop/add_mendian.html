@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>添加优惠券门店-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+</head>
+<style>
+    .input1{ border: 1px solid #005DAD; width: 500px;}
+</style>
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+        <div class="center_r_t">您的位置：<a class="a1" href="{:U('Shop/list_yhq')}">优惠券列表</a> >>添加优惠券门店</div>
+      <div class="center_r_z">
+      
+        <div class="theme-popover">
+          
+        </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      <form name="form1" method='POST' id="form1" action="">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        <tr class="center_t_d">
+          <td class="td1" width="135">优惠券门店名称</td>
+          <td><input type="text" class="input1" name='mdname' id="mdname" value='{$info.mdname}' />
+          </td>
+        </tr>
+        <tr class="center_t_d">
+          <td colspan='2'>
+              <input type='hidden' id="id" name='id' value='{$id}' />
+              <input type='hidden' id="p_id" name='p_id' value='{$p_id}' />
+              <input type='hidden' id="c_id" name='c_id' value='{$c_id}' />
+              <input type="submit" class='btn submit' name='sub' id="sub" value='提交' />
+          </td>
+        </tr>
+      </table>
+      </form>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+
+</body>
+</html>
