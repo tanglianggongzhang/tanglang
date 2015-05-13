@@ -695,7 +695,7 @@ class ShopAction extends CommonAction {
             }
 
             $yhqid = $_POST['yhqid']; #优惠券id
-            
+
             $yid = $_POST['yid']; #优惠券密码id
             $pc = $this->getprocity_kh($gzid);
             $data = array(
@@ -777,12 +777,12 @@ class ShopAction extends CommonAction {
         $M2 = M("Yhq");
         $info3 = $M2->where("id=" . $info['yhqid'])->field("name")->find();
         $this->assign("yhqname", $info3['name']);
-        
+
         $M3 = M("Yhqmd");
         $info3 = $M3->where("id=" . $info['mdid'])->field("mdname")->find();
-       
-        $this->assign("mname", $info3['mdname'] );
-        
+
+        $this->assign("mname", $info3['mdname']);
+
         $M4 = M("Kehuview");
         $info4 = $M4->where("a_id=" . $info['uid'])->field("a_name,truename")->find();
         ##echo $M4->getLastSql();
@@ -894,9 +894,116 @@ class ShopAction extends CommonAction {
         $this->display("add_mendian");
     }
 
+    /**
+     * 口碑点评
+     */
+    public function koubeicomment() {
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $where = "type=1";
+        $is_hf = $_GET['is_hf'];
+        $this->assign("is_hf", $is_hf);
+        $uid = $_GET['uid'];
+        $this->assign("uid", $uid);
+        if (!empty($is_hf)) {
+            $is_hf = $is_hf == 2 ? 0 : $is_hf;
+            $where .= " and is_hf=" . $is_hf;
+        }
+        if (!empty($uid))
+            $where .= " and sjuid=" . $uid;
+
+        $M = M("Koubeicomment");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        $arrhf = array("未回复", "已回复");
+        $arrs = array("未审核", "已审核");
+        foreach ($list as $k => $v) {
+            $list[$k]['is_hf_f'] = $arrhf[$v['is_hf']];
+            $list[$k]['status_f'] = $arrs[$v['status']];
+        }
+
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+        $gzlist = $this->getgzh(); #获取商城
+        $this->assign("gzlist", $gzlist);
+        $this->display();
+    }
+
+    /**
+     * 口碑状态
+     */
+    public function status_koubei() {
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        if ($status == 1) {
+            $status_f = 0;
+        } else {
+            $status_f = 1;
+        }
+        $M = M("Koubeicomment");
+        $rs = $M->where("id=" . $id)->save(array("status" => $status_f));
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+
+    /**
+     * 删除口碑
+     */
+    public function del_koubei() {
+        $id = $_GET['id'];
+        $M = M("Koubeicomment");
+        $rs = $M->where("id=" . $id)->delete();
+        if($rs)
+            $this->success ("删除成功！");
+        else
+            $this->error ("删除失败！");
+    }
+    /**
+     * 回复
+     */
+    public function hf(){
+        if(IS_POST){
+            $id=$_POST['id'];
+            $hf_content=  trim($_POST['hf_content']);
+            $M=M("Koubeicomment");
+            if(empty($hf_content)){
+                $this->error("回复内容不能为空！");
+                exit;
+            }
+            $rs=$M->where("id=".$id)->save(array("hf_content"=>$hf_content,"hf_time"=>time(),"is_hf"=>1));
+            if($rs)
+                $this->success ("操作成功！",U("Shop/koubeicomment"));
+            else
+                $this->error ("操作失败！");
+            
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig",  $this->systemConfig);
+        $M=M("Koubeicomment");
+        $id=$_GET['id'];
+        $info=$M->where("id=".$id)->find();
+        $this->assign("info",$info);
+        $kh=$this->getkehu_ins($info['uid']);
+        $this->assign("khmem",$kh['a_name']."[".$kh['truename']."]");
+        $this->assign("addtime",date("Y-m-d H:i:s",$info['addtime']));
+        $is_good=$info['is_good']==1?"好评":"差评";
+        $this->assign("is_good_f",$is_good);
+        $sj=  $this->getgzh_ins($info['sjuid']);
+        $this->assign("sjmem",$sj['a_name']."[".$sj['company']."]");
+        $status_f=$info['status']==1?"已审核":"未审核";
+        
+        $this->assign("status_f",$status_f);
+        
+        $this->display();
+    }
     //----------------------private-------
     /**
-     * 获取设计师列表
+     * 获取商城列表
      */
     private function getgzh() {
         $is_qx = $this->getqx($_SESSION['my_info']['role']);
@@ -912,6 +1019,15 @@ class ShopAction extends CommonAction {
         $list = $M->where($where)->field("a_id,a_name,lxrname,company")->select();
 
         return $list;
+    }
+    /**
+     * 获取商家详细
+     */
+    private function getgzh_ins($aid){
+        $where="a_id=".$aid;
+        $M = M("Dianpumember");
+        $info = $M->where($where)->field("a_id,a_name,lxrname,company")->find();
+        return $info;
     }
 
     /**
@@ -932,7 +1048,15 @@ class ShopAction extends CommonAction {
 
         return $list;
     }
-
+    /**
+     * 获取客户详细
+     */
+    private function getkehu_ins($aid){
+        $where="a_id=".$aid;
+        $M = M("Kehuview");
+        $info = $M->where($where)->field("a_id,a_name,truename")->find();
+        return $info;
+    }
     /**
      * 根据用户id
      * 获取省和市
