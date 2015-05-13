@@ -1079,13 +1079,13 @@ class GongzhangAction extends CommonAction {
                 exit;
             }
             $fengmian = $_POST['fengmian'];
-            $p_id=$_POST['p_id'];
-            $c_id=$_POST['c_id'];
-            $gzid=$_POST['gzid'];
-            $status=$_POST['status'];
+            $p_id = $_POST['p_id'];
+            $c_id = $_POST['c_id'];
+            $gzid = $_POST['gzid'];
+            $status = $_POST['status'];
             $data = array();
             if (!empty($fengmian)) {
-                $data['fmimg'] = "/Uploads/product/".$fengmian;
+                $data['fmimg'] = "/Uploads/product/" . $fengmian;
             }
             if (!empty($name)) {
                 $data['name'] = $name;
@@ -1105,18 +1105,18 @@ class GongzhangAction extends CommonAction {
             }
             if (!empty($imstr))
                 $data['gdimg'] = $imstr;
-            $data['addtime']=time();
-            $data['p_id']=$p_id;
-            $data['c_id']=$c_id;
-            $data['uid']=$gzid;
-            $data['adduid']=$_SESSION['my_info']['a_id'];
-            $data['status']=$status;
-            $M=M("Gongdi");
-            $rs=$M->add($data);
-            if($rs)
-                $this->success ("操作成功！",U("Gongzhang/list_gd"));
+            $data['addtime'] = time();
+            $data['p_id'] = $p_id;
+            $data['c_id'] = $c_id;
+            $data['uid'] = $gzid;
+            $data['adduid'] = $_SESSION['my_info']['a_id'];
+            $data['status'] = $status;
+            $M = M("Gongdi");
+            $rs = $M->add($data);
+            if ($rs)
+                $this->success("操作成功！", U("Gongzhang/list_gd"));
             else
-                $this->error ("操作失败!");
+                $this->error("操作失败!");
             exit;
         }
         parent::_initalize();
@@ -1146,10 +1146,11 @@ class GongzhangAction extends CommonAction {
             $this->display("add_gd2");
         }
     }
+
     /**
      * 工地列表
      */
-    public function list_gd(){
+    public function list_gd() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
         $this->assign("gzlist", $this->getgzh()); #工长
@@ -1194,21 +1195,22 @@ class GongzhangAction extends CommonAction {
 
 
         $this->assign("page", $p->show());
-     
+
         foreach ($list as $k => $v) {
             $list[$k]['status_f'] = $v['status'] == 1 ? "已审核" : "未审核";
         }
         $this->assign("list", $list);
-        
+
 
 
         $this->display();
     }
+
     /**
      * 修改状态
      * 施工工地
      */
-    public function gdstatus(){
+    public function gdstatus() {
         $id = $_GET['id'];
         $status = $_GET['status'];
         if ($status == 1)
@@ -1222,18 +1224,19 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
+
     /**
      * 编辑
      * 工地
      */
-    public function edit_gd(){
+    public function edit_gd() {
         if (IS_POST) {
             $id = $_POST['id'];
             $name = trim($_POST['name']);
             $status = trim($_POST['status']);
             $fengmian = $_POST['fengmian']; #封面
             $uid = $_POST['uid'];
-            
+
             $path = "/Uploads/product/";
             $iminfo = $this->upload("." . $path);
             $imarr = array();
@@ -1248,7 +1251,7 @@ class GongzhangAction extends CommonAction {
                 if (!empty($imarr))
                     $imstr = json_encode($imarr);
             }
-            
+
             $data = array();
             $M = M("Gongdi");
             $info1 = $M->where("id=" . $id)->find();
@@ -1256,18 +1259,18 @@ class GongzhangAction extends CommonAction {
                 $data['fmimg'] = $path . $fengmian;
                 unlink("." . $info1['fmimg']);
             }
-            if (!empty($imstr)){
-                $gdimg=json_decode($info1['gdimg']);
-                foreach($gdimg as $k=>$v){
-                    unlink(".".$v);
+            if (!empty($imstr)) {
+                $gdimg = json_decode($info1['gdimg']);
+                foreach ($gdimg as $k => $v) {
+                    unlink("." . $v);
                 }
                 $data['gdimg'] = $imstr;
             }
-            
-            
+
+
             if ($name != $info1['name'])
                 $data['name'] = $name;
-           
+
             if ($uid != $info1['uid'])
                 $data['uid'] = $uid;
             if ($status != $info1['status'])
@@ -1289,37 +1292,148 @@ class GongzhangAction extends CommonAction {
         $this->assign("gzlist", $this->getgzh());
         if (!empty($info['gdimg']))
             $gdimg = json_decode($info['gdimg']);
-        
-        
+
+
         $this->assign("imglist", $gdimg);
 
 
         $this->display();
     }
+
     /**
      * 删除
      * 工地
      */
-    public function del_gd(){
-        $id=$_GET['id'];
-        $M=M("Gongdi");
-        $rss=$M->where("id=".$id)->find();
-        if(!empty($rss['gdimg'])){
-            $imgarr=json_decode($rss['gdimg']);
-            foreach($imgarr as $k=>$v){
-                unlink(".".$v);
+    public function del_gd() {
+        $id = $_GET['id'];
+        $M = M("Gongdi");
+        $rss = $M->where("id=" . $id)->find();
+        if (!empty($rss['gdimg'])) {
+            $imgarr = json_decode($rss['gdimg']);
+            foreach ($imgarr as $k => $v) {
+                unlink("." . $v);
             }
         }
-        if(!empty($rss['fmimg'])){
-            unlink(".".$rss['fmimg']);
+        if (!empty($rss['fmimg'])) {
+            unlink("." . $rss['fmimg']);
         }
-        
-        $rs=$M->where("id=".$id)->delete();
-        if($rs)
-            $this->success ("操作成功!");
+
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功!");
         else
-            $this->error ("操作失败!");
+            $this->error("操作失败!");
     }
+
+    /**
+     * 口碑点评
+     */
+    public function koubeicomment() {
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $where = "type=2";
+        $is_hf = $_GET['is_hf'];
+        $this->assign("is_hf", $is_hf);
+        $uid = $_GET['uid'];
+        $this->assign("uid", $uid);
+        if (!empty($is_hf)) {
+            $is_hf = $is_hf == 2 ? 0 : $is_hf;
+            $where .= " and is_hf=" . $is_hf;
+        }
+        if (!empty($uid))
+            $where .= " and sjuid=" . $uid;
+
+        $M = M("Koubeicomment");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        $arrhf = array("未回复", "已回复");
+        $arrs = array("未审核", "已审核");
+        foreach ($list as $k => $v) {
+            $list[$k]['is_hf_f'] = $arrhf[$v['is_hf']];
+            $list[$k]['status_f'] = $arrs[$v['status']];
+        }
+
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+        $gzlist = $this->getgzh(); #获取商城
+        $this->assign("gzlist", $gzlist);
+        $this->display();
+    }
+
+    /**
+     * 口碑状态
+     */
+    public function status_koubei() {
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        if ($status == 1) {
+            $status_f = 0;
+        } else {
+            $status_f = 1;
+        }
+        $M = M("Koubeicomment");
+        $rs = $M->where("id=" . $id)->save(array("status" => $status_f));
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+
+    /**
+     * 删除口碑
+     */
+    public function del_koubei() {
+        $id = $_GET['id'];
+        $M = M("Koubeicomment");
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("删除成功！");
+        else
+            $this->error("删除失败！");
+    }
+
+    /**
+     * 回复
+     */
+    public function hf() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $hf_content = trim($_POST['hf_content']);
+            $M = M("Koubeicomment");
+            if (empty($hf_content)) {
+                $this->error("回复内容不能为空！");
+                exit;
+            }
+            $rs = $M->where("id=" . $id)->save(array("hf_content" => $hf_content, "hf_time" => time(), "is_hf" => 1));
+            if ($rs)
+                $this->success("操作成功！", U("Gongzhang/koubeicomment"));
+            else
+                $this->error("操作失败！");
+
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $M = M("Koubeicomment");
+        $id = $_GET['id'];
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+        $kh = $this->getkehu_ins($info['uid']);
+        $this->assign("khmem", $kh['a_name'] . "[" . $kh['truename'] . "]");
+        $this->assign("addtime", date("Y-m-d H:i:s", $info['addtime']));
+        $is_good = $info['is_good'] == 1 ? "好评" : "差评";
+        $this->assign("is_good_f", $is_good);
+        $sj = $this->getgzh_ins($info['sjuid']);
+        $this->assign("sjmem", $sj['a_name'] . "[" . $sj['truename'] . "]");
+        $status_f = $info['status'] == 1 ? "已审核" : "未审核";
+
+        $this->assign("status_f", $status_f);
+
+        $this->display();
+    }
+
 //--------------------------------------------------
 
     /**
@@ -1403,7 +1517,15 @@ class GongzhangAction extends CommonAction {
         $list = $M->where($where)->field("a_id,a_name,truename")->select();
         return $list;
     }
-
+    /**
+     * 获取工长详细
+     */
+    private function getgzh_ins($aid){
+        $where="a_id=".$aid;
+        $M = M("Foremanview");
+        $info = $M->where($where)->field("a_id,a_name,truename")->find();
+        return $info;
+    }
     /**
      * 检查
      * 日记分类名称是否存在
@@ -1440,6 +1562,16 @@ class GongzhangAction extends CommonAction {
         $list = $M->where("uid=" . $uid)->select();
 
         return $list;
+    }
+
+    /**
+     * 获取客户详细
+     */
+    private function getkehu_ins($aid) {
+        $where = "a_id=" . $aid;
+        $M = M("Kehuview");
+        $info = $M->where($where)->field("a_id,a_name,truename")->find();
+        return $info;
     }
 
 }
