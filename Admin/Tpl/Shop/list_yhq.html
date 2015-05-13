@@ -129,6 +129,8 @@ function close_win(){
               <a name="{$vo.name}" link="{:U('Shop/del_yhq',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
               <br/>
               <a aid="{$vo.a_id}" href="{:U('Shop/add_mendian',array('id'=>$vo[id],'p_id'=>$vo[p_id],'c_id'=>$vo[c_id]))}" style="cursor:pointer">添加门店</a>
+              <br/>
+              <a aid="{$vo.a_id}" href="{:U('Shop/ck_mendian',array('id'=>$vo[id]))}" style="cursor:pointer">门店列表</a>
           </td>
         </tr>
         </volist>

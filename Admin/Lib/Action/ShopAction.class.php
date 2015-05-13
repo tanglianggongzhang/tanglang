@@ -630,18 +630,18 @@ class ShopAction extends CommonAction {
         $this->assign('systemConfig', $this->systemConfig);
         $M = M("YhqXiangxi");
         $id = $_GET['id'];
-        
-        $this->assign("id",$id);
-        $issy=$_GET['issy'];
-        $this->assign("issy",$issy);
-        $wh="id=" . $id;
-        if($issy==2)
+
+        $this->assign("id", $id);
+        $issy = $_GET['issy'];
+        $this->assign("issy", $issy);
+        $wh = "id=" . $id;
+        if ($issy == 2)
             $wh.=" and issy=0";
-        elseif($issy==1)
-            $wh.=" and issy=".$issy;
-        
+        elseif ($issy == 1)
+            $wh.=" and issy=" . $issy;
+
         $list = $M->where($wh)->select();
-        
+
         $arr = array("未使用", "已使用");
         foreach ($list as $k => $v) {
             $list[$k]['issy_f'] = $arr[$v['issy']];
@@ -650,6 +650,7 @@ class ShopAction extends CommonAction {
 
         $this->display();
     }
+
     /**
      * 优惠券 删除详细表
      */
@@ -676,57 +677,66 @@ class ShopAction extends CommonAction {
      * 设置优惠券 附加表 状态
      */
     public function edit_status_xxyhq() {
-        if(IS_POST){
-            $gzid=$_POST['gzid'];
-            $movphone=$_POST['movphone'];
-            if(empty($gzid)){
-                $this->error("请选择客户！");exit;
+        if (IS_POST) {
+            $gzid = $_POST['gzid'];
+            $movphone = $_POST['movphone'];
+            if (empty($gzid)) {
+                $this->error("请选择客户！");
+                exit;
             }
-            if(empty($movphone)){
-                $this->error("请填写领取的手机号！");exit;
+            if (empty($movphone)) {
+                $this->error("请填写领取的手机号！");
+                exit;
             }
-            $yhqid=$_POST['yhqid'];#优惠券id
-            $mdid=$_POST['mdid'];#门店id
-            $yid=$_POST['yid'];#优惠券密码id
-            $pc=  $this->getprocity_kh($gzid);
-            $data=array(
-                "uid"=>$gzid,
-                "addtime"=>  time(),
-                "mdid"=>$mdid,
-                "movphone"=>$movphone,
-                "yhqid"=>$yhqid,
-                "yid"=>$yid,
-                "p_id"=>$pc['p_id'],
-                "c_id"=>$pc['c_id']
+            $mdid = $_POST['mdid'];
+            if (empty($mdid)) {
+                $this->error("请选择门店！");
+                exit;
+            }
+
+            $yhqid = $_POST['yhqid']; #优惠券id
+            
+            $yid = $_POST['yid']; #优惠券密码id
+            $pc = $this->getprocity_kh($gzid);
+            $data = array(
+                "uid" => $gzid,
+                "addtime" => time(),
+                "mdid" => $mdid,
+                "movphone" => $movphone,
+                "yhqid" => $yhqid,
+                "yid" => $yid,
+                "p_id" => $pc['p_id'],
+                "c_id" => $pc['c_id']
             );
-            $M=M("Yhjjl");
-            $M1=M("Yhq");
-            $M2=M("YhqXiangxi");
-            $rs=$M->add($data);//添加一条记录
-            $rs1=$M2->where("yid=".$yid)->save(array("issy"=>1));//设置优惠券密码记录为已使用
-            
-            $inf=$M1->where("id=".$yhqid)->field("ysy")->find();//增加一张张优惠券 使用状态
-            $ysy=$inf['ysy']+1;
-            $rs2=$M1->where("id=".$yhqid)->save(array("ysy"=>$ysy));
-            
-            if($rs&&$rs1&&$rs2)
-                $this->success ("操作成功！",U("Shop/list_xx_yhq",array('id'=>$yhqid)));
+            $M = M("Yhjjl");
+            $M1 = M("Yhq");
+            $M2 = M("YhqXiangxi");
+            $rs = $M->add($data); //添加一条记录
+            $rs1 = $M2->where("yid=" . $yid)->save(array("issy" => 1)); //设置优惠券密码记录为已使用
+
+            $inf = $M1->where("id=" . $yhqid)->field("ysy")->find(); //增加一张张优惠券 使用状态
+            $ysy = $inf['ysy'] + 1;
+            $rs2 = $M1->where("id=" . $yhqid)->save(array("ysy" => $ysy));
+
+            if ($rs && $rs1 && $rs2)
+                $this->success("操作成功！", U("Shop/list_xx_yhq", array('id' => $yhqid)));
             else
-                $this->error ("操作失败！");
+                $this->error("操作失败！");
             exit;
         }
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
-        $yid = $_GET['yid'];#密码id
-        $this->assign("khlist",  $this->getkehu());
-        $this->assign("yid",$yid);#优惠券密码id
-        $M=M("YhqXiangxi");
-        
-        $info=$M->where("yid=".$yid)->find();
-        $this->assign("yhqid",$info['id']);#优惠券id
-        $M2=M("Yhq");
-        $info2=$M2->where("id=".$info['id'])->field("uid")->find();
-        $this->assign("mdid",$info2['uid']);#门店id
+        $yid = $_GET['yid']; #密码id
+        $this->assign("khlist", $this->getkehu());
+        $this->assign("yid", $yid); #优惠券密码id
+        $M = M("YhqXiangxi");
+
+        $info = $M->where("yid=" . $yid)->find();
+        $this->assign("yhqid", $info['id']); #优惠券id
+        $M2 = M("Yhqmd");
+        $info2 = $M2->where("yhqid=" . $info['id'])->field("id,mdname")->select();
+
+        $this->assign("mdlist", $info2); #门店列表
         $this->display();
     }
 
@@ -747,122 +757,142 @@ class ShopAction extends CommonAction {
         else
             $this->error("操作失败!");
     }
+
     /**
      * 查看优惠券记录
      */
-    public function yhqjl(){
+    public function yhqjl() {
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        $yid=$_GET['yid'];
-        $id=$_GET['id'];
-        $this->assign("id",$id);
-        $M=M("Yhjjl");
-        $info=$M->where("yid=".$yid)->find();
-        $info['addtime']=date("Y-m-d H:i:s",$info['addtime']);
-        $M1=M("YhqXiangxi");
-        $info2=$M1->where("yid=".$info['yid'])->field("yhqpwd")->find();
-        $this->assign("yhqpwd",$info2['yhqpwd']);
-        $this->assign("info",$info);
-        $M2=M("Yhq");
-        $info3=$M2->where("id=".$info['yhqid'])->field("name")->find();
-        $this->assign("yhqname",$info3['name']);
-        $M3=M("Dianpumember");
-        $info3=$M3->where("a_id=".$info['mdid'])->field("a_name,company")->find();
-        $this->assign("mname",$info3['a_name']."[".$info3['company']."]");
-        $M4=M("Kehuview");
-        $info4=$M4->where("a_id=".$info['uid'])->field("a_name,truename")->find();
+        $this->assign("systemConfig", $this->systemConfig);
+        $yid = $_GET['yid'];
+        $id = $_GET['id'];
+        $this->assign("id", $id);
+        $M = M("Yhjjl");
+        $info = $M->where("yid=" . $yid)->find();
+        $info['addtime'] = date("Y-m-d H:i:s", $info['addtime']);
+        $M1 = M("YhqXiangxi");
+        $info2 = $M1->where("yid=" . $info['yid'])->field("yhqpwd")->find();
+        $this->assign("yhqpwd", $info2['yhqpwd']);
+        $this->assign("info", $info);
+        $M2 = M("Yhq");
+        $info3 = $M2->where("id=" . $info['yhqid'])->field("name")->find();
+        $this->assign("yhqname", $info3['name']);
+        
+        $M3 = M("Yhqmd");
+        $info3 = $M3->where("id=" . $info['mdid'])->field("mdname")->find();
+       
+        $this->assign("mname", $info3['mdname'] );
+        
+        $M4 = M("Kehuview");
+        $info4 = $M4->where("a_id=" . $info['uid'])->field("a_name,truename")->find();
         ##echo $M4->getLastSql();
-        $this->assign("kename",$info4['a_name']."[".$info4['truename']."]");
-        
-        $this->display();
-    }
-    /**
-     * 查看门店
-     */
-    public function ck_mendian(){
-        parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        $this->display();
-    }
-    /**
-     * 添加门店
-     */
-    public function add_mendian(){
-        if(IS_POST){
-            $mdname=  trim($_POST['mdname']);
-            if(empty($mdname)){
-                $this->error("优惠券门店名称不能为空");exit;
-            }
-            $M=M("Yhqmd");
-            $id=$_POST['id'];
-            $p_id=$_POST['p_id'];
-            $c_id=$_POST['c_id'];
-            
-            $data=array(
-                "yhqid"=>$id,
-                "mdname"=>$mdname,
-                "p_id"=>$p_id,
-                "c_id"=>$c_id
-            );
-            $rs=$M->add($data);
-            if($rs)
-                $this->success ("操作成功！",U('Shop/list_yhq'));
-            else
-                $this->error ("操作失败！");
-            exit;
-        }
-        parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        $id=$_GET['id'];
-        $p_id=$_GET['p_id'];
-        $c_id=$_GET['c_id'];
-        $this->assign("id",$id);
-        $this->assign("p_id",$p_id);
-        $this->assign("c_id",$c_id);
-        
-        $this->display();
-    }
-    /**
-     * 删除门店
-     */
-    public function del_mendian(){
-        $id=$_GET['id'];
-        $M=M("Yhqmd");
-        $rs=$M->where("id=".$id)->delete();
-        if($rs)
-            $this->success ("操作成功！");
-        else
-            $this->error ("操作失败！");
-    }
-    /**
-     * 修改门店
-     */
-    public function edit_mendian(){
-        if(IS_POST){
-            $id=$_POST['id'];
-            $mdname=trim($_POST['mdname']);
-            if(empty($mdname)){
-                $this->error("门店名称不能为空！");
-                exit;
-            }
-            $M=M("Yhqmd");
-            $rs=$M->where("id=".$id)->save(array("mdname"=>$mdname));
-            if($rs)
-                $this->success ("操作成功！");
-            else
-                $this->error ("操作失败！");
-            exit;
-        }
-        parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        $id=$_GET['id'];
-        $M=M("Yhqmd");
-        $info=$M->where("id=".$id)->find();
-        $this->assign("info",$info);
-        
+        $this->assign("kename", $info4['a_name'] . "[" . $info4['truename'] . "]");
+
         $this->display();
     }
 
+    /**
+     * 查看门店
+     */
+    public function ck_mendian() {
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        if (empty($id)) {
+            $this->error("请选择优惠券");
+        }
+        $M = M("Yhqmd");
+        $list = $M->where("yhqid=" . $id)->order("id desc")->select();
+        $this->assign("list", $list);
+
+        $this->display();
+    }
+
+    /**
+     * 添加门店
+     */
+    public function add_mendian() {
+        if (IS_POST) {
+            $mdname = trim($_POST['mdname']);
+            if (empty($mdname)) {
+                $this->error("优惠券门店名称不能为空");
+                exit;
+            }
+            $M = M("Yhqmd");
+            $id = $_POST['id'];
+            $p_id = $_POST['p_id'];
+            $c_id = $_POST['c_id'];
+
+            $data = array(
+                "yhqid" => $id,
+                "mdname" => $mdname,
+                "p_id" => $p_id,
+                "c_id" => $c_id
+            );
+            $rs = $M->add($data);
+            if ($rs)
+                $this->success("操作成功！", U('Shop/list_yhq'));
+            else
+                $this->error("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $p_id = $_GET['p_id'];
+        $c_id = $_GET['c_id'];
+        $this->assign("id", $id);
+        $this->assign("p_id", $p_id);
+        $this->assign("c_id", $c_id);
+
+        $this->display();
+    }
+
+    /**
+     * 删除门店
+     */
+    public function del_mendian() {
+        $id = $_GET['id'];
+        $M = M("Yhqmd");
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+
+    /**
+     * 修改门店
+     */
+    public function edit_mendian() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $mdname = trim($_POST['mdname']);
+            if (empty($mdname)) {
+                $this->error("门店名称不能为空！");
+                exit;
+            }
+            $M = M("Yhqmd");
+            $rs = $M->where("id=" . $id)->save(array("mdname" => $mdname));
+            $yhqid = $_POST['yhqid'];
+
+            if ($rs)
+                $this->success("操作成功！", U("Shop/ck_mendian", array('id' => $yhqid)));
+            else
+                $this->error("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $M = M("Yhqmd");
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+        $this->assign("id", $id);
+        $this->assign("is_edit", 1);
+
+        $this->display("add_mendian");
+    }
 
     //----------------------private-------
     /**
@@ -883,6 +913,7 @@ class ShopAction extends CommonAction {
 
         return $list;
     }
+
     /**
      * 获取客户列表
      */
@@ -960,6 +991,7 @@ class ShopAction extends CommonAction {
         $rs = $M->where("a_id=" . $uid)->field("company")->find();
         return $rs['company'];
     }
+
     /**
      * 根据用户id
      * 获取省和市
@@ -989,11 +1021,12 @@ class ShopAction extends CommonAction {
             $data = array("status" => 0, "data" => "");
         echo json_encode($data);
     }
+
     /**
      * ajax
      * 获取 客户
      */
-    public function ajaxgetkehu(){
+    public function ajaxgetkehu() {
         header('Content-Type:application/json; charset=utf-8');
         $gname = $_POST['gname'];
         $m = M("Kehuview");
@@ -1005,7 +1038,5 @@ class ShopAction extends CommonAction {
             $data = array("status" => 0, "data" => "");
         echo json_encode($data);
     }
-    
-    
-    
+
 }

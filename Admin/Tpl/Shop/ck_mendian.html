@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>优惠券门店-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+<script>
+jQuery(document).ready(function($) {
+	$('.theme-login').click(function(){
+		window.location.href="{:U('Shop/add_yhq')}";
+	})
+})
+function close_win(){
+	$(".theme-popover").html("");
+		
+	$('.theme-popover-mask').fadeOut(100);
+	$('.theme-popover').slideUp(200);
+}
+
+</script>
+<style>
+.fontb{ display:block; float:right; margin-right:56px;}
+</style>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+
+
+</head>
+
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+        <div class="center_r_t">您的位置：<a href="{:U('Shop/list_yhq')}" class="a1" >优惠券列表</a> >>优惠券门店</div>
+      <div class="center_r_z">
+     
+        <div class="theme-popover">
+          
+        </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        <tr class="center_t_t">
+          <td width="135">编号</td>
+          <td width="135">优惠券门店名称</td>
+          <td class="td2" width="135">操作</td>
+        </tr>
+        <volist id="vo" name="list">
+        <tr class="center_t_d">
+          <td width="135">{$vo.id}</td>
+          <td width="135">{$vo.mdname}</td>
+          
+          
+          <td width="135">
+        
+            <a name="{$vo.id}" href="{:U('Shop/edit_mendian',array('id'=>$vo[id]))}" style="cursor:pointer" >编辑</a>  
+            <a name="{$vo.id}" link="{:U('Shop/del_mendian',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+          </td>
+        </tr>
+        </volist>
+      </table>
+      <div class="paging">
+        <div class="paging_l">{$page}</div>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+
+    <style>
+        .sortpx{border: 1px solid #0070a9; width: 30px;}
+    </style>
+
+<script>
+    function updatesort(id,sort){
+        
+        $("#s_"+id).html("<input type='text' id='sv_"+id+"' class='sortpx' name='sv_"+id+"' onchange='gb(this.value,"+id+")' value='"+sort+"' />");
+    }
+    function gb(sort,id){
+        $.ajax({
+            data:"sort="+sort+"&id="+id,
+            url:"{:U('Gongzhang/ajaxupdatesort')}",
+            type:"POST",
+            datatype:"JSON",
+            cache:false,
+            success:function(msg){
+                $("#s_"+id).html(sort);
+            }
+        });
+    }
+//删除
+    $(".del").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要删除["+n+"]吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+    $(".sgdtstatus").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要修改会员["+n+"]的状态吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+	//获取城市
+	  function getcity(proid,cityid){
+		var pid=$("#"+proid).val();
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"{:U('Member/getcity')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				msg=eval("("+msg+")");
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					for(l=0;l<len;l++){
+						citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+					}
+					
+					
+					$("#"+cityid).append(citystr);
+				}
+				
+			}
+					
+		});
+		
+			
+}
+
+
+//获取日期 
+
+function getdays(){
+	var mon=$("#month").val();
+	var year=$("#year").val();
+	$.ajax({
+		data:"year="+year+"&mon="+mon,
+		cache:false,
+		url:"{:U('Member/getdays')}",
+		type:"POST",
+		dataType:"JSON",
+		success: function(msg){
+			msg=eval("("+msg+")");
+			$("#day").empty();
+			var l;
+			var htm="";
+			for(l=0;l<msg.length;l++){
+				htm+="<option value='"+msg[l]+"'>"+msg[l]+"</option>";
+			}
+			$("#day").append(htm);	
+			
+		}
+	});	
+}
+
+
+</script>
+</body>
+</html>

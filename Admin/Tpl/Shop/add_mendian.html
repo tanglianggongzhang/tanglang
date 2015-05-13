@@ -28,7 +28,15 @@ and open the template in the editor.
   <!--左边end-->
   <div class="center_r">
     <div class="center">
-        <div class="center_r_t">您的位置：<a class="a1" href="{:U('Shop/list_yhq')}">优惠券列表</a> >>添加优惠券门店</div>
+        <div class="center_r_t">您的位置：<a class="a1" href="{:U('Shop/list_yhq')}">优惠券列表</a>>>
+            <if condition='$is_edit==1'>
+                <a href="{:U('Shop/ck_mendian',array('id'=>$info[yhqid]))}" class="a1">优惠券门店列表</a>
+                <else/>
+                <a href="{:U('Shop/ck_mendian',array('id'=>$id))}" class="a1">优惠券门店列表</a>
+            </if>
+            
+            
+            >>添加优惠券门店</div>
       <div class="center_r_z">
       
         <div class="theme-popover">
@@ -48,6 +56,9 @@ and open the template in the editor.
               <input type='hidden' id="id" name='id' value='{$id}' />
               <input type='hidden' id="p_id" name='p_id' value='{$p_id}' />
               <input type='hidden' id="c_id" name='c_id' value='{$c_id}' />
+        <if condition='$is_edit==1'>
+            <input type='hidden' id="yhqid" name='yhqid' value='{$info[yhqid]}' />
+        </if>
               <input type="submit" class='btn submit' name='sub' id="sub" value='提交' />
           </td>
         </tr>

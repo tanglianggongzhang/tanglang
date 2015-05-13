@@ -44,19 +44,32 @@
              
             
               
-             <tr align="left"  class="center_t_d">
+            <tr align="left"  class="center_t_d">
                 <td width="20%">手机号</td>
                 <td align="left">
                     <input type="text" name="movphone" id="movphone" size="100" value="" />
                 </td>
             </tr> 
+            <tr align="left"  class="center_t_d">
+                <td width="20%">请选择门店</td>
+                <td align="left">
+                    <select id="mdid" name="mdid">
+                        <option value="">选择门店</option>
+                        <volist id="vo" name="mdlist">
+                            <option value="{$vo.id}">{$vo.mdname}</option>
+                        </volist>
+                    </select>
+                </td>
+            </tr> 
             
+              
+              
             <tr align="left"  class="center_t_d">
               <td colspan="2">
                   
                 <input type="hidden" name="yhqid" id="yhqid" value="{$yhqid}" />
                 <input type="hidden" name="yid" id="yid" value="{$yid}" />
-                <input type="hidden" name="mdid" id="mdid" value="{$mdid}" />
+                
                 
                 <input type="submit" class="btn submit" value="提交" id="sub" name="sub" /></td>
             </tr>
