@@ -46,51 +46,22 @@ $(function(){
       <form method="get" name="search_form" id="search_form" action=""  >
         <label>关键字</label>
         <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
-        <if condition="$is_qx==0">
-        <label>省</label>
-        <select id="p_id" name="p_id" onchange="getcity('p_id','c_id')" >
-                        <option value="">请选择省</option>
-                        <volist id="vo" name="plist" >
-                          <option value="{$vo.region_id}" <if condition="$p_id==$vo[region_id]">selected</if>>{$vo.region_name}</option>  
-                        </volist>
-                    </select>
-        <label>市</label>
-        <select id="c_id" name="c_id" onchange="getdiqu('p_id','c_id','q_id')"><option value="">请选择市</option>
-            <if condition="!empty($c_id)">
-                
-                <option value="{$c_id}" selected="">{$c_name}</option>
-            </if>
+      
+        <label>团购活动</label>
+        <select id="gid" name="gid" class="choose">
+        <option value="">请选择</option>
+        <volist id="vo" name="glist" >
+            <option value="{$vo.id}" <if condition="$gid==$vo[id]">selected</if>>{$vo.title}</option>  
+        </volist>
         </select>
-        <label>区</label>
-        <select id="q_id" name="q_id" ><option value="">请选择区</option>
-            <if condition="!empty($q_id)">
-                
-                <option value="{$q_id}" selected="">{$q_name}</option>
-            </if>
-        </select>
-        
-        </if>
-        <if condition="$is_qx==1">
-            <label>区</label>
-        <select id="q_id" name="q_id" ><option value="">请选择区</option>
-            
-            <volist id="vo" name="qlist" >
-                <option value="{$vo.region_id}" <if condition="$q_id==$vo[region_id]">selected</if>>{$vo.region_name}</option>  
-            </volist>
-        </select>
-        </if>
+       
         
         <input name="sub" type="submit"  value="查询" class="sub1" />
-        <if condition="$is_qx==1">
-        <if condition="$keys!=''||$q_id!=''">
-            <a href="{:U('Group/index')}">取消查询</a>
+    
+        <if condition="$keys!=''||$g_id!=''">
+            <a href="{:U('Group/groupaddjl')}">取消查询</a>
         </if>
-            <else/>
-        <if condition="$keys!=''||$p_id!=''||$c_id!=''||$q_id!=''">
-            <a href="{:U('Group/index')}">取消查询</a>
-        </if>
-        </if>
-        
+           
         </form>
         <div class="theme-popover">
           
