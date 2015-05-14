@@ -293,29 +293,7 @@ class GongzhangAction extends CommonAction {
             $this->error("操作失败!");
     }
 
-    /**
-     * ajax 获取工长
-     */
-    public function ajaxgetgz() {
-        header('Content-Type:application/json; charset=utf-8');
-        $gname = trim($_POST['gname']);
-        if (!empty($gname)) {
-            $M = M("Foremanview");
-            $list = $M->where("a_name like '%" . $gname . "%' or truename like '%" . $gname . "%'")->select();
-            if ($list)
-                $data = array("status" => 1, "data" => $list);
-            else
-                $data = array("status" => 0, "data" => "");
-        }else {
-            $M = M("Foremanview");
-            $list = $M->where("a_name like '%" . $gname . "%' or truename like '%" . $gname . "%'")->select();
-            if ($list)
-                $data = array("status" => 1, "data" => $list);
-            else
-                $data = array("status" => 0, "data" => "");
-        }
-        echo json_encode($data);
-    }
+    
 
     /**
      * 图片集合分类
@@ -1433,8 +1411,78 @@ class GongzhangAction extends CommonAction {
 
         $this->display();
     }
-
-//--------------------------------------------------
+    /**
+     * 友情商铺列表
+     */
+    public function firendgx(){
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $M=M("Gzgxview");
+        $where="1";
+        $uid=$_GET['uid'];
+        if(!empty($uid))
+            $where.=" and uid=".$uid;
+        
+        $cou=$M->where($where)->count();
+        $p=new Page($cou,10);
+        $list=$M->where($where)->order("addtime desc")->limit($p->firstRow.",".$p->listRows)->select();
+       # echo $M->getLastSql();
+        $this->assign("list",$list);
+        $this->assign("page",$p->show());
+        $this->assign("gzlist",  $this->getgzh());#工长
+        $this->assign("uid",$uid);
+        
+        $this->display();
+    }
+    /**
+     * 添加友情商铺
+     */
+    public function add_flink(){
+        if(IS_POST){
+            $gzid=$_POST['gzid'];
+            $gzid1=$_POST['gzid1'];
+            if(empty($gzid)||empty($gzid1)){
+                $this->error("请选择工长！");exit;
+            }
+            if($gzid==$gzid1){
+                $this->error("您选择的工长相同！");exit;
+            }
+            if($this->check_flink($gzid, $gzid1)){
+                $this->error("您选择的工长已经是好友！");exit;
+            }
+            $data=array(
+                "uid"=>$gzid,
+                "fuid"=>$gzid1,
+                "addtime"=>  time()
+            );
+            $M=M("Firendgx");
+            $rs=$M->add($data);
+            if($rs)
+                $this->success ("操作成功！");
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $this->assign("list",  $this->getgzh());
+        $this->display();
+    }
+    /**
+     * 删除关系
+     */
+    public function del_flink(){
+        $id=$_GET['id'];
+        $M=M("Firendgx");
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+    
+//----------------------------private----------------------
 
     /**
      * 图片集合
@@ -1573,5 +1621,39 @@ class GongzhangAction extends CommonAction {
         $info = $M->where($where)->field("a_id,a_name,truename")->find();
         return $info;
     }
-
+    /**
+     * 检查好友关系是否存在
+     */
+    private function check_flink($uid,$fuid){
+        $M=M("Firendgx");
+        $cou=$M->where(array("uid"=>$uid,"fuid"=>$fuid))->count();
+        if($cou>0)
+            return 1;
+        else
+            return 0;
+    }
+    //------------------------ajax--------------
+    /**
+     * ajax 获取工长
+     */
+    public function ajaxgetgz() {
+        header('Content-Type:application/json; charset=utf-8');
+        $gname = trim($_POST['gname']);
+        if (!empty($gname)) {
+            $M = M("Foremanview");
+            $list = $M->where("a_name like '%" . $gname . "%' or truename like '%" . $gname . "%'")->select();
+            if ($list)
+                $data = array("status" => 1, "data" => $list);
+            else
+                $data = array("status" => 0, "data" => "");
+        }else {
+            $M = M("Foremanview");
+            $list = $M->where("a_name like '%" . $gname . "%' or truename like '%" . $gname . "%'")->select();
+            if ($list)
+                $data = array("status" => 1, "data" => $list);
+            else
+                $data = array("status" => 0, "data" => "");
+        }
+        echo json_encode($data);
+    }
 }
