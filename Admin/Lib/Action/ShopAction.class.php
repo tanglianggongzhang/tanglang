@@ -1001,6 +1001,24 @@ class ShopAction extends CommonAction {
         
         $this->display();
     }
+    /**
+     * 商品评论列表
+     */
+    public function comments(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        import("ORG.Util.Page");
+        $where="1";
+        $M=M("Comments");
+        $cou=$M->where($where)->count();
+        $p=new Page($cou,10);
+        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("addtime desc")->select();
+        $this->assign("list",$list);
+        $this->assign("page",$p->show());
+        
+        $this->display();
+    }
+    
     //----------------------private-------
     /**
      * 获取商城列表

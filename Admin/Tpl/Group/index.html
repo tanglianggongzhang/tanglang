@@ -20,7 +20,7 @@ and open the template in the editor.
 <script>
 jQuery(document).ready(function($) {
 	$('.theme-login').click(function(){
-		window.location.href="{:U('Sqtz/addsqtz')}";
+		window.location.href="{:U('Group/add_group')}";
 	})
 	
 		
@@ -101,14 +101,14 @@ $(function(){
         <input name="sub" type="submit"  value="查询" class="sub1" />
         <if condition="$is_qx==1">
         <if condition="$keys!=''||$q_id!=''">
-            <a href="{:U('Sqtz/index')}">取消查询</a>
+            <a href="{:U('Group/index')}">取消查询</a>
         </if>
             <else/>
         <if condition="$keys!=''||$p_id!=''||$c_id!=''||$q_id!=''">
-            <a href="{:U('Sqtz/index')}">取消查询</a>
+            <a href="{:U('Group/index')}">取消查询</a>
         </if>
         </if>
-        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加社区团装</a>
+        <a class="btn btn-primary btn-large theme-login" href="javascript:;">添加团购活动</a>
         </form>
         <div class="theme-popover">
           
@@ -120,25 +120,26 @@ $(function(){
           <td class="td1" width="135">编号</td>
           <td width="135">团装名称</td>
           <td width="135">添加时间</td>
-        <td width="135">小区名称</td>
+        <td width="135">报名人数</td>
         <td width="135">城市</td>
           <td width="135">状态</td>
-           <td width="135">排序</td>
+    <td width="135">是否推荐</td>
           <td class="td2" width="135">操作</td>
         </tr>
         <volist id="vo" name="list">
         <tr class="center_t_d">
           <td class="td1" width="135">{$vo.id}</td>
-          <td width="135"><a href="{$vo.link}" target="_blank">{$vo.name}</a></td>
+          <td width="135">{$vo.title}</td>
           <td width="135">{$vo.addtimef}</td>
-          <td width="135">{$vo.xq_name}</td>
+          <td width="135">{$vo.bmnum}</td>
           <td width="135">{$vo.p_name}/{$vo.c_name}/{$vo.q_name}</td>
           <td width="135">{$vo.statusf}</td>
-          <td width="135" ondblclick="updatepx({$vo.id},{$vo.orders})" id="t_{$vo.id}" >{$vo.orders}</td>
+          <td width="135">{$vo.is_tjf}</td>
           <td width="135">
-              <a aid="{$vo.id}" class="xgzt" link="{:U('Sqtz/update_status_sqtz',array('id'=>$vo[id],'status'=>$vo[is_display]))}" style="cursor:pointer">修改状态</a>
-              <a name="{$vo.id}" link="{:U('Sqtz/delsqtz',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
-          <a aid="{$vo.id}" href="{:U('Sqtz/editsqtz',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
+              <a aid="{$vo.title}" class="xgzt" link="{:U('Group/edit_status',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer">修改状态</a>
+              <a aid="{$vo.title}" class="xgzt" link="{:U('Group/edit_tj',array('id'=>$vo[id],'is_tj'=>$vo[is_tj]))}" style="cursor:pointer">修改推荐</a><Br/>
+              <a name="{$vo.title}" link="{:U('Group/del_group',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+          <a aid="{$vo.title}" href="{:U('Group/edit_group',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
           </td>
           
         </tr>
