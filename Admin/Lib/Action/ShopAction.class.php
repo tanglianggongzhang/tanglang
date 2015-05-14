@@ -19,6 +19,124 @@ class ShopAction extends CommonAction {
     public function index() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $citymod = new CityModel();
+        if ($is_qx) {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+            #区列表
+            $qlist = $citymod->getcity($c_id);
+            $this->assign("qlist", $qlist);
+        } else {
+            #省列表
+            $plist = $citymod->getprovince(1);
+            $this->assign("plist", $plist);
+            $p_id = $_GET['p_id'];
+            $c_id = $_GET['c_id'];
+        }
+        $q_id = $_GET['q_id'];
+        $where = "1";
+        if (!empty($p_id)) {
+            $where.=" and p_id=" . $p_id;
+        }
+        if (!empty($c_id)) {
+            $where.=" and c_id=" . $c_id;
+        }
+        if (!empty($q_id)) {
+            $where.=" and q_id=" . $q_id;
+        }
+        $M=M("Goods");
+        $cou=$M->where($where)->count();
+        import("ORG.Util.Page");
+        $p=new Page($cou,10);
+        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("addtime desc")->select();
+        $this->assign("list",$list);
+        
+        $this->assign("page",$p->show());
+        
+
+        $this->display();
+    }
+
+    /**
+     * 添加商品
+     */
+    public function add_goods() {
+        if (IS_POST) {
+            $name = $_POST['name'];
+            $hdtitle = $_POST['hdtitle'];
+            $hdztlink = $_POST['hdztlink'];
+            $fenshu = $_POST['fenshu'];
+            $comments = $_POST['comments'];
+            $price = $_POST['price'];
+            $ckprice = $_POST['ckprice'];
+            $content = $_POST['content'];
+            $fmimg = $_POST['fengmian'];
+            $is_tj = $_POST['is_tj'];
+            $kucun = $_POST["kucun"];
+            $uid = $_POST['gzid'];
+            $pc = $this->getprocity($uid);
+            $p_id = $pc['p_id'];
+            $c_id = $pc['c_id'];
+            $q_id = $pc['q_id'];
+            $classid=$_POST['classid'];
+            $img = $this->upload();
+            $status = $_POST['status'];
+            $str = array();
+            if (empty($name)) {
+                $this->error("名称不能为空！");
+                exit;
+            }
+            if ($this->check_goodname($name)) {
+                $this->error("名称已经存在！");
+                exit;
+            }
+            foreach ($img as $k => $v) {
+                $str[] = "/Uploads/product/" . $v['savename'];
+            }
+            if (!empty($str)) {
+                $imgstr = json_encode($str);
+            }
+            $data = array(
+                "name" => $name,
+                "hdtitle" => $hdtitle,
+                "hdztlink" => $hdztlink,
+                "fenshu" => $fenshu,
+                "comments" => $comments,
+                "imgsrc" => $imgstr,
+                "price" => $price,
+                "ckprice" => $ckprice,
+                "content" => $content,
+                "fmimg" => $fmimg,
+                "is_tj" => $is_tj,
+                "kucun" => $kucun,
+                "p_id" => $p_id,
+                "c_id" => $c_id,
+                "q_id" => $q_id,
+                "uid" => $uid,
+                "adduid" => $_SESSION['my_info']['a_id'],
+                "addtime" => time(),
+                "status" => $status,
+                "classid"=>$classid
+            );
+            $M = M("Goods");
+            $rs = $M->add($data);
+            if ($rs)
+                $this->success("操作成功！");
+            else
+                $this->error("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $cof = include './Common/config2.php';
+        $goodstj = $cof['goodstj'];
+        $this->assign("goodstj", $goodstj); #推荐
+        $this->assign("sjlist", $this->getgzh()); #店铺列表
+        $cmod = new ShopcategoryModel();
+        $splist = $cmod->getcategory();
+        $this->assign("splist",$splist);
+        
         $this->display();
     }
 
@@ -957,68 +1075,70 @@ class ShopAction extends CommonAction {
         $id = $_GET['id'];
         $M = M("Koubeicomment");
         $rs = $M->where("id=" . $id)->delete();
-        if($rs)
-            $this->success ("删除成功！");
+        if ($rs)
+            $this->success("删除成功！");
         else
-            $this->error ("删除失败！");
+            $this->error("删除失败！");
     }
+
     /**
      * 回复
      */
-    public function hf(){
-        if(IS_POST){
-            $id=$_POST['id'];
-            $hf_content=  trim($_POST['hf_content']);
-            $M=M("Koubeicomment");
-            if(empty($hf_content)){
+    public function hf() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $hf_content = trim($_POST['hf_content']);
+            $M = M("Koubeicomment");
+            if (empty($hf_content)) {
                 $this->error("回复内容不能为空！");
                 exit;
             }
-            $rs=$M->where("id=".$id)->save(array("hf_content"=>$hf_content,"hf_time"=>time(),"is_hf"=>1));
-            if($rs)
-                $this->success ("操作成功！",U("Shop/koubeicomment"));
+            $rs = $M->where("id=" . $id)->save(array("hf_content" => $hf_content, "hf_time" => time(), "is_hf" => 1));
+            if ($rs)
+                $this->success("操作成功！", U("Shop/koubeicomment"));
             else
-                $this->error ("操作失败！");
-            
+                $this->error("操作失败！");
+
             exit;
         }
         parent::_initalize();
-        $this->assign("systemConfig",  $this->systemConfig);
-        $M=M("Koubeicomment");
-        $id=$_GET['id'];
-        $info=$M->where("id=".$id)->find();
-        $this->assign("info",$info);
-        $kh=$this->getkehu_ins($info['uid']);
-        $this->assign("khmem",$kh['a_name']."[".$kh['truename']."]");
-        $this->assign("addtime",date("Y-m-d H:i:s",$info['addtime']));
-        $is_good=$info['is_good']==1?"好评":"差评";
-        $this->assign("is_good_f",$is_good);
-        $sj=  $this->getgzh_ins($info['sjuid']);
-        $this->assign("sjmem",$sj['a_name']."[".$sj['company']."]");
-        $status_f=$info['status']==1?"已审核":"未审核";
-        
-        $this->assign("status_f",$status_f);
-        
+        $this->assign("systemConfig", $this->systemConfig);
+        $M = M("Koubeicomment");
+        $id = $_GET['id'];
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+        $kh = $this->getkehu_ins($info['uid']);
+        $this->assign("khmem", $kh['a_name'] . "[" . $kh['truename'] . "]");
+        $this->assign("addtime", date("Y-m-d H:i:s", $info['addtime']));
+        $is_good = $info['is_good'] == 1 ? "好评" : "差评";
+        $this->assign("is_good_f", $is_good);
+        $sj = $this->getgzh_ins($info['sjuid']);
+        $this->assign("sjmem", $sj['a_name'] . "[" . $sj['company'] . "]");
+        $status_f = $info['status'] == 1 ? "已审核" : "未审核";
+
+        $this->assign("status_f", $status_f);
+
         $this->display();
     }
+
     /**
      * 商品评论列表
      */
-    public function comments(){
+    public function comments() {
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("systemConfig", $this->systemConfig);
         import("ORG.Util.Page");
-        $where="1";
-        $M=M("Comments");
-        $cou=$M->where($where)->count();
-        $p=new Page($cou,10);
-        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("addtime desc")->select();
-        $this->assign("list",$list);
-        $this->assign("page",$p->show());
-        
+        $where = "1";
+        $M = M("Comments");
+        $cou = $M->where($where)->count();
+        $p = new Page($cou, 10);
+        $list = $M->where($where)->limit($p->firstRow . "," . $p->listRows)->order("addtime desc")->select();
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+
         $this->display();
     }
-    
+
     //----------------------private-------
     /**
      * 获取商城列表
@@ -1038,11 +1158,12 @@ class ShopAction extends CommonAction {
 
         return $list;
     }
+
     /**
      * 获取商家详细
      */
-    private function getgzh_ins($aid){
-        $where="a_id=".$aid;
+    private function getgzh_ins($aid) {
+        $where = "a_id=" . $aid;
         $M = M("Dianpumember");
         $info = $M->where($where)->field("a_id,a_name,lxrname,company")->find();
         return $info;
@@ -1066,15 +1187,17 @@ class ShopAction extends CommonAction {
 
         return $list;
     }
+
     /**
      * 获取客户详细
      */
-    private function getkehu_ins($aid){
-        $where="a_id=".$aid;
+    private function getkehu_ins($aid) {
+        $where = "a_id=" . $aid;
         $M = M("Kehuview");
         $info = $M->where($where)->field("a_id,a_name,truename")->find();
         return $info;
     }
+
     /**
      * 根据用户id
      * 获取省和市
@@ -1084,7 +1207,8 @@ class ShopAction extends CommonAction {
         $where = "a_id=" . $uid;
 
         $M = M("Dianpu");
-        $list = $M->where($where)->field("p_id,c_id")->find();
+        $list = $M->where($where)->field("p_id,c_id,q_id")->find();
+
         return $list;
     }
 
@@ -1145,6 +1269,18 @@ class ShopAction extends CommonAction {
         $M = M("Webmember");
         $list = $M->where($where)->field("p_id,c_id")->find();
         return $list;
+    }
+
+    /**
+     * 检查名称是否存在
+     */
+    private function check_goodname($name) {
+        $M = M("Goods");
+        $cou = $M->where("name='" . $name . "'")->count();
+        if ($cou > 0)
+            return true;
+        else
+            return false;
     }
 
     //------------------ajax
