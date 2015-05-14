@@ -196,7 +196,69 @@ class YuyueAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
-
+    /**
+     * 施工动态 预约
+     */
+    public function yuyuelfjl(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->assign("sglist",$this->getsgdt());#施工动态列表
+        $where="1";
+        import("ORG.Util.Page");
+        $M=D("YuyuelfjlView");
+        $sg_id=$_GET['sg_id'];
+        if(!empty($sg_id)){
+            $where.=" and Yuyuelfjl.sgid=".$sg_id;
+        }
+        $keys=$_GET['keys'];
+        $keys=$keys=="请输入关键字"?"":$keys;
+        if(!empty($keys)){
+            $where.=" and Yuyuelfjl.name like '%".$keys."%'";
+        }
+        $this->assign("keys",$keys);
+        $this->assign("sg_id",$sg_id);
+        
+        $cou=$M->where($where)->count();
+        $p=new Page($cou,10);
+        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("Yuyuelfjl.addtime desc")->select();
+        $arr=array("未审核","已审核");
+        foreach($list as $k=>$v){
+            $list[$k]['addtime_f']=date("Y-m-d H:i",$v['addtime']);
+            $list[$k]['status_f']=$arr[$v['status']];
+        }
+        $this->assign("list",$list);
+        $this->assign("page",$p->show());
+        
+        $this->display();
+    }
+    /**
+     * 编辑 施工动态记录状态
+     */
+    public function edit_jl_status(){
+        $id=$_GET['id'];
+        $status=$_GET['status'];
+        $status_f=$status==1?"0":"1";
+        $M=M("Yuyuelfjl");
+        $rs=$M->where("id=".$id)->save(array("status"=>$status_f));
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+    /**
+     * 删除 施工动态记录状态
+     */
+    public function del_jl_status(){
+        $id=$_GET['id'];
+        
+        $M=M("Yuyuelfjl");
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+    
     //---------------------ajax
     /**
      * 修改预约类型
@@ -211,6 +273,23 @@ class YuyueAction extends CommonAction {
             echo 1;
         else
             echo 0;
+    }
+    //--------------------private
+    private function getsgdt(){
+        $M=M("Shigongdt");
+        $is_qx=  $this->getqx($_SESSION['my_info']['role']);
+        if($is_qx==1){
+            $p_id=$_SESSION['my_info']['proid'];
+            $c_id=$_SESSION['my_info']['cityid'];
+        }
+        $where="1";
+        if(!empty($p_id))
+            $where.=" and p_id=".$p_id;
+        if(!empty($c_id))
+            $where.=" and c_id=".$c_id;
+        
+        $list=$M->where($where)->select();
+        return $list;
     }
 
 }
