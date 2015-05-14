@@ -340,7 +340,58 @@ class GroupAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
-
+    
+    /**
+     *  修改 参加团购活动记录状态
+     */
+    public function edit_jl_status(){
+        $status = $_GET['status'];
+        $statusf = $status == 1 ? "0" : "1";
+        $id = $_GET['id'];
+        $M = M("Groupaddjl");
+        $rs = $M->where("id=" . $id)->save(array("status" => $statusf));
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+    
+    /**
+     * 参见活动记录
+     */
+    public function groupaddjl(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        import("ORG.Util.Page");
+        $gMod=D("GroupaddjlView");
+        $where="1";
+        $cou=$gMod->where($where)->count();
+        $p=new Page($cou,10);
+        $list=$gMod->where($where)->limit($p->firstRow.",".$p->listRows)->order("Groupaddjl.addtime desc")->select();
+        
+        $arr=array("未审核","已审核");
+        foreach($list as $k=>$v){
+            $list[$k]['addtimef']=date("Y-m-d H:i",$v['addtime']);
+            $list[$k]['statusf']=$arr[$v['status']];
+        }
+        $this->assign("list",$list);
+        
+        $this->assign("page",$p->show());
+        
+        $this->display();
+    }
+    /**
+     * 删除记录
+     */
+    public function del_jl(){
+        $id=$_GET['id'];
+        $M=M("Groupaddjl");
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
     //----------------------private-------
     /**
      * 获取商城列表
