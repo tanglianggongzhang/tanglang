@@ -64,31 +64,41 @@ $(function(){
       <form method="get" name="search_form" id="search_form" action=""  >
         <label>关键字</label>
         <input type="text" class="input1" name="keys"  <if condition="$keys==''">value="请输入关键字" <else /> value="{$keys}" </if> />
-        <label>日期</label>
-        <input type="text" name="start_date" value="{$start_date}" readonly class="doubledate ipticon"/>
-        <label>-</label>
-        <input type="text" name="end_date" readonly value="{$end_date}" class="doubledate ipticon"/>
+        <label>商城</label>
+        <select name="uid" id="uid" class="choose">
+            <option value="" >请选择</option>
+            <volist id="vo" name="sclist" key="k">
+                <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if> >{$vo.a_name}[{$vo.company}]</option>
+            </volist>
+        </select>
+        <label>推荐</label>
+        <select name="istj" id="istj" class="choose">
+            <option value="" >请选择</option>
+            <volist id="vo" name="istj" key="k">
+                <option value="{$k}" <if condition="$k==$istj1">selected</if> >{$vo}</option>
+            </volist>
+        </select>
         <if condition="$is_qx==0">
         
-        <select name="province" id="province_s" class="choose" onChange="getcity('province_s','city_s')">
+        <select name="p_id" id="province_s" class="choose" onChange="getcity('province_s','city_s')">
           <option value="" >请选择省</option>
           
-			<volist id="vo" name="pro_list">
-            	<option value="{$vo.region_id}" <if condition="$vo[region_id]==$province">selected</if>>{$vo.region_name}</option>
+			<volist id="vo" name="plist">
+            	<option value="{$vo.region_id}" <if condition="$vo[region_id]==$p_id">selected</if>>{$vo.region_name}</option>
 			</volist>
           
         </select>
        
-        <select name="city" id="city_s" class="choose" onChange="getdiqu('province_s','city_s','q_s')">
+        <select name="c_id" id="city_s" class="choose" onChange="getdiqu('province_s','city_s','q_s')">
           <option value="" >请选择城市</option>
-          <if condition="!empty($city)">
-                    <option value="{$city}" selected="selected">{$cityname}</option>
+          <if condition="!empty($c_id)">
+                    <option value="{$c_id}" selected="selected">{$c_name}</option>
                     </if>
         </select>
-        <select name="qu" id="q_s" class="choose">
+        <select name="q_id" id="q_s" class="choose">
           <option value="" >请选择区</option>
-            <if condition="!empty($qu)">
-                    <option value="{$qu}" selected="selected">{$quname}</option>
+            <if condition="!empty($q_id)">
+                    <option value="{$q_id}" selected="selected">{$q_name}</option>
             </if>
         </select>  
         </if>
@@ -96,20 +106,20 @@ $(function(){
          <select name="qu" id="q_s" class="choose">
           <option value="" >请选择区</option>
           <volist id="vo" name="qlist">
-              <option value="{$vo.region_id}" <if condition="$vo[region_id]==$qu">selected</if>>{$vo.region_name}</option>
+              <option value="{$vo.region_id}" <if condition="$vo[region_id]==$q_id">selected</if>>{$vo.region_name}</option>
           </volist>
          </select>  
         </if>
         
         
         <if condition="$is_qx==0">
-            <if condition="!empty($province)||!empty($city)||!empty($qu)||!empty($keys)||!empty($start_date)||!empty($end_date)">
-                <a href="{:U('Member/index')}">取消查询</a>
+            <if condition="!empty($p_id)||!empty($c_id)||!empty($q_id)||!empty($keys)||!empty($istj1)||!empty($uid)">
+                <a href="{:U('Shop/index')}">取消查询</a>
             </if>
         </if>
         <if condition="$is_qx==1">
-            <if condition="!empty($qu)||!empty($keys)||!empty($start_date)||!empty($end_date)">
-                <a href="{:U('Member/index')}">取消查询</a>
+            <if condition="!empty($q_id)||!empty($keys)||!empty($istj1)||!empty($uid)">
+                <a href="{:U('Shop/index')}">取消查询</a>
             </if>
         </if>
         
@@ -125,26 +135,32 @@ $(function(){
       </div>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
         <tr class="center_t_t">
-          <td class="td1" width="135">登录名</td>
-          <td width="135">真实姓名</td>
-          <td width="135">注册时间</td>
-          <td width="135">登录时间</td>
-          <td width="135">手机</td>
-          <td width="100">性别</td>
-          
+          <td class="td1" width="135">编号</td>
+          <td width="135">分类名称</td>
+          <td width="135">商品标题</td>
+          <td width="135">商城名称</td>
+          <td width="50">本站价格</td>
+          <td width="50">参考价格</td>
+          <td width="50">库存</td>
+          <td width="100">封面图片</td>
+          <td width="100">推荐级别</td>
           <td class="td2" width="135">操作</td>
         </tr>
         <volist id="vo" name="list">
         <tr class="center_t_d">
-          <td class="td1" width="135">{$vo.a_name}</td>
-          <td width="135">{$vo.truename}</td>
-          <td width="135">{$vo.create_time}</td>
-          <td width="135">{$vo.last_login}</td>
-          <td width="135">{$vo.movphone}</td>
-          <td width="100">{$vo.sex}</td>
-          <td width="135"><a aid="{$vo.a_id}" class='chakan' style="cursor:pointer;">查看</a>
-              <a aid="{$vo.a_id}" href="{:U('Member/editpt',array('aid'=>$vo[a_id]))}" style="cursor:pointer">编辑</a>
-              <a name="{$vo.truename}" link="{:U('Member/del',array('aid'=>$vo[a_id]))}" style="cursor:pointer" class="del">删除</a></td>
+          <td class="td1" width="135">{$vo.id}</td>
+          <td width="135">{$vo.cname}</td>
+          <td width="135" ondblclick="updatename('{$vo.id}','{$vo.name}')" id="t_{$vo.id}">{$vo.name}</td>
+          <td width="135">{$vo.company}</td>
+          <td width="50" ondblclick="updateprice('{$vo.id}','{$vo.price}')" id="p_{$vo.id}">{$vo.price}</td>
+          <td width="50" ondblclick="updateckprice('{$vo.id}','{$vo.ckprice}')" id="c_{$vo.id}">{$vo.ckprice}</td>
+          <td width="50" ondblclick="updatekucun('{$vo.id}','{$vo.kucun}')" id="k_{$vo.id}">{$vo.kucun}</td>
+          <td width="100"><img src="__ROOT__{$vo.fmimg}" width="100"/> </td>
+          <td width="100">{$vo.tjjb} </td>
+          <td width="135">
+              
+              <a aid="{$vo.id}" href="{:U('Shop/edit_goods',array('id'=>$vo[id]))}" style="cursor:pointer">编辑</a>
+              <a name="{$vo.name}" link="{:U('Shop/del_goods',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a></td>
         </tr>
         </volist>
       </table>
@@ -156,131 +172,10 @@ $(function(){
   </div>
 </div>
 
-<!--查看-->
-<div class="yc_ck" style="display:none;">
-<div class="theme-poptit"> <a href="javascript:;" title="关闭" class="close" onClick="close_win()"><img src="__ROOT__/Public/images/gb.jpg" /></a>
-            <h3>查看用户信息</h3>
-          </div>
-          <div class="theme-popbod dform">
-            
-              <ol>
-                  <li>
-                    <label>头像</label>
-                    <font id="logo_img" class=""></font>
-                </li>
-                <li style="height:30px;">
-                  <label>登录帐号</label>
-                  
-                  <font id="a_aname_1" class="ipt fontb"></font>
-                </li>
-                
-                
-                <li style="height:30px;">
-                  <label>真实姓名</label>
-                  
-                  <font class="ipt fontb" id="truename_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;性别</label>
-                  
-                  <font class="ipt fontb" id="sex_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;积分</label>
-                  
-                  <font class="ipt fontb" id="jifen_1"></font>
-                </li>
-                
-                
-                
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮箱</label>
-                  
-                  <font class="ipt fontb" id="email_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ</label>
-                  
-                  <font class="ipt fontb" id="qq_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;手机号码</label>
-                  
-                  <font class="ipt fontb" id="movphone_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;座机</label>
-                  
-                  <font class="ipt fontb" id="telphone_1"></font>
-                </li>
-                <li style="height:30px;">
-                  <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;生日</label>
-                  
-                  <font class="ipt fontb" id="birthday_1"></font>
-                </li>
-                
-                <li style="height:30px;">
-                  <label>所在城市</label>
-                  
-                  <font class="ipt fontb" id="city_1"></font>
-                </li>
-                <li style="height:30px">
-                    <label>地址</label>
-                    <font id="address_1" class="ipt fontb"></font>
-                </li>
-                <li style="height:30px">
-                    <label>户型</label>
-                    <font id="hxname_1" class="ipt fontb"></font>
-                </li>
-                
-                <li style="height:30px">
-                    <label>面积</label>
-                    <font id="mianji_1" class="ipt fontb"></font>
-                </li>
-                
-                <li style="height:30px">
-                    <label>施工阶段</label>
-                    <font id="zxjd_1" class="ipt fontb"></font>
-                </li>
-                <li style="height:30px">
-                    <label>喜欢风格</label>
-                    <font id="fgname_1" class="ipt fontb"></font>
-                </li>
-                <li style="height:30px">
-                    <label>预算</label>
-                    <font id="ysname_1" class="ipt fontb"></font>
-                </li>
-                <li style="height:30px">
-                    <label>装修日期</label>
-                    <font id="zxtime_1" class="ipt fontb"></font>
-                </li>
-                <li style="height:30px">
-                    <label>用户类型</label>
-                    <font id="a_type_1" class="ipt fontb"></font>
-                </li>
-                <li style="height:30px">
-                    <label>注册时间</label>
-                    <font id="create_time_1" class="ipt fontb"></font>
-                </li>
-                <li style="height:30px">
-                    <label>最后登录时间</label>
-                    <font id="last_login_1" class="ipt fontb"></font>
-                </li>
-                
-                <li style="height:30px">
-                    <label>最后登录时间</label>
-                    <font id="last_ip_1" class="ipt fontb"></font>
-                </li>
-                <li style="height:30px">
-                    <label>账户状态</label>
-                    <font id="status_1" class="ipt fontb"></font>
-                </li>
-              </ol>
-            </form>
-          </div>
 
-</div>
-
+<style>
+    .bor{border: 1px solid #005DAD;}
+</style>
 <script>
 //删除
     $(".del").click(function(){
@@ -353,92 +248,85 @@ function getdiqu(proid,cityid,dqid){
 		});
         }
 
-
-//获取日期 
-
-function getdays(){
-	var mon=$("#month").val();
-	var year=$("#year").val();
-	$.ajax({
-		data:"year="+year+"&mon="+mon,
-		cache:false,
-		url:"{:U('Member/getdays')}",
-		type:"POST",
-		dataType:"JSON",
-		success: function(msg){
-			msg=eval("("+msg+")");
-			$("#day").empty();
-			var l;
-			var htm="";
-			for(l=0;l<msg.length;l++){
-				htm+="<option value='"+msg[l]+"'>"+msg[l]+"</option>";
-			}
-			$("#day").append(htm);	
-			
-		}
-	});	
+function updatename(tid,tname){
+    $("#t_"+tid).html("<input type='text' name='name' class='bor' value='"+tname+"' onblur='gbname(this.value,"+tid+")' />");
 }
-//查看
-$(".chakan").click(function(){
-	var aid=$(this).attr("aid");	
-	
-	
-	$.ajax({
-		data:"aid="+aid,
-		type:"POST",
-		dataType:"JSON",
-		url:"{:U('Member/getinfo')}",
-		cache:false,
-		success: function(msg){
-			msg=eval("("+msg+")");
-			
-			document.getElementById("a_aname_1").innerHTML=msg.a_name;
-			document.getElementById("truename_1").innerHTML=msg.truename;
-                        
-                        document.getElementById("city_1").innerHTML=msg.pro_name+"/"+msg.city_name+"/"+msg.qu_name;
-                        $("#jifen_1").html(msg.jifen);
-                        $("#sex_1").html(msg.sex);
-                        $("#email_1").html(msg.email);
-			$("#qq_1").html(msg.qq);
-                        $("#movphone_1").html(msg.movphone);
-                        $("#telphone_1").html(msg.telphone);
-                        $("#birthday_1").html(msg.birthday);
-                        $("#address_1").html(msg.address);
-                        
-                        $("#hxname_1").html(msg.hxname);
-                        $("#mianji_1").html(msg.mianji);
-                        $("#zxjd_1").html(msg.zxjd);
-                        $("#fgname_1").html(msg.fgname);
-                        $("#ysname_1").html(msg.ysname);
-                        
-                        $("#zxtime_1").html(msg.zxtime);
-                        
-                        $("#a_type_1").html(msg.a_type);
-                        $("#create_time_1").html(msg.create_time);
-                        $("#last_login_1").html(msg.last_login);
-                        $("#last_ip_1").html(msg.last_ip);
-                        $("#status_1").html(msg.status);
-                        
-                        if(msg.logo!='')
-                        document.getElementById("logo_img").innerHTML="<img src='__ROOT__/avatar/"+msg.logo+"_60.jpg'/>";
-                    
-                        
-                        
-			
-			
-			}
-		})
-	
-	
-	
-	$(".theme-popover").html($(".yc_ck").html());
-		
-	$('.theme-popover-mask').fadeIn(100);
-	$('.theme-popover').slideDown(200);
-	
-	
-		
-});
+//改变商品名称
+function gbname(tname,tid){
+    $.ajax({
+        data:"id="+tid+"&name="+tname,
+        cache:false,
+        datatype:"JSON",
+        url:"{:U('Shop/ajax_gbnme')}",
+        type:"POST",
+        success:function(msg){
+            if(msg==1){
+                $("#t_"+tid).html(tname);
+            }
+        }
+    });
+}
+//更改价格
+function updateprice(tid,price){
+   $("#p_"+tid).html("<input type='text' name='price' size='10' class='bor' value='"+price+"' onblur='updateprice1(this.value,"+tid+")' />");
+}
+//改变价格操作
+function updateprice1(price,tid){
+    $.ajax({
+        data:"id="+tid+"&price="+price,
+        cache:false,
+        datatype:"JSON",
+        url:"{:U('Shop/ajax_updateprice')}",
+        type:"POST",
+        success:function(msg){
+            if(msg==1){
+                $("#p_"+tid).html(price);
+            }
+        }
+    }); 
+}
+
+//更改价格
+function updateckprice(tid,price){
+   $("#c_"+tid).html("<input type='text' name='price' size='10' class='bor' value='"+price+"' onblur='updateckprice1(this.value,"+tid+")' />");
+}
+//改变价格操作
+function updateckprice1(price,tid){
+    $.ajax({
+        data:"id="+tid+"&price="+price,
+        cache:false,
+        datatype:"JSON",
+        url:"{:U('Shop/ajax_updateckprice')}",
+        type:"POST",
+        success:function(msg){
+            if(msg==1){
+                $("#c_"+tid).html(price);
+            }
+        }
+    }); 
+}
+
+//更改库存
+function updatekucun(tid,price){
+   $("#k_"+tid).html("<input type='text' name='price' size='10' class='bor' value='"+price+"' onblur='updateckprice1(this.value,"+tid+")' />");
+}
+//改变库存操作
+function updateckprice1(price,tid){
+    $.ajax({
+        data:"id="+tid+"&price="+price,
+        cache:false,
+        datatype:"JSON",
+        url:"{:U('Shop/ajax_updatekucun')}",
+        type:"POST",
+        success:function(msg){
+            if(msg==1){
+                $("#k_"+tid).html(price);
+            }
+        }
+    }); 
+}
+
+
 
 //当鼠标在文本框中文字隐藏,当离开之后文字显示
 $(".input1").blur(function(){

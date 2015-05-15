@@ -45,15 +45,48 @@ class ShopAction extends CommonAction {
         if (!empty($q_id)) {
             $where.=" and q_id=" . $q_id;
         }
-        $M=M("Goods");
-        $cou=$M->where($where)->count();
+        $this->assign("p_id", $p_id);
+        $this->assign("c_id", $c_id);
+        $this->assign("c_name", $citymod->getname($c_id));
+        $this->assign("q_id", $q_id);
+        $this->assign("q_name", $citymod->getname($q_id));
+        $istj = $_GET['istj'];
+        if (!empty($istj)) {
+
+            $where.=" and is_tj=" . $istj;
+            $istj1 = $istj;
+            $this->assign("istj1", $istj1);
+        }
+        $uid = $_GET['uid'];
+        if (!empty($uid)) {
+            $where.=" and uid=" . $uid;
+            $this->assign("uid", $uid);
+        }
+        $keys = $_GET['keys'];
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+        if (!empty($keys)) {
+            $where.=" and name like '%" . $keys . "%'";
+            $this->assign("keys", $keys);
+        }
+        $M = M("Goodsview");
+        $cou = $M->where($where)->count();
         import("ORG.Util.Page");
-        $p=new Page($cou,10);
-        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("addtime desc")->select();
-        $this->assign("list",$list);
-        
-        $this->assign("page",$p->show());
-        
+        $p = new Page($cou, 10);
+        $list = $M->where($where)->limit($p->firstRow . "," . $p->listRows)->order("addtime desc")->select();
+        #推荐
+        $conf = include './Common/config2.php';
+        $istj = $conf['goodstj'];
+        $this->assign("istj", $istj);
+        #商城
+        $sclist = $this->getgzh();
+        $this->assign("sclist", $sclist);
+
+
+        foreach ($list as $k => $v) {
+            $list[$k]['tjjb'] = $istj[$v['is_tj']];
+        }
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
 
         $this->display();
     }
@@ -79,7 +112,7 @@ class ShopAction extends CommonAction {
             $p_id = $pc['p_id'];
             $c_id = $pc['c_id'];
             $q_id = $pc['q_id'];
-            $classid=$_POST['classid'];
+            $classid = $_POST['classid'];
             $img = $this->upload();
             $status = $_POST['status'];
             $str = array();
@@ -117,7 +150,7 @@ class ShopAction extends CommonAction {
                 "adduid" => $_SESSION['my_info']['a_id'],
                 "addtime" => time(),
                 "status" => $status,
-                "classid"=>$classid
+                "classid" => $classid
             );
             $M = M("Goods");
             $rs = $M->add($data);
@@ -135,10 +168,140 @@ class ShopAction extends CommonAction {
         $this->assign("sjlist", $this->getgzh()); #店铺列表
         $cmod = new ShopcategoryModel();
         $splist = $cmod->getcategory();
-        $this->assign("splist",$splist);
+        $this->assign("splist", $splist);
+
+        $this->display();
+    }
+
+    /**
+     * 编辑商品
+     */
+    public function edit_goods() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $name = trim($_POST['name']);
+            if (empty($name)) {
+                $this->error("名称不能为空！");
+                exit;
+            }
+            $classid = $_POST['classid'];
+            if (empty($classid)) {
+                $this->error("请选择所属分类！");
+                exit;
+            }
+            $status = $_POST['status'];
+
+            $hdtitle = trim($_POST['hdtitle']);
+
+            $hdztlink = trim($_POST['hdztlink']);
+            $img = $this->upload();
+            $imgr = array();
+            if (!empty($img)) {
+                foreach ($img as $K => $v) {
+                    if (!empty($v['savename']))
+                        $imgr[] = "/Uploads/product/" . $v['savename'];
+                }
+                $imgstr = json_encode($imgr);
+            }
+
+
+            $price = trim($_POST['price']);
+            $ckprice = trim($_POST['ckprice']);
+            $content = trim($_POST['content']);
+            $fengmian = $_POST['fengmian'];
+            $is_tj = $_POST['is_tj'];
+            $kucun = trim($_POST['kucun']);
+            $comments = trim($_POST['comments']);
+            $M = M("Goods");
+            $info1 = $M->where("id=" . $id)->find();
+            $data=array();
+            if ($info1['name'] != $name)
+                $data['name'] = $name;
+            if ($info1['classid'] != $classid)
+                $data['classid'] = $classid;
+            if ($info1['hdtitle'] != $hdtitle)
+                $data['hdtitle'] = $hdtitle;
+            if ($info1['hdztlink'] != $hdztlink)
+                $data['hdztlink'] = $hdztlink;
+            if ($info1['fenshu'] != $fenshu)
+                $data['fenshu'] = $fenshu;
+            if ($info1['comments'] != $comments)
+                $data['comments'] = $comments;
+            if (!empty($imgstr))
+                $data['imgsrc'] = $imgstr;
+            if ($price != $info1['price'])
+                $data['price'] = $price;
+            if ($ckprice != $info1['ckprice'])
+                $data['ckprice'] = $ckprice;
+            if ($content != $info1['content'])
+                $data['content'] = $content;
+            if ($fengmian != $info1['fmimg'])
+                $data['fmimg'] = $fengmian;
+            if ($is_tj != $info1['is_tj'])
+                $data['is_tj'] = $is_tj;
+            if ($kucun != $info1['kucun'])
+                $data['kucun'] = $kucun;
+            $data['addtime'] = time();
+            $data['status']=$status;
+            $rs=$M->where("id=".$id)->save($data);
+            if($rs)
+                $this->success ("操作成功！",U("Shop/index"));
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $M = M("Goodsview");
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+        $this->assign("is_edit", 1);
+        $cmod = new ShopcategoryModel();
+        $splist = $cmod->getcategory();
+        $this->assign("splist", $splist);
+        $imgsrc = json_decode($info['imgsrc']);
+        $this->assign("imgsrc", $imgsrc);
+
+        $cof = include './Common/config2.php';
+        $goodstj = $cof['goodstj'];
+        $this->assign("goodstj", $goodstj); #推荐
+        $this->display("add_goods");
+    }
+
+    /**
+     * 删除商品
+     */
+    public function del_goods() {
+        $id = $_GET['id'];
+        $M = M("Goods");
+        $inf = $M->where("id=" . $id)->find();
+        if (!empty($inf['fmimg'])) {
+            unlink("." . $inf['fmimg']);
+        }
+        if (!empty($inf['imgsrc'])) {
+            $infarr = json_decode($inf['imgsrc']);
+            foreach ($infarr as $k => $v) {
+                unlink("." . $v);
+            }
+        }
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+    
+    /**
+     * 套餐列表
+     */
+    public function taocan(){
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
         
         $this->display();
     }
+
 
     /**
      * 商城分类
@@ -1315,6 +1478,70 @@ class ShopAction extends CommonAction {
         else
             $data = array("status" => 0, "data" => "");
         echo json_encode($data);
+    }
+
+    /**
+     * ajax
+     * 改变商品标题
+     */
+    public function ajax_gbnme() {
+        header('Content-Type:application/json; charset=utf-8');
+        $gname = $_POST['name'];
+        $id = $_POST['id'];
+        $M = M("Goods");
+        $rs = $M->where("id=" . $id)->save(array("name" => $gname));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
+
+    /**
+     * ajax
+     * 改变价格
+     */
+    public function ajax_updateprice() {
+        header('Content-Type:application/json; charset=utf-8');
+        $gname = $_POST['price'];
+        $id = $_POST['id'];
+        $M = M("Goods");
+        $rs = $M->where("id=" . $id)->save(array("price" => $gname));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
+
+    /**
+     * ajax
+     * 改变参考价格
+     */
+    public function ajax_updateckprice() {
+        header('Content-Type:application/json; charset=utf-8');
+        $gname = $_POST['price'];
+        $id = $_POST['id'];
+        $M = M("Goods");
+        $rs = $M->where("id=" . $id)->save(array("ckprice" => $gname));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
+
+    /**
+     * ajax
+     * 改变库存
+     */
+    public function ajax_updatekucun() {
+        header('Content-Type:application/json; charset=utf-8');
+        $gname = $_POST['price'];
+        $id = $_POST['id'];
+        $M = M("Goods");
+        $rs = $M->where("id=" . $id)->save(array("kucun" => $gname));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
     }
 
 }

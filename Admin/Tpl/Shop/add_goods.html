@@ -143,11 +143,17 @@
 <div class="wrap"> <include file="Common:head" /> <include file="Common:left" />
   <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：<a href="{:U('Shop/index')}" class="a1">商品列表</a>>>添加商品</div>
+      <div class="center_r_t">您的位置：<a href="{:U('Shop/index')}" class="a1">商品列表</a>>>添加/编辑商品</div>
       <div class="center_t">
           <form action="" method="POST" enctype="multipart/form-data" id="form1" name="form1" >
           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tab">
-            <tr align="left"  class="center_t_d">
+              <if condition="$is_edit==1">
+                   <td width="20%">商城</td>
+                <td align="left">
+                    {$info.company}                   
+                </td> 
+                  <else/>
+                  <tr align="left"  class="center_t_d">
                 <td width="20%">选择商城</td>
                 <td align="left">
                     <input type="text" size="100" name="gname" id="gname" value="" onchange="xzgz()" placeholder="在此输入登录名进行搜索商城" /><br/>
@@ -166,6 +172,8 @@
                     </select>
                 </td>
             </tr>
+              </if>
+            
               
              <tr align="left"  class="center_t_d">
                 <td width="20%">名称</td>
@@ -179,7 +187,7 @@
                     <select id="classid" name="classid">
                         <option value="">请选择</option>
                         <volist id="vo" name="splist">
-                            <option value="{$vo.cid}">{$vo.fullname}</option>
+                            <option value="{$vo.cid}" <if condition="$vo[cid]==$info[classid]">selected</if> >{$vo.fullname}</option>
                         </volist>
                     </select>
                 </td>
@@ -221,6 +229,10 @@
             <tr align="left"  class="center_t_d">
                 <td width="20%">图片集合<a href="javascript:addimgrow();" class="btn submit">添加</a></td>
                 <td align="left">
+                    <volist id="vo" name="imgsrc">
+                        <img src="__ROOT__{$vo}" width="100" /><br/>
+                    </volist>
+                    
                     <div id="tpjh">
                         <div class="rowtpjh">
                         <input type="file" name="imgsrc[]" id="imgsrc[]" value="" />
@@ -243,7 +255,7 @@
             <tr align="left"  class="center_t_d">
                 <td width="20%">内容</td>
                 <td align="left">
-                    <textarea name="content" id="content"></textarea>
+                    <textarea name="content" id="content">{$info.content}</textarea>
                 </td>
             </tr>  
             <tr align="left"  class="center_t_d">
@@ -254,7 +266,7 @@
 
             </div>
             <div class="imgList" id="image"></div>
-            <input type="hidden" name="fengmian" id="yingyezhizhao" value="{$info.yingyezhizhao}" />
+            <input type="hidden" name="fengmian" id="yingyezhizhao" value="{$info.fmimg}" />
             <if condition="!empty($info[fmimg])">
             <img src="__ROOT__{$info.fmimg}" height="100" />
             </if>
@@ -264,9 +276,8 @@
                 <td width="20%">推荐</td>
                 <td align="left">
                     <select id="is_tj" name="is_tj">
-                        <option value="">请选择</option>
                         <volist id="vo" name="goodstj" key="k">
-                            <option value="{$k}">{$vo}</option>
+                            <option value="{$k}" <if condition="$info[is_tj]==$k">selected</if>>{$vo}</option>
                         </volist>
                     </select>
                 </td>
@@ -277,7 +288,12 @@
                     <input type="text" name="kucun" id="kucun" size="20" value="{$info.kucun}" />
                 </td>
             </tr>   
-              
+            <tr align="left"  class="center_t_d">
+                <td width="20%">评论数目</td>
+                <td align="left">
+                    <input type="text" name="comments" id="comments" size="20" value="{$info.comments}" />
+                </td>
+            </tr>   
               
               
             <tr align="left"  class="center_t_d">
