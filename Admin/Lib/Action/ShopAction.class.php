@@ -214,7 +214,7 @@ class ShopAction extends CommonAction {
             $comments = trim($_POST['comments']);
             $M = M("Goods");
             $info1 = $M->where("id=" . $id)->find();
-            $data=array();
+            $data = array();
             if ($info1['name'] != $name)
                 $data['name'] = $name;
             if ($info1['classid'] != $classid)
@@ -242,12 +242,12 @@ class ShopAction extends CommonAction {
             if ($kucun != $info1['kucun'])
                 $data['kucun'] = $kucun;
             $data['addtime'] = time();
-            $data['status']=$status;
-            $rs=$M->where("id=".$id)->save($data);
-            if($rs)
-                $this->success ("操作成功！",U("Shop/index"));
+            $data['status'] = $status;
+            $rs = $M->where("id=" . $id)->save($data);
+            if ($rs)
+                $this->success("操作成功！", U("Shop/index"));
             else
-                $this->error ("操作失败！");
+                $this->error("操作失败！");
             exit;
         }
         parent::_initalize();
@@ -291,18 +291,120 @@ class ShopAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
-    
+
     /**
      * 套餐列表
      */
-    public function taocan(){
+    public function taocan() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $where=1;
+        $M=M("Taocanview");
+        $totalRows=$M->where($where)->count();
+        $p=new Page($totalRows,10);
+        $this->assign("page",$p->show());
+        $list=$M->where($where)->order("id desc")->limit($p->firstRow.",".$p->listRows)->select();
+        $this->assign("list",$list);
+        #商城列表
+        $splist=$this->getgzh();
+        $this->assign("sclist",$splist);
+        
+        
+        
         
         $this->display();
     }
 
+    /**
+     * 添加套餐
+     */
+    public function add_taocan() {
+        if (IS_POST) {
+            $tcname = trim($_POST['tcname']);
+            if (empty($tcname)) {
+                $this->error("套餐名称不能为空！");
+                exit;
+            }
+            if($this->checktaocan($tcname)){
+                $this->error("套餐名称已经存在！");
+                exit;
+            }
+            $uid = $_POST['uid'];
+            $price = $_POST['price'];
+            $goodsid = $_POST['goodsid'];
+            $zuhe=array();
+            foreach ($price as $k => $v) {
+                $zuhe[$goodsid[$k]]=$v;
+            }
+            $zuhearr=  json_encode($zuhe);
+            $cou=  count($zuhe);
+            
+            if($cou<2){
+                $this->error("套餐组合失败！");exit;
+            }
+            
+            $idarr=array();
+            foreach ($zuhe as $k=>$v){
+                $idarr[]=$k;
+            }
+            $idzuhe=  implode(",",$idarr);
+            $pc=$this->getprocity($uid);
+            if($this->checkzuhe($idzuhe)){
+                $this->error("组合已经存在！");
+                exit;
+            }
+            
+            $data=array(
+                "tcname"=>$tcname,
+                "zuhe"=>$zuhearr,
+                "idzuhe"=>$idzuhe,
+                "p_id"=>$pc['p_id'],
+                "c_id"=>$pc['c_id'],
+                "uid"=>$uid,
+                "adduid"=>$_SESSION['my_info']['a_id'],
+                "addtime"=>  time()
+            );
+            $M=M("Taocan");
+            $rs=$M->add($data);
+            if($rs)
+                $this->success ("操作成功！",U('Shop/taocan'));
+            else
+                $this->error("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $this->assign("sjlist", $this->getgzh()); #店铺列表
+        $step = $_GET['step'];
+        $step = empty($step) ? 1 : $step;
+        if ($step == 1) {
+            $this->assign("sjlist", $this->getgzh()); #店铺列表
+            $this->display();
+        } else {
+            $uid = $_GET['gzid'];
+            if (empty($uid)) {
+                $this->error("请选择商城！");
+                exit;
+            }
+            $this->assign("uid", $uid);
+            $this->assign("glist", $this->getgoodslist($uid));
 
+            $this->display("add_taocan1");
+        }
+    }
+    /**
+     * 删除套餐
+     */
+    public function del_taocan(){
+        $id=$_GET['id'];
+        $M=M("Taocan");
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
     /**
      * 商城分类
      */
@@ -1446,7 +1548,39 @@ class ShopAction extends CommonAction {
             return false;
     }
 
-    //------------------ajax
+    /**
+     * 获取商品
+     * @param uid
+     */
+    private function getgoodslist($uid) {
+        $M = M("Goodsview");
+        $list = $M->field("id,name,price,ckprice")->where("uid=" . $uid)->select();
+        return $list;
+    }
+    /**
+     * 检查套餐名称是否存在
+     */
+    private function checktaocan($name){
+        $M=M("Taocan");
+        $rs=$M->where("tcname ='".$name."'")->count();
+        if($rs>0)
+            return true;
+        else
+            return false;
+    }
+    /**
+     * 检查套餐组合是否存在
+     * 
+     */
+    private function checkzuhe($zh){
+        $M=M("Taocan");
+        $rs=$M->where("idzuhe ='".$zh."'")->count();
+        if($rs>0)
+            return true;
+        else
+            return false;
+    }
+    //------------------ajax-------------------------------------------------
     /**
      * ajax 获取 设计师
      */
@@ -1543,5 +1677,19 @@ class ShopAction extends CommonAction {
         else
             echo 0;
     }
-
+    /**
+     * ajax 
+     * 改变套餐名称
+     */
+    public function ajax_updatetcname(){
+        header('Content-Type:application/json; charset=utf-8');
+        $gname = $_POST['name'];
+        $id = $_POST['id'];
+        $M = M("Taocan");
+        $rs = $M->where("id=" . $id)->save(array("tcname" => $gname));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
 }
