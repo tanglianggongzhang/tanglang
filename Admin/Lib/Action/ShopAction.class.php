@@ -1581,7 +1581,7 @@ class ShopAction extends CommonAction {
         $this->assign("sjid", $sjid);
         #状态条件
         $status = $_GET['status'];
-        $status = $status == '2' ? "0" : "1";
+        $status = $status == '2' ? "0" : $status;
         if (!empty($status))
             $where .= " and o.status=" . $status;
         $this->assign("status", $status);
@@ -1625,27 +1625,52 @@ class ShopAction extends CommonAction {
             $this->error("操作失败！");
         }
     }
-    
+
     /**
      * 订单详细列表
      */
-    public function ins_order(){
+    public function ins_order() {
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        $id=$_GET['id'];
-        $where="o.orderid=".$id;
-        $M=D("OrderinsView");
-        $cou=$M->where($where)->count();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $where = "o.orderid=" . $id;
+        $M = D("OrderinsView");
         import("ORG.Util.Page");
-        $p=new Page($cou,10);
-        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("o.id desc")->select();
-        
-        $this->assign("list",$list);
-        $this->assign("page",$p->show());
-        
+        $list = $M->where($where)->order("o.id desc")->select();
+        $this->assign("list", $list);
         $this->display();
     }
+
+    /**
+     * 删除订单详细
+     */
+    public function del_insorder() {
+        $id = $_GET['id'];
+        $M = M("Orderxiangxi"); 
+        $r = $M->where("id=" . $id)->delete();
+        if ( $r) {
+            $this->success("操作成功！");
+        } else {
+            $this->error("操作失败！");
+        }
+    }
     
+    /**
+     * 发货
+     */
+    public function fh(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->display();
+    }
+    /**
+     * 退货
+     */
+    public function th(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $this->display();
+    }
     //----------------------private-------
     /**
      * 获取商城列表

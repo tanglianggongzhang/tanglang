@@ -15,6 +15,7 @@
 class OrderinsViewModel extends ViewModel {
     public $viewFields=array(
         "Orderxiangxi"=>array("*","_type" => "LEFT","_as"=>'o'),
-        "Goods"=>array("name"=>"gname","_on"=>"o.goodsid=p.id","_as"=>'p')
+        "Goods"=>array("name"=>"gname","_on"=>"o.goodsid=p.id","_as"=>'p'),
+        "Order"=>array("ordersn","_on"=>"o.orderid=.o1.id","_as"=>"o1")
     );
 }
