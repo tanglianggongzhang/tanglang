@@ -108,12 +108,12 @@ $(function(){
         
         <if condition="$is_qx==0">
             <if condition="!empty($p_id)||!empty($c_id)||!empty($q_id)||!empty($keys)||!empty($istj1)||!empty($uid)">
-                <a href="{:U('Shop/index')}">取消查询</a>
+                <a href="{:U('Shop/taocan')}">取消查询</a>
             </if>
         </if>
         <if condition="$is_qx==1">
-            <if condition="!empty($q_id)||!empty($keys)||!empty($istj1)||!empty($uid)">
-                <a href="{:U('Shop/index')}">取消查询</a>
+            <if condition="!empty($q_id)||!empty($keys)||!empty($uid)">
+                <a href="{:U('Shop/taocan')}">取消查询</a>
             </if>
         </if>
         

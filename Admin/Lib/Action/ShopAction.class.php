@@ -299,7 +299,48 @@ class ShopAction extends CommonAction {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
         import("ORG.Util.Page");
-        $where=1;
+        
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $citymod = new CityModel();
+        if ($is_qx) {
+            $p_id = $_SESSION['my_info']['proid'];
+            $c_id = $_SESSION['my_info']['cityid'];
+            #区列表
+            $qlist = $citymod->getcity($c_id);
+            $this->assign("qlist", $qlist);
+        } else {
+            #省列表
+            $plist = $citymod->getprovince(1);
+            $this->assign("plist", $plist);
+            $p_id = $_GET['p_id'];
+            $c_id = $_GET['c_id'];
+        }
+        $q_id = $_GET['q_id'];
+        $where = "1";
+        if (!empty($p_id)) {
+            $where.=" and p_id=" . $p_id;
+        }
+        if (!empty($c_id)) {
+            $where.=" and c_id=" . $c_id;
+        }
+        if (!empty($q_id)) {
+            $where.=" and q_id=" . $q_id;
+        }
+        $this->assign("p_id", $p_id);
+        $this->assign("c_id", $c_id);
+        $this->assign("c_name", $citymod->getname($c_id));
+        $this->assign("q_id", $q_id);
+        $this->assign("q_name", $citymod->getname($q_id));
+        $u_id=$_GET['uid'];
+        if(!empty($u_id)){
+            $where.=" and uid=".$u_id;
+        }
+        $this->assign("uid",$u_id);
+        $keys=$_GET['keys'];
+        $keys=$keys=="请输入关键字"?"":$keys;
+        if(!empty($keys))
+            $where.=" and tcname like '%".$keys."%'";
+        $this->assign("keys",$keys);
         $M=M("Taocanview");
         $totalRows=$M->where($where)->count();
         $p=new Page($totalRows,10);
@@ -309,9 +350,6 @@ class ShopAction extends CommonAction {
         #商城列表
         $splist=$this->getgzh();
         $this->assign("sclist",$splist);
-        
-        
-        
         
         $this->display();
     }
@@ -333,6 +371,7 @@ class ShopAction extends CommonAction {
             $uid = $_POST['uid'];
             $price = $_POST['price'];
             $goodsid = $_POST['goodsid'];
+            
             $zuhe=array();
             foreach ($price as $k => $v) {
                 $zuhe[$goodsid[$k]]=$v;
@@ -343,6 +382,7 @@ class ShopAction extends CommonAction {
             if($cou<2){
                 $this->error("套餐组合失败！");exit;
             }
+            ksort($zuhe);
             
             $idarr=array();
             foreach ($zuhe as $k=>$v){
