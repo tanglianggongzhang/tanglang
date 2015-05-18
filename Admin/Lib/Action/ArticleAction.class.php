@@ -14,8 +14,7 @@
 class ArticleAction extends CommonAction {
 
     /**
-     * 列表
-     * 文章
+     * 列表文章
      */
     public function index() {
         parent::_initalize();
@@ -49,8 +48,7 @@ class ArticleAction extends CommonAction {
     }
 
     /**
-     * 添加
-     * 文章
+     * 添加文章
      */
     public function add_art() {
         if (IS_POST) {
@@ -118,8 +116,7 @@ class ArticleAction extends CommonAction {
     }
 
     /**
-     * 编辑
-     * 文章
+     * 编辑文章
      */
     public function edit_art() {
         if (IS_POST) {
@@ -308,7 +305,17 @@ class ArticleAction extends CommonAction {
         $rs = $M->where("cid=" . $id)->save($data);
         echo $rs;
     }
-
+    
+    /**
+     * 文章评论
+     */
+    public function comments(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        
+        
+        $this->display();
+    }
     //----------------
     /**
      * 获取省id和市id
