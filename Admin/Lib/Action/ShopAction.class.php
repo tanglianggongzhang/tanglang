@@ -299,7 +299,7 @@ class ShopAction extends CommonAction {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
         import("ORG.Util.Page");
-        
+
         $is_qx = $this->getqx($_SESSION['my_info']['role']);
         $citymod = new CityModel();
         if ($is_qx) {
@@ -331,26 +331,26 @@ class ShopAction extends CommonAction {
         $this->assign("c_name", $citymod->getname($c_id));
         $this->assign("q_id", $q_id);
         $this->assign("q_name", $citymod->getname($q_id));
-        $u_id=$_GET['uid'];
-        if(!empty($u_id)){
-            $where.=" and uid=".$u_id;
+        $u_id = $_GET['uid'];
+        if (!empty($u_id)) {
+            $where.=" and uid=" . $u_id;
         }
-        $this->assign("uid",$u_id);
-        $keys=$_GET['keys'];
-        $keys=$keys=="请输入关键字"?"":$keys;
-        if(!empty($keys))
-            $where.=" and tcname like '%".$keys."%'";
-        $this->assign("keys",$keys);
-        $M=M("Taocanview");
-        $totalRows=$M->where($where)->count();
-        $p=new Page($totalRows,10);
-        $this->assign("page",$p->show());
-        $list=$M->where($where)->order("id desc")->limit($p->firstRow.",".$p->listRows)->select();
-        $this->assign("list",$list);
+        $this->assign("uid", $u_id);
+        $keys = $_GET['keys'];
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+        if (!empty($keys))
+            $where.=" and tcname like '%" . $keys . "%'";
+        $this->assign("keys", $keys);
+        $M = M("Taocanview");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $this->assign("page", $p->show());
+        $list = $M->where($where)->order("id desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        $this->assign("list", $list);
         #商城列表
-        $splist=$this->getgzh();
-        $this->assign("sclist",$splist);
-        
+        $splist = $this->getgzh();
+        $this->assign("sclist", $splist);
+
         $this->display();
     }
 
@@ -364,51 +364,52 @@ class ShopAction extends CommonAction {
                 $this->error("套餐名称不能为空！");
                 exit;
             }
-            if($this->checktaocan($tcname)){
+            if ($this->checktaocan($tcname)) {
                 $this->error("套餐名称已经存在！");
                 exit;
             }
             $uid = $_POST['uid'];
             $price = $_POST['price'];
             $goodsid = $_POST['goodsid'];
-            
-            $zuhe=array();
+
+            $zuhe = array();
             foreach ($price as $k => $v) {
-                $zuhe[$goodsid[$k]]=$v;
+                $zuhe[$goodsid[$k]] = $v;
             }
-            $zuhearr=  json_encode($zuhe);
-            $cou=  count($zuhe);
-            
-            if($cou<2){
-                $this->error("套餐组合失败！");exit;
+            $zuhearr = json_encode($zuhe);
+            $cou = count($zuhe);
+
+            if ($cou < 2) {
+                $this->error("套餐组合失败！");
+                exit;
             }
             ksort($zuhe);
-            
-            $idarr=array();
-            foreach ($zuhe as $k=>$v){
-                $idarr[]=$k;
+
+            $idarr = array();
+            foreach ($zuhe as $k => $v) {
+                $idarr[] = $k;
             }
-            $idzuhe=  implode(",",$idarr);
-            $pc=$this->getprocity($uid);
-            if($this->checkzuhe($idzuhe)){
+            $idzuhe = implode(",", $idarr);
+            $pc = $this->getprocity($uid);
+            if ($this->checkzuhe($idzuhe)) {
                 $this->error("组合已经存在！");
                 exit;
             }
-            
-            $data=array(
-                "tcname"=>$tcname,
-                "zuhe"=>$zuhearr,
-                "idzuhe"=>$idzuhe,
-                "p_id"=>$pc['p_id'],
-                "c_id"=>$pc['c_id'],
-                "uid"=>$uid,
-                "adduid"=>$_SESSION['my_info']['a_id'],
-                "addtime"=>  time()
+
+            $data = array(
+                "tcname" => $tcname,
+                "zuhe" => $zuhearr,
+                "idzuhe" => $idzuhe,
+                "p_id" => $pc['p_id'],
+                "c_id" => $pc['c_id'],
+                "uid" => $uid,
+                "adduid" => $_SESSION['my_info']['a_id'],
+                "addtime" => time()
             );
-            $M=M("Taocan");
-            $rs=$M->add($data);
-            if($rs)
-                $this->success ("操作成功！",U('Shop/taocan'));
+            $M = M("Taocan");
+            $rs = $M->add($data);
+            if ($rs)
+                $this->success("操作成功！", U('Shop/taocan'));
             else
                 $this->error("操作失败！");
             exit;
@@ -433,18 +434,20 @@ class ShopAction extends CommonAction {
             $this->display("add_taocan1");
         }
     }
+
     /**
      * 删除套餐
      */
-    public function del_taocan(){
-        $id=$_GET['id'];
-        $M=M("Taocan");
-        $rs=$M->where("id=".$id)->delete();
-        if($rs)
-            $this->success ("操作成功！");
+    public function del_taocan() {
+        $id = $_GET['id'];
+        $M = M("Taocan");
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功！");
         else
-            $this->error ("操作失败！");
+            $this->error("操作失败！");
     }
+
     /**
      * 商城分类
      */
@@ -1443,120 +1446,206 @@ class ShopAction extends CommonAction {
 
         $this->display();
     }
+
     /**
      * 商店留言咨询
      */
-    public function message(){
+    public function message() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
         import("ORG.Util.Page");
-        
-        $conf=  include './Common/config2.php';
-        $messagetype=$conf['messagetype'];
-        $this->assign("messagetype",$messagetype);
-        $this->assign("gzlist",  $this->getgzh());
-        $is_hf=$_GET['is_hf'];
-        $lytype=$_GET['lytype'];
-        $uid=$_GET['uid'];
-        $this->assign("is_hf",$is_hf);
-        $this->assign("lytype",$lytype);
-        $this->assign("uid",$uid);
-        
-        $where="1";
-        if(!empty($is_hf)){
-            if($is_hf==2)
-                $is_hf=0;
-            $where.=" and ishf=".$is_hf;
+
+        $conf = include './Common/config2.php';
+        $messagetype = $conf['messagetype'];
+        $this->assign("messagetype", $messagetype);
+        $this->assign("gzlist", $this->getgzh());
+        $is_hf = $_GET['is_hf'];
+        $lytype = $_GET['lytype'];
+        $uid = $_GET['uid'];
+        $this->assign("is_hf", $is_hf);
+        $this->assign("lytype", $lytype);
+        $this->assign("uid", $uid);
+
+        $where = "1";
+        if (!empty($is_hf)) {
+            if ($is_hf == 2)
+                $is_hf = 0;
+            $where.=" and ishf=" . $is_hf;
         }
-        if(!empty($lytype)){
-            $where.=" and lytype=".$lytype;
+        if (!empty($lytype)) {
+            $where.=" and lytype=" . $lytype;
         }
-        if(!empty($uid)){
-            $where.=" and sjid=".$uid;
+        if (!empty($uid)) {
+            $where.=" and sjid=" . $uid;
         }
-        $M=M("Message");
+        $M = M("Message");
+        $cou = $M->where($where)->count();
+        $p = new Page($cou, 10);
+        $list = $M->where($where)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        $hfarr = array("0" => "未回复", "1" => "已回复");
+        $starr = array("0" => "未审核", "1" => "已审核");
+        foreach ($list as $k => $v) {
+            $list[$k]['ishf_f'] = $hfarr[$v['ishf']];
+            $list[$k]['status_f'] = $starr[$v['status']];
+        }
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+
+        $this->display();
+    }
+
+    /**
+     * 修改留言状态
+     */
+    public function status_message() {
+        $status = $_GET['status'];
+        $id = $_GET['id'];
+        $statusf = $status == 1 ? "0" : "1";
+        $M = M("Message");
+        $res = $M->where("id=" . $id)->save(array("status" => $statusf));
+        if ($res)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+
+    /**
+     * 删除留言
+     */
+    public function del_message() {
+        $M = M("Message");
+        $id = $_GET['id'];
+        $res = $M->where("id=" . $id)->delete();
+        if ($res)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+
+    /**
+     * 回复留言
+     */
+    public function hf_message() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $hf_content = trim($_POST['hf_content']);
+            if (empty($hf_content)) {
+                $this->error("请填写回复内容");
+                exit;
+            }
+            $M = M("Message");
+            $rs = $M->where("id=" . $id)->save(array("hfcontent" => $hf_content, "hftime" => time(), "ishf" => 1));
+            if ($rs)
+                $this->success("操作成功！", U("Shop/message"));
+            else
+                $this->error("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $M = M("Message");
+        $info = $M->where("id=" . $id)->find();
+
+        $this->assign("info", $info);
+        $arr = include './Common/config2.php';
+        $messagetype = $arr['messagetype'];
+        $lytype = $messagetype[$info['lytype']];
+        $this->assign("lytype", $lytype);
+        $sj = $this->getgzh_ins($info['sjid']);
+        $this->assign("sj", $sj['a_name'] . "[" . $sj['company'] . "]");
+        if ($info['status'] == 1)
+            $statusf = "已审核";
+        else
+            $statusf = "未审核";
+        $this->assign("statusf", $statusf);
+        $addtimef = date("Y-m-d H:i:s", $info['addtime']);
+        $this->assign("addtimef", $addtimef);
+
+        $this->display();
+    }
+
+    /**
+     * 订单列表
+     */
+    public function order() {
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $M = D("OrderView");
+        $where = "1";
+        #商家条件
+        $sjid = $_GET['sjid'];
+        if (!empty($sjid))
+            $where .= " and o.sjid=" . $sjid;
+        $this->assign("sjid", $sjid);
+        #状态条件
+        $status = $_GET['status'];
+        $status = $status == '2' ? "0" : "1";
+        if (!empty($status))
+            $where .= " and o.status=" . $status;
+        $this->assign("status", $status);
+        #订单号条件
+        $keys = $_GET['keys'];
+        $keys = $keys == '请填写订单号' ? "" : $keys;
+        if (!empty($keys))
+            $where .= " and o.ordersn like '%" . $keys . "%'";
+        $this->assign("keys", $keys);
+
+        $cou = $M->where($where)->count();
+        $p = new Page($cou, 10);
+        $list = $M->where($where)->limit($p->firstRow . "," . $p->listRows)->select();
+        # echo $M->getLastSql();
+        $conf = include './Common/config2.php';
+        $statuslist = $conf['status'];
+        foreach ($list as $k => $v) {
+            $list[$k]['status_f'] = $statuslist[$v['status']];
+        }
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+
+        $this->assign("statuslist", $statuslist);
+        $this->assign('sclist', $this->getgzh());
+
+        $this->display();
+    }
+
+    /**
+     * 删除订单
+     */
+    public function del_order() {
+        $id = $_GET['id'];
+        $M = M("Orderxiangxi");
+        $M1 = M("Order");
+        $r = $M->where("id=" . $id)->delete();
+        $r1 = $M1->where("id=" . $id)->delete();
+        if ($r1 && $r) {
+            $this->success("操作成功！");
+        } else {
+            $this->error("操作失败！");
+        }
+    }
+    
+    /**
+     * 订单详细列表
+     */
+    public function ins_order(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        $where="o.orderid=".$id;
+        $M=D("OrderinsView");
         $cou=$M->where($where)->count();
+        import("ORG.Util.Page");
         $p=new Page($cou,10);
-        $list=$M->where($where)->order("addtime desc")->limit($p->firstRow.",".$p->listRows)->select();
-        $hfarr=array("0"=>"未回复","1"=>"已回复");
-        $starr=array("0"=>"未审核","1"=>"已审核");
-        foreach($list as $k=>$v){
-            $list[$k]['ishf_f']=$hfarr[$v['ishf']];
-            $list[$k]['status_f']=$starr[$v['status']];
-        }
+        $list=$M->where($where)->limit($p->firstRow.",".$p->listRows)->order("o.id desc")->select();
+        
         $this->assign("list",$list);
         $this->assign("page",$p->show());
         
         $this->display();
     }
-    /**
-     * 修改留言状态
-     */
-    public function status_message(){
-        $status=$_GET['status'];
-        $id=$_GET['id'];
-        $statusf=$status==1?"0":"1";
-        $M=M("Message");
-        $res=$M->where("id=".$id)->save(array("status"=>$statusf));
-        if($res)
-            $this->success ("操作成功！");
-        else
-            $this->error ("操作失败！");
-    }
-    /**
-     * 删除留言
-     */
-    public function del_message(){
-        $M=M("Message");
-        $id=$_GET['id'];
-        $res=$M->where("id=".$id)->delete();
-        if($res)
-            $this->success ("操作成功！");
-        else
-            $this->error ("操作失败！");
-    }
-    /**
-     * 回复留言
-     */
-    public function hf_message(){
-        if(IS_POST){
-            $id=$_POST['id'];
-            $hf_content=  trim($_POST['hf_content']);
-            if(empty($hf_content)){
-                $this->error("请填写回复内容");
-                exit;
-            }
-            $M=M("Message");
-            $rs=$M->where("id=".$id)->save(array("hfcontent"=>$hf_content,"hftime"=>  time(),"ishf"=>1));
-            if($rs)
-                $this->success ("操作成功！",U("Shop/message"));
-            else
-                $this->error ("操作失败！");
-            exit;
-        }
-        parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        $id=$_GET['id'];
-        $M=M("Message");
-        $info=$M->where("id=".$id)->find();
-        
-        $this->assign("info",$info);
-        $arr=  include './Common/config2.php';
-        $messagetype=$arr['messagetype'];
-        $lytype=$messagetype[$info['lytype']];
-        $this->assign("lytype",$lytype);
-        $sj=$this->getgzh_ins($info['sjid']);
-        $this->assign("sj",$sj['a_name']."[".$sj['company']."]");
-        if($info['status']==1)
-            $statusf="已审核";
-        else
-            $statusf="未审核";
-        $this->assign("statusf",$statusf);
-        $addtimef=date("Y-m-d H:i:s",$info['addtime']);
-        $this->assign("addtimef",$addtimef);
-        
-        $this->display();
-    }
+    
     //----------------------private-------
     /**
      * 获取商城列表
@@ -1710,29 +1799,32 @@ class ShopAction extends CommonAction {
         $list = $M->field("id,name,price,ckprice")->where("uid=" . $uid)->select();
         return $list;
     }
+
     /**
      * 检查套餐名称是否存在
      */
-    private function checktaocan($name){
-        $M=M("Taocan");
-        $rs=$M->where("tcname ='".$name."'")->count();
-        if($rs>0)
+    private function checktaocan($name) {
+        $M = M("Taocan");
+        $rs = $M->where("tcname ='" . $name . "'")->count();
+        if ($rs > 0)
             return true;
         else
             return false;
     }
+
     /**
      * 检查套餐组合是否存在
      * 
      */
-    private function checkzuhe($zh){
-        $M=M("Taocan");
-        $rs=$M->where("idzuhe ='".$zh."'")->count();
-        if($rs>0)
+    private function checkzuhe($zh) {
+        $M = M("Taocan");
+        $rs = $M->where("idzuhe ='" . $zh . "'")->count();
+        if ($rs > 0)
             return true;
         else
             return false;
     }
+
     //------------------ajax-------------------------------------------------
     /**
      * ajax 获取 设计师
@@ -1830,11 +1922,12 @@ class ShopAction extends CommonAction {
         else
             echo 0;
     }
+
     /**
      * ajax 
      * 改变套餐名称
      */
-    public function ajax_updatetcname(){
+    public function ajax_updatetcname() {
         header('Content-Type:application/json; charset=utf-8');
         $gname = $_POST['name'];
         $id = $_POST['id'];
@@ -1845,4 +1938,5 @@ class ShopAction extends CommonAction {
         else
             echo 0;
     }
+
 }
