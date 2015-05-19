@@ -12,6 +12,7 @@
  * @author 李雪莲 <lixuelianlk@163.com>
  */
 class GongzhangAction extends CommonAction {
+
     /**
      * 施工动态列表
      */
@@ -71,6 +72,7 @@ class GongzhangAction extends CommonAction {
         $this->assign("jieduan", $jieduan);
         $this->display();
     }
+
     /**
      * 添加施工动态
      */
@@ -163,6 +165,7 @@ class GongzhangAction extends CommonAction {
             $this->display("addsgdt2");
         }
     }
+
     /**
      * 编辑施工动态
      */
@@ -289,6 +292,7 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败!");
     }
+
     /**
      * 图片集合分类
      */
@@ -323,6 +327,7 @@ class GongzhangAction extends CommonAction {
         $this->assign("list", $list);
         $this->display();
     }
+
     /**
      * 删除图片集合分类
      */
@@ -335,6 +340,7 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败!");
     }
+
     /**
      * 修改状态
      */
@@ -352,6 +358,7 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("修改失败！");
     }
+
     /**
      * 修改状态
      */
@@ -1112,6 +1119,7 @@ class GongzhangAction extends CommonAction {
 
         $this->display();
     }
+
     /**
      * 修改状态
      * 施工工地
@@ -1130,6 +1138,7 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
+
     /**
      * 编辑
      * 工地
@@ -1204,6 +1213,7 @@ class GongzhangAction extends CommonAction {
 
         $this->display();
     }
+
     /**
      * 删除
      * 工地
@@ -1228,6 +1238,7 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败!");
     }
+
     /**
      * 口碑点评
      */
@@ -1264,6 +1275,7 @@ class GongzhangAction extends CommonAction {
         $this->assign("gzlist", $gzlist);
         $this->display();
     }
+
     /**
      * 口碑状态
      */
@@ -1282,6 +1294,7 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
+
     /**
      * 删除口碑
      */
@@ -1294,6 +1307,7 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("删除失败！");
     }
+
     /**
      * 回复
      */
@@ -1333,85 +1347,92 @@ class GongzhangAction extends CommonAction {
 
         $this->display();
     }
+
     /**
      * 友情商铺列表
      */
-    public function firendgx(){
+    public function firendgx() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
         import("ORG.Util.Page");
-        $M=M("Gzgxview");
-        $where="1";
-        $uid=$_GET['uid'];
-        if(!empty($uid))
-            $where.=" and uid=".$uid;
-        
-        $cou=$M->where($where)->count();
-        $p=new Page($cou,10);
-        $list=$M->where($where)->order("addtime desc")->limit($p->firstRow.",".$p->listRows)->select();
-       # echo $M->getLastSql();
-        $this->assign("list",$list);
-        $this->assign("page",$p->show());
-        $this->assign("gzlist",  $this->getgzh());#工长
-        $this->assign("uid",$uid);
-        
+        $M = M("Gzgxview");
+        $where = "1";
+        $uid = $_GET['uid'];
+        if (!empty($uid))
+            $where.=" and uid=" . $uid;
+
+        $cou = $M->where($where)->count();
+        $p = new Page($cou, 10);
+        $list = $M->where($where)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        # echo $M->getLastSql();
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+        $this->assign("gzlist", $this->getgzh()); #工长
+        $this->assign("uid", $uid);
+
         $this->display();
     }
+
     /**
      * 添加友情商铺
      */
-    public function add_flink(){
-        if(IS_POST){
-            $gzid=$_POST['gzid'];
-            $gzid1=$_POST['gzid1'];
-            if(empty($gzid)||empty($gzid1)){
-                $this->error("请选择工长！");exit;
+    public function add_flink() {
+        if (IS_POST) {
+            $gzid = $_POST['gzid'];
+            $gzid1 = $_POST['gzid1'];
+            if (empty($gzid) || empty($gzid1)) {
+                $this->error("请选择工长！");
+                exit;
             }
-            if($gzid==$gzid1){
-                $this->error("您选择的工长相同！");exit;
+            if ($gzid == $gzid1) {
+                $this->error("您选择的工长相同！");
+                exit;
             }
-            if($this->check_flink($gzid, $gzid1)){
-                $this->error("您选择的工长已经是好友！");exit;
+            if ($this->check_flink($gzid, $gzid1)) {
+                $this->error("您选择的工长已经是好友！");
+                exit;
             }
-            $data=array(
-                "uid"=>$gzid,
-                "fuid"=>$gzid1,
-                "addtime"=>  time()
+            $data = array(
+                "uid" => $gzid,
+                "fuid" => $gzid1,
+                "addtime" => time()
             );
-            $M=M("Firendgx");
-            $rs=$M->add($data);
-            if($rs)
-                $this->success ("操作成功！");
+            $M = M("Firendgx");
+            $rs = $M->add($data);
+            if ($rs)
+                $this->success("操作成功！");
             else
-                $this->error ("操作失败！");
+                $this->error("操作失败！");
             exit;
         }
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
-        $this->assign("list",  $this->getgzh());
+        $this->assign("list", $this->getgzh());
         $this->display();
     }
+
     /**
      * 删除关系
      */
-    public function del_flink(){
-        $id=$_GET['id'];
-        $M=M("Firendgx");
-        $rs=$M->where("id=".$id)->delete();
-        if($rs)
-            $this->success ("操作成功！");
+    public function del_flink() {
+        $id = $_GET['id'];
+        $M = M("Firendgx");
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功！");
         else
-            $this->error ("操作失败！");
+            $this->error("操作失败！");
     }
+
     /**
      * 日记评论
      */
-    public function rcomments(){
+    public function rcomments() {
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
         import("ORG.Util.Page");
         $where = "typeid=1";
-        
+
         $is_hf = $_GET['is_hf'];
         $this->assign("is_hf", $is_hf);
         $uid = $_GET['uid'];
@@ -1440,69 +1461,172 @@ class GongzhangAction extends CommonAction {
         $this->assign("rjlist", $rjlist);
         $this->display();
     }
+
     /**
      * 删除日记评论
      */
-    public function del_rcomments(){
-        $id=$_GET['id'];
-        $M=M("Comments");
-        $rs=$M->where("id=".$id)->delete();
-        if($rs)
-            $this->success ("操作成功！");
+    public function del_rcomments() {
+        $id = $_GET['id'];
+        $M = M("Comments");
+        $rs = $M->where("id=" . $id)->delete();
+        if ($rs)
+            $this->success("操作成功！");
         else
-            $this->error ("操作失败！");
+            $this->error("操作失败！");
     }
+
     /**
      * 修改状态日记评论
      */
-    public function status_rcomments(){
-        $id=$_GET['id'];
-        $status=$_GET['status'];
-        $status=$status==1?"0":"1";
-        $data=array("status"=>$status);
-        $M=M("Comments");
-        $rs=$M->where("id=".$id)->save($data);
-        if($rs)
-            $this->success ("操作成功！");
+    public function status_rcomments() {
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        $status = $status == 1 ? "0" : "1";
+        $data = array("status" => $status);
+        $M = M("Comments");
+        $rs = $M->where("id=" . $id)->save($data);
+        if ($rs)
+            $this->success("操作成功！");
         else
-            $this->error ("操作失败！");
+            $this->error("操作失败！");
     }
-    public function hf_rcomments(){
-        if(IS_POST){
-            $id=$_POST['id'];
-            $hfcontent=  trim($_POST['hf_content']);
-            if(empty($hfcontent)){
+
+    /**
+     * 回复日记评论
+     */
+    public function hf_rcomments() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $hfcontent = trim($_POST['hf_content']);
+            if (empty($hfcontent)) {
                 $this->error("回复内容不能为空！");
                 exit;
             }
-            $M=M("Comments");
-            $data=array("ishf"=>1,"hfcontent"=>$hfcontent,"hftime"=>  time());
-            $rs=$M->where("id=".$id)->save($data);
-            if($rs)
-                $this->success ("操作成功！",U("Gongzhang/rcomments"));
+            $M = M("Comments");
+            $info = $M->where("id=" . $id)->find();
+            if ($info['typeid'] == 1)
+                $link = U("Gongzhang/rcomments");
+            elseif ($info['typeid'] == 2)
+                $link = U("Gongzhang/dtcomments");
+            elseif ($info['typeid'] == 3)
+                $link = U("Gongzhang/casecomments");
+
+            $data = array("ishf" => 1, "hfcontent" => $hfcontent, "hftime" => time());
+            $rs = $M->where("id=" . $id)->save($data);
+            if ($rs)
+                $this->success("操作成功！", $link);
             else
-                $this->error ("操作失败！");
+                $this->error("操作失败！");
             exit;
         }
         parent::_initalize();
         $this->assign("systemConfig", $this->systemConfig);
-        $id=$_GET['id'];
-        $M=M("Comments");
-        $info=$M->where("id=".$id)->find();
-        $this->assign("info",$info);
-        
+        $id = $_GET['id'];
+        $M = M("Comments");
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+
         $kh = $this->getkehu_ins($info['uid']);
         $this->assign("khmem", $kh['a_name'] . "[" . $kh['truename'] . "]");
         $this->assign("addtime", date("Y-m-d H:i:s", $info['addtime']));
-        
+
         $status_f = $info['status'] == 1 ? "已审核" : "未审核";
 
         $this->assign("status_f", $status_f);
-        
-        $this->assign("rjtitle",  $this->getrj_ins($info['arid']));
-        
+        if ($info['typeid'] == 1){
+            $this->assign("rjtitle", $this->getrj_ins($info['arid']));
+            $this->assign("links","<a href=".U('Gongzhang/rcomments')." class='a1' >装修日记评论列表</a>");
+            $this->assign("tnames","日记");    
+        }
+        elseif ($info['typeid'] == 2){
+            $this->assign("rjtitle", $this->getdt_ins($info['arid']));
+            $this->assign("links","<a href=".U('Gongzhang/dtcomments')." class='a1' >施工动态评论列表</a>");
+            $this->assign("tnames","施工动态");    
+        }
+        elseif($info['typeid']==3){
+            $this->assign("rjtitle", $this->getcase_ins($info['arid']));
+            $this->assign("links","<a href=".U('Gongzhang/casecomments')." class='a1' >装修案例评论列表</a>");
+            $this->assign("tnames","装修案例");    
+        }
         $this->display();
     }
+
+    /**
+     * 施工动态评论
+     */
+    public function dtcomments() {
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $where = "typeid=2";
+
+        $is_hf = $_GET['is_hf'];
+        $this->assign("is_hf", $is_hf);
+        $uid = $_GET['uid'];
+        $this->assign("uid", $uid);
+        if (!empty($is_hf)) {
+            $is_hf = $is_hf == 2 ? 0 : $is_hf;
+            $where .= " and ishf=" . $is_hf;
+        }
+        if (!empty($uid))
+            $where .= " and arid=" . $uid;
+
+        $M = M("Comments");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        $arrhf = array("未回复", "已回复");
+        $arrs = array("未审核", "已审核");
+        foreach ($list as $k => $v) {
+            $list[$k]['is_hf_f'] = $arrhf[$v['ishf']];
+            $list[$k]['status_f'] = $arrs[$v['status']];
+        }
+
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+        $rjlist = $this->getdt(); #获取施工动态列表
+        $this->assign("rjlist", $rjlist);
+        $this->display();
+    }
+
+    /**
+     * 装修案例 评论
+     */
+    public function casecomments() {
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $where = "typeid=3";
+
+        $is_hf = $_GET['is_hf'];
+        $this->assign("is_hf", $is_hf);
+        $uid = $_GET['uid'];
+        $this->assign("uid", $uid);
+        if (!empty($is_hf)) {
+            $is_hf = $is_hf == 2 ? 0 : $is_hf;
+            $where .= " and ishf=" . $is_hf;
+        }
+        if (!empty($uid))
+            $where .= " and arid=" . $uid;
+
+        $M = M("Comments");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        $arrhf = array("未回复", "已回复");
+        $arrs = array("未审核", "已审核");
+        foreach ($list as $k => $v) {
+            $list[$k]['is_hf_f'] = $arrhf[$v['ishf']];
+            $list[$k]['status_f'] = $arrs[$v['status']];
+        }
+
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+        $rjlist = $this->getcase(); #获取装修日记列表
+        $this->assign("rjlist", $rjlist);
+        $this->display();
+    }
+
 //----------------------------private----------------------
     /**
      * 图片集合
@@ -1514,6 +1638,7 @@ class GongzhangAction extends CommonAction {
         $tpjhlist = $tpjhm->where("1")->select();
         return $tpjhlist;
     }
+
     /**
      * 户型
      */
@@ -1522,6 +1647,7 @@ class GongzhangAction extends CommonAction {
         $hxlist = $hxmod->where(1)->select();
         return $hxlist;
     }
+
     /**
      * 风格
      */
@@ -1530,6 +1656,7 @@ class GongzhangAction extends CommonAction {
         $hxlist = $fgmod->where(1)->select();
         return $hxlist;
     }
+
     /**
      * 获取图片集合分类的key值
      */
@@ -1542,6 +1669,7 @@ class GongzhangAction extends CommonAction {
         }
         return $arr;
     }
+
     /**
      * 根据从数据库中获取的图片集合
      * 获取图片集合的数组以id为key值
@@ -1553,6 +1681,7 @@ class GongzhangAction extends CommonAction {
         }
         return $arr;
     }
+
     /**
      * 根据用户id 获取用户所属的省市
      * 
@@ -1562,6 +1691,7 @@ class GongzhangAction extends CommonAction {
         $info = $m->where("a_id=" . $uid)->field("p_id,c_id")->find();
         return $info;
     }
+
     /**
      * 获取工长列表
      */
@@ -1579,15 +1709,17 @@ class GongzhangAction extends CommonAction {
         $list = $M->where($where)->field("a_id,a_name,truename")->select();
         return $list;
     }
+
     /**
      * 获取工长详细
      */
-    private function getgzh_ins($aid){
-        $where="a_id=".$aid;
+    private function getgzh_ins($aid) {
+        $where = "a_id=" . $aid;
         $M = M("Foremanview");
         $info = $M->where($where)->field("a_id,a_name,truename")->find();
         return $info;
     }
+
     /**
      * 检查
      * 日记分类名称是否存在
@@ -1600,6 +1732,7 @@ class GongzhangAction extends CommonAction {
         else
             return 0;
     }
+
     /**
      * 检查日记标题是否存在
      */
@@ -1611,6 +1744,7 @@ class GongzhangAction extends CommonAction {
         else
             return 0;
     }
+
     /**
      * 根据uid
      * 获取
@@ -1623,6 +1757,7 @@ class GongzhangAction extends CommonAction {
 
         return $list;
     }
+
     /**
      * 获取客户详细
      */
@@ -1632,39 +1767,93 @@ class GongzhangAction extends CommonAction {
         $info = $M->where($where)->field("a_id,a_name,truename")->find();
         return $info;
     }
+
     /**
      * 检查好友关系是否存在
      */
-    private function check_flink($uid,$fuid){
-        $M=M("Firendgx");
-        $cou=$M->where(array("uid"=>$uid,"fuid"=>$fuid))->count();
-        if($cou>0)
+    private function check_flink($uid, $fuid) {
+        $M = M("Firendgx");
+        $cou = $M->where(array("uid" => $uid, "fuid" => $fuid))->count();
+        if ($cou > 0)
             return 1;
         else
             return 0;
     }
+
     /**
      * 获取装修日记列表
      */
-    private function getrj(){
-        $is_qx=$this->getqx($_SESSION['my_info']['role']);
-        $where="1";
-        if($is_qx==1){
-            $where.=" and p_id=".$_SESSION['my_info']['proid'];
-            $where.=" and c_id=".$_SESSION['my_info']['cityid'];
+    private function getrj() {
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $where = "1";
+        if ($is_qx == 1) {
+            $where.=" and p_id=" . $_SESSION['my_info']['proid'];
+            $where.=" and c_id=" . $_SESSION['my_info']['cityid'];
         }
-        $M=M("Riji");
-        $list=$M->where($where)->select();
+        $M = M("Riji");
+        $list = $M->where($where)->select();
         return $list;
     }
+
     /**
      * 获取装修日记详细
      */
-    private function getrj_ins($id){
-        
-        $where="id=".$id;
-        $M=M("Riji");
-        $list=$M->where($where)->field("title")->find();
+    private function getrj_ins($id) {
+
+        $where = "id=" . $id;
+        $M = M("Riji");
+        $list = $M->where($where)->field("title")->find();
+        return $list['title'];
+    }
+
+    /**
+     * 获取装修动态列表
+     */
+    private function getdt() {
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $where = "1";
+        if ($is_qx == 1) {
+            $where.=" and p_id=" . $_SESSION['my_info']['proid'];
+            $where.=" and c_id=" . $_SESSION['my_info']['cityid'];
+        }
+        $M = M("Shigongdt");
+        $list = $M->where($where)->select();
+        return $list;
+    }
+
+    /**
+     * 获取施工动态详细
+     */
+    private function getdt_ins($id) {
+
+        $where = "id=" . $id;
+        $M = M("Shigongdt");
+        $list = $M->where($where)->field("title")->find();
+        return $list['title'];
+    }
+/**
+     * 获取装修案例列表
+     */
+    private function getcase() {
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $where = "type=1";
+        if ($is_qx == 1) {
+            $where.=" and p_id=" . $_SESSION['my_info']['proid'];
+            $where.=" and c_id=" . $_SESSION['my_info']['cityid'];
+        }
+        $M = M("Case");
+        $list = $M->where($where)->select();
+        return $list;
+    }
+
+    /**
+     * 获取装修案例详细
+     */
+    private function getcase_ins($id) {
+
+        $where = "id=" . $id;
+        $M = M("Case");
+        $list = $M->where($where)->field("title")->find();
         return $list['title'];
     }
     //------------------------ajax--------------
@@ -1691,6 +1880,7 @@ class GongzhangAction extends CommonAction {
         }
         echo json_encode($data);
     }
+
     /**
      * ajax
      * 改变图片集合名称
@@ -1706,6 +1896,7 @@ class GongzhangAction extends CommonAction {
         else
             echo 0;
     }
+
     /**
      * 修改排序
      */
@@ -1735,6 +1926,7 @@ class GongzhangAction extends CommonAction {
         else
             echo 0;
     }
+
     /**
      * 快速
      * ajax
@@ -1750,4 +1942,5 @@ class GongzhangAction extends CommonAction {
         else
             echo 0;
     }
+
 }
