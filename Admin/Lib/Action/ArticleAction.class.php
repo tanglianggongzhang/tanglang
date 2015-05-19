@@ -21,18 +21,18 @@ class ArticleAction extends CommonAction {
         $this->assign("systemConfig", $this->systemConfig);
         import("ORG.Util.Page");
         $M = M("Article");
-        $keys=trim($_GET['keys']);
-        $keys=$keys=="请输入关键字"?"":$keys;
-        
+        $keys = trim($_GET['keys']);
+        $keys = $keys == "请输入关键字" ? "" : $keys;
+
         $map = "1";
-        if(!empty($keys))
-            $map.=" and title like '%".$keys."%'";
-        $this->assign("keys",$keys);
-        
+        if (!empty($keys))
+            $map.=" and title like '%" . $keys . "%'";
+        $this->assign("keys", $keys);
+
         $totalRows = $M->where($map)->count();
         $p = new Page($totalRows, 10);
         $list = $M->where($map)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
-       
+
         $this->assign("page", $p->show());
         $arr1 = array("普通", "推荐");
         $arr2 = array("未审核", "已审核");
@@ -66,7 +66,7 @@ class ArticleAction extends CommonAction {
             $p_id = $parr['p_id'];
             $c_id = $parr['c_id'];
 
-            
+
             if (empty($title)) {
                 $this->error("标题不能为空！");
                 exit;
@@ -305,17 +305,107 @@ class ArticleAction extends CommonAction {
         $rs = $M->where("cid=" . $id)->save($data);
         echo $rs;
     }
-    
+
     /**
      * 文章评论
      */
-    public function comments(){
+    public function comments() {
         parent::_initalize();
-        $this->assign("systemConfig",$this->systemConfig);
-        
-        
+        $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $where = "typeid=4";
+
+        $is_hf = $_GET['is_hf'];
+        $this->assign("is_hf", $is_hf);
+        $uid = $_GET['uid'];
+        $this->assign("uid", $uid);
+        if (!empty($is_hf)) {
+            $is_hf = $is_hf == 2 ? 0 : $is_hf;
+            $where .= " and ishf=" . $is_hf;
+        }
+        if (!empty($uid))
+            $where .= " and arid=" . $uid;
+
+        $M = M("Comments");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        $arrhf = array("未回复", "已回复");
+        $arrs = array("未审核", "已审核");
+        foreach ($list as $k => $v) {
+            $list[$k]['is_hf_f'] = $arrhf[$v['ishf']];
+            $list[$k]['status_f'] = $arrs[$v['status']];
+        }
+
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+        $rjlist = $this->getcase(); #获取装修日记列表
+        $this->assign("rjlist", $rjlist);
         $this->display();
     }
+
+    /**
+     * 修改状态日记评论
+     */
+    public function status_rcomments() {
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+        $status = $status == 1 ? "0" : "1";
+        $data = array("status" => $status);
+        $M = M("Comments");
+        $rs = $M->where("id=" . $id)->save($data);
+        if ($rs)
+            $this->success("操作成功！");
+        else
+            $this->error("操作失败！");
+    }
+
+    /**
+     * 回复日记评论
+     */
+    public function hf_rcomments() {
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $hfcontent = trim($_POST['hf_content']);
+            if (empty($hfcontent)) {
+                $this->error("回复内容不能为空！");
+                exit;
+            }
+            $M = M("Comments");
+            $info = $M->where("id=" . $id)->find();
+
+            $link = U("Article/comments");
+
+            $data = array("ishf" => 1, "hfcontent" => $hfcontent, "hftime" => time());
+            $rs = $M->where("id=" . $id)->save($data);
+            if ($rs)
+                $this->success("操作成功！", $link);
+            else
+                $this->error("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id = $_GET['id'];
+        $M = M("Comments");
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+
+        $kh = $this->getkehu_ins($info['uid']);
+        $this->assign("khmem", $kh['a_name'] . "[" . $kh['truename'] . "]");
+        $this->assign("addtime", date("Y-m-d H:i:s", $info['addtime']));
+
+        $status_f = $info['status'] == 1 ? "已审核" : "未审核";
+
+        $this->assign("status_f", $status_f);
+
+        $this->assign("rjtitle", $this->getcase_ins($info['arid']));
+        $this->assign("links", "<a href=" . U('Article/comments') . " class='a1' >文章评论</a>");
+        $this->assign("tnames", "文章");
+
+        $this->display();
+    }
+
     //----------------
     /**
      * 获取省id和市id
@@ -396,57 +486,93 @@ class ArticleAction extends CommonAction {
     private function getumemlist() {
         $is_qx = $this->getqx($_SESSION['my_info']['role']);
         if ($is_qx == 1) {
-            $p_id=$_SESSION['my_info']['p_id'];
-            $c_id=$_SESSION['my_info']['c_id'];
-            
-            $map=" and p_id=".$p_id." and c_id=".$c_id;
-        } 
+            $p_id = $_SESSION['my_info']['p_id'];
+            $c_id = $_SESSION['my_info']['c_id'];
+
+            $map = " and p_id=" . $p_id . " and c_id=" . $c_id;
+        }
         //普通会员
         $M1 = M("Kehuview");
-        $list1 = $M1->where("status=1 ".$map)->field("a_id,a_name,truename")->select();
+        $list1 = $M1->where("status=1 " . $map)->field("a_id,a_name,truename")->select();
         //工长
-        $M2=M("Foremanview");
-        $list2=$M2->where("status=1 ".$map)->field("a_id,a_name,truename")->select();
-        
+        $M2 = M("Foremanview");
+        $list2 = $M2->where("status=1 " . $map)->field("a_id,a_name,truename")->select();
+
         //店铺
-        $M3=M("Dianpumember");
-        $list3=$M3->where("status=1 ".$map)->field("a_id,a_name,company")->select();
-        
-        
+        $M3 = M("Dianpumember");
+        $list3 = $M3->where("status=1 " . $map)->field("a_id,a_name,company")->select();
+
+
         //设计
-        $M4=M("Shejiview");
-        $list4=$M4->where("status=1 ".$map)->field("a_id,a_name,truename")->select();
+        $M4 = M("Shejiview");
+        $list4 = $M4->where("status=1 " . $map)->field("a_id,a_name,truename")->select();
         //工人
-        $M5=M("Gongrenview");
-        $list5=$M5->where("status=1 ".$map)->field("a_id,a_name,truename")->select();
-        
+        $M5 = M("Gongrenview");
+        $list5 = $M5->where("status=1 " . $map)->field("a_id,a_name,truename")->select();
+
         $ulist = array();
         foreach ($list1 as $k => $v) {
             $ulist[$v['a_id']]['a_id'] = $v['a_id'];
             $ulist[$v['a_id']]['a_name'] = $v['a_name'];
             $ulist[$v['a_id']]['truename'] = $v['truename'];
         }
-        foreach($list2 as $k1=>$v1){
+        foreach ($list2 as $k1 => $v1) {
             $ulist[$v1['a_id']]['a_id'] = $v1['a_id'];
             $ulist[$v1['a_id']]['a_name'] = $v1['a_name'];
             $ulist[$v1['a_id']]['truename'] = $v1['truename'];
         }
-        foreach($list3 as $k2=>$v2){
+        foreach ($list3 as $k2 => $v2) {
             $ulist[$v2['a_id']]['a_id'] = $v2['a_id'];
             $ulist[$v2['a_id']]['a_name'] = $v2['a_name'];
             $ulist[$v2['a_id']]['truename'] = $v2['company'];
         }
-        foreach($list4 as $k3=>$v3){
+        foreach ($list4 as $k3 => $v3) {
             $ulist[$v3['a_id']]['a_id'] = $v3['a_id'];
             $ulist[$v3['a_id']]['a_name'] = $v3['a_name'];
             $ulist[$v3['a_id']]['truename'] = $v3['truename'];
         }
-        foreach($list5 as $k4=>$v4){
+        foreach ($list5 as $k4 => $v4) {
             $ulist[$v4['a_id']]['a_id'] = $v4['a_id'];
             $ulist[$v4['a_id']]['a_name'] = $v4['a_name'];
             $ulist[$v4['a_id']]['truename'] = $v4['truename'];
         }
         return $ulist;
+    }
+
+    /**
+     * 获取装修案例列表
+     */
+    private function getcase() {
+        $is_qx = $this->getqx($_SESSION['my_info']['role']);
+        $where = "1";
+        if ($is_qx == 1) {
+            $where.=" and p_id=" . $_SESSION['my_info']['proid'];
+            $where.=" and c_id=" . $_SESSION['my_info']['cityid'];
+        }
+        $M = M("Article");
+        $list = $M->where($where)->select();
+        return $list;
+    }
+
+    /**
+     * 获取装修案例详细
+     */
+    private function getcase_ins($id) {
+
+        $where = "id=" . $id;
+        $M = M("Article");
+        $list = $M->where($where)->field("title")->find();
+        return $list['title'];
+    }
+
+    /**
+     * 获取客户详细
+     */
+    private function getkehu_ins($aid) {
+        $where = "a_id=" . $aid;
+        $M = M("Kehuview");
+        $info = $M->where($where)->field("a_id,a_name,truename")->find();
+        return $info;
     }
 
 }
