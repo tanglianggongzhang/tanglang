@@ -12,7 +12,6 @@
  * @author 李雪莲 <lixuelianlk@163.com>
  */
 class GongzhangAction extends CommonAction {
-
     /**
      * 施工动态列表
      */
@@ -72,7 +71,6 @@ class GongzhangAction extends CommonAction {
         $this->assign("jieduan", $jieduan);
         $this->display();
     }
-
     /**
      * 添加施工动态
      */
@@ -165,7 +163,6 @@ class GongzhangAction extends CommonAction {
             $this->display("addsgdt2");
         }
     }
-
     /**
      * 编辑施工动态
      */
@@ -292,9 +289,6 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败!");
     }
-
-    
-
     /**
      * 图片集合分类
      */
@@ -329,7 +323,6 @@ class GongzhangAction extends CommonAction {
         $this->assign("list", $list);
         $this->display();
     }
-
     /**
      * 删除图片集合分类
      */
@@ -342,23 +335,6 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败!");
     }
-
-    /**
-     * ajax
-     * 改变图片集合名称
-     */
-    public function ajaxupdatejh() {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $m = M("Tpjh");
-        $rr = $m->where("id=" . $id)->save(array("name" => $name));
-
-        if ($rr)
-            echo 1;
-        else
-            echo 0;
-    }
-
     /**
      * 修改状态
      */
@@ -376,7 +352,6 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("修改失败！");
     }
-
     /**
      * 修改状态
      */
@@ -393,52 +368,6 @@ class GongzhangAction extends CommonAction {
             $this->success("修改成功！");
         else
             $this->error("修改失败！");
-    }
-
-    /**
-     * 修改排序
-     */
-    public function ajaxupdatesort() {
-        $sort = $_POST['sort'];
-        $id = $_POST['id'];
-        $m = M("Shigongdt");
-        $rs = $m->where("id=" . $id)->save(array("sort" => $sort));
-        if ($rs)
-            echo 1;
-        else
-            echo 0;
-    }
-
-    /**
-     * 快速修改
-     * 日记 点击次数
-     * 
-     */
-    public function ajaxupdate_rj_click() {
-        $sort = $_POST['sort'];
-        $id = $_POST['id'];
-        $m = M("Riji");
-        $rs = $m->where("id=" . $id)->save(array("click" => $sort));
-        if ($rs)
-            echo 1;
-        else
-            echo 0;
-    }
-
-    /**
-     * 快速
-     * ajax
-     * 修改日记分类名称
-     */
-    public function ajaxupdate_cate_rj() {
-        $name = $_POST['name'];
-        $id = $_POST['id'];
-        $m = M("Rijicategory");
-        $rs = $m->where("cid=" . $id)->save(array("cname" => $name));
-        if ($rs)
-            echo 1;
-        else
-            echo 0;
     }
 
     /**
@@ -1183,7 +1112,6 @@ class GongzhangAction extends CommonAction {
 
         $this->display();
     }
-
     /**
      * 修改状态
      * 施工工地
@@ -1202,7 +1130,6 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
-
     /**
      * 编辑
      * 工地
@@ -1277,7 +1204,6 @@ class GongzhangAction extends CommonAction {
 
         $this->display();
     }
-
     /**
      * 删除
      * 工地
@@ -1302,7 +1228,6 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败!");
     }
-
     /**
      * 口碑点评
      */
@@ -1339,7 +1264,6 @@ class GongzhangAction extends CommonAction {
         $this->assign("gzlist", $gzlist);
         $this->display();
     }
-
     /**
      * 口碑状态
      */
@@ -1358,7 +1282,6 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("操作失败！");
     }
-
     /**
      * 删除口碑
      */
@@ -1371,7 +1294,6 @@ class GongzhangAction extends CommonAction {
         else
             $this->error("删除失败！");
     }
-
     /**
      * 回复
      */
@@ -1481,9 +1403,107 @@ class GongzhangAction extends CommonAction {
         else
             $this->error ("操作失败！");
     }
-    
-//----------------------------private----------------------
+    /**
+     * 日记评论
+     */
+    public function rcomments(){
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        import("ORG.Util.Page");
+        $where = "typeid=1";
+        
+        $is_hf = $_GET['is_hf'];
+        $this->assign("is_hf", $is_hf);
+        $uid = $_GET['uid'];
+        $this->assign("uid", $uid);
+        if (!empty($is_hf)) {
+            $is_hf = $is_hf == 2 ? 0 : $is_hf;
+            $where .= " and ishf=" . $is_hf;
+        }
+        if (!empty($uid))
+            $where .= " and arid=" . $uid;
 
+        $M = M("Comments");
+        $totalRows = $M->where($where)->count();
+        $p = new Page($totalRows, 10);
+        $list = $M->where($where)->order("addtime desc")->limit($p->firstRow . "," . $p->listRows)->select();
+        $arrhf = array("未回复", "已回复");
+        $arrs = array("未审核", "已审核");
+        foreach ($list as $k => $v) {
+            $list[$k]['is_hf_f'] = $arrhf[$v['ishf']];
+            $list[$k]['status_f'] = $arrs[$v['status']];
+        }
+
+        $this->assign("list", $list);
+        $this->assign("page", $p->show());
+        $rjlist = $this->getrj(); #获取装修日记列表
+        $this->assign("rjlist", $rjlist);
+        $this->display();
+    }
+    /**
+     * 删除日记评论
+     */
+    public function del_rcomments(){
+        $id=$_GET['id'];
+        $M=M("Comments");
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+    /**
+     * 修改状态日记评论
+     */
+    public function status_rcomments(){
+        $id=$_GET['id'];
+        $status=$_GET['status'];
+        $status=$status==1?"0":"1";
+        $data=array("status"=>$status);
+        $M=M("Comments");
+        $rs=$M->where("id=".$id)->save($data);
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+    public function hf_rcomments(){
+        if(IS_POST){
+            $id=$_POST['id'];
+            $hfcontent=  trim($_POST['hf_content']);
+            if(empty($hfcontent)){
+                $this->error("回复内容不能为空！");
+                exit;
+            }
+            $M=M("Comments");
+            $data=array("ishf"=>1,"hfcontent"=>$hfcontent,"hftime"=>  time());
+            $rs=$M->where("id=".$id)->save($data);
+            if($rs)
+                $this->success ("操作成功！",U("Gongzhang/rcomments"));
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $id=$_GET['id'];
+        $M=M("Comments");
+        $info=$M->where("id=".$id)->find();
+        $this->assign("info",$info);
+        
+        $kh = $this->getkehu_ins($info['uid']);
+        $this->assign("khmem", $kh['a_name'] . "[" . $kh['truename'] . "]");
+        $this->assign("addtime", date("Y-m-d H:i:s", $info['addtime']));
+        
+        $status_f = $info['status'] == 1 ? "已审核" : "未审核";
+
+        $this->assign("status_f", $status_f);
+        
+        $this->assign("rjtitle",  $this->getrj_ins($info['arid']));
+        
+        $this->display();
+    }
+//----------------------------private----------------------
     /**
      * 图片集合
      * 
@@ -1494,7 +1514,6 @@ class GongzhangAction extends CommonAction {
         $tpjhlist = $tpjhm->where("1")->select();
         return $tpjhlist;
     }
-
     /**
      * 户型
      */
@@ -1503,7 +1522,6 @@ class GongzhangAction extends CommonAction {
         $hxlist = $hxmod->where(1)->select();
         return $hxlist;
     }
-
     /**
      * 风格
      */
@@ -1512,7 +1530,6 @@ class GongzhangAction extends CommonAction {
         $hxlist = $fgmod->where(1)->select();
         return $hxlist;
     }
-
     /**
      * 获取图片集合分类的key值
      */
@@ -1525,7 +1542,6 @@ class GongzhangAction extends CommonAction {
         }
         return $arr;
     }
-
     /**
      * 根据从数据库中获取的图片集合
      * 获取图片集合的数组以id为key值
@@ -1537,7 +1553,6 @@ class GongzhangAction extends CommonAction {
         }
         return $arr;
     }
-
     /**
      * 根据用户id 获取用户所属的省市
      * 
@@ -1547,7 +1562,6 @@ class GongzhangAction extends CommonAction {
         $info = $m->where("a_id=" . $uid)->field("p_id,c_id")->find();
         return $info;
     }
-
     /**
      * 获取工长列表
      */
@@ -1586,7 +1600,6 @@ class GongzhangAction extends CommonAction {
         else
             return 0;
     }
-
     /**
      * 检查日记标题是否存在
      */
@@ -1598,7 +1611,6 @@ class GongzhangAction extends CommonAction {
         else
             return 0;
     }
-
     /**
      * 根据uid
      * 获取
@@ -1611,7 +1623,6 @@ class GongzhangAction extends CommonAction {
 
         return $list;
     }
-
     /**
      * 获取客户详细
      */
@@ -1631,6 +1642,30 @@ class GongzhangAction extends CommonAction {
             return 1;
         else
             return 0;
+    }
+    /**
+     * 获取装修日记列表
+     */
+    private function getrj(){
+        $is_qx=$this->getqx($_SESSION['my_info']['role']);
+        $where="1";
+        if($is_qx==1){
+            $where.=" and p_id=".$_SESSION['my_info']['proid'];
+            $where.=" and c_id=".$_SESSION['my_info']['cityid'];
+        }
+        $M=M("Riji");
+        $list=$M->where($where)->select();
+        return $list;
+    }
+    /**
+     * 获取装修日记详细
+     */
+    private function getrj_ins($id){
+        
+        $where="id=".$id;
+        $M=M("Riji");
+        $list=$M->where($where)->field("title")->find();
+        return $list['title'];
     }
     //------------------------ajax--------------
     /**
@@ -1655,5 +1690,64 @@ class GongzhangAction extends CommonAction {
                 $data = array("status" => 0, "data" => "");
         }
         echo json_encode($data);
+    }
+    /**
+     * ajax
+     * 改变图片集合名称
+     */
+    public function ajaxupdatejh() {
+        $id = $_POST['id'];
+        $name = $_POST['name'];
+        $m = M("Tpjh");
+        $rr = $m->where("id=" . $id)->save(array("name" => $name));
+
+        if ($rr)
+            echo 1;
+        else
+            echo 0;
+    }
+    /**
+     * 修改排序
+     */
+    public function ajaxupdatesort() {
+        $sort = $_POST['sort'];
+        $id = $_POST['id'];
+        $m = M("Shigongdt");
+        $rs = $m->where("id=" . $id)->save(array("sort" => $sort));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
+
+    /**
+     * 快速修改
+     * 日记 点击次数
+     * 
+     */
+    public function ajaxupdate_rj_click() {
+        $sort = $_POST['sort'];
+        $id = $_POST['id'];
+        $m = M("Riji");
+        $rs = $m->where("id=" . $id)->save(array("click" => $sort));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
+    }
+    /**
+     * 快速
+     * ajax
+     * 修改日记分类名称
+     */
+    public function ajaxupdate_cate_rj() {
+        $name = $_POST['name'];
+        $id = $_POST['id'];
+        $m = M("Rijicategory");
+        $rs = $m->where("cid=" . $id)->save(array("cname" => $name));
+        if ($rs)
+            echo 1;
+        else
+            echo 0;
     }
 }
