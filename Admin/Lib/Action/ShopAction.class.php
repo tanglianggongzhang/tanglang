@@ -1437,13 +1437,107 @@ class ShopAction extends CommonAction {
         $this->assign("systemConfig", $this->systemConfig);
         import("ORG.Util.Page");
         $where = "1";
-        $M = M("Comments");
+        $is_hf=$_GET['is_hf'];
+        $this->assign("is_hf",$is_hf);
+        $uid=$_GET['uid'];
+        $this->assign("uid",$uid);
+        if(!empty($is_hf)){
+            $is_hf=$is_hf==2?0:$is_hf;
+            $where.=" and Gcomments.is_hf=".$is_hf;
+        }
+        if(!empty($uid)){
+            $where.=" and Gcomments.sjid=".$uid;
+        }
+        
+        #工长
+        $this->assign("gzlist",$this->getgzh());
+        $M = D("GcommentsView");
         $cou = $M->where($where)->count();
         $p = new Page($cou, 10);
-        $list = $M->where($where)->limit($p->firstRow . "," . $p->listRows)->order("addtime desc")->select();
+        $list = $M->where($where)->limit($p->firstRow . "," . $p->listRows)->order("Gcomments.addtime desc")->select();
+        $statusarr=array("未审核","已审核");
+        $hfstatus=array("未回复","已回复");
+        
+        foreach($list as $k=>$v){
+            $list[$k]['is_hf_f']=$hfstatus[$v['is_hf']];
+            $list[$k]['status_f']=$statusarr[$v['status']];
+        }
         $this->assign("list", $list);
         $this->assign("page", $p->show());
 
+        $this->display();
+    }
+    /**
+     * 修改状态
+     */
+    public function  status_gcomment(){
+        $id=$_GET['id'];
+        $status=$_GET['statuss'];
+        $status=$status==1?0:1;
+        $M=M("Gcomments");
+        $rs=$M->where("id=".$id)->save(array("status"=>$status));
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+    /**
+     * 删除商品评论
+     */
+    public function del_gcomment(){
+        $id=$_GET['id'];
+        $M=M("Gcomments");
+        $info=$M->where("id=".$id)->find();
+        if(!empty($info['imgsrc'])){
+            $imgsrc=json_decode($info['imgsrc']);
+            foreach ($imgsrc as $k=>$v){
+                unlink(".".$v);
+            }
+        }
+        $rs=$M->where("id=".$id)->delete();
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
+    }
+    /**
+     * 回复评论
+     */
+    public function hf_gcomment(){
+        
+        if (IS_POST) {
+            $id = $_POST['id'];
+            $hf_content = trim($_POST['hf_content']);
+            $M = M("Gcomments");
+            if (empty($hf_content)) {
+                $this->error("回复内容不能为空！");
+                exit;
+            }
+            $rs = $M->where("id=" . $id)->save(array("hfcontent" => $hf_content, "hftime" => time(), "is_hf" => 1));
+            if ($rs)
+                $this->success("操作成功！", U("Shop/comments"));
+            else
+                $this->error("操作失败！");
+
+            exit;
+        }
+        parent::_initalize();
+        $this->assign("systemConfig", $this->systemConfig);
+        $M = M("Gcomments");
+        $id = $_GET['id'];
+        $info = $M->where("id=" . $id)->find();
+        $this->assign("info", $info);
+        $kh = $this->getkehu_ins($info['uid']);
+        $this->assign("khmem", $kh['a_name'] . "[" . $kh['truename'] . "]");
+        $this->assign("addtime", date("Y-m-d H:i:s", $info['addtime']));
+        $sj = $this->getgzh_ins($info['sjid']);
+        $this->assign("sjmem", $sj['a_name'] . "[" . $sj['company'] . "]");
+        $status_f = $info['status'] == 1 ? "已审核" : "未审核";
+        $this->assign("status_f", $status_f);
+        if(!empty($info['imgsrc'])){
+            $imglist=json_decode($info['imgsrc']);
+            $this->assign("imglist",$imglist);
+        }
         $this->display();
     }
 

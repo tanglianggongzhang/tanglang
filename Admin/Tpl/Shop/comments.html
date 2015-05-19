@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
 <head>
-<title>口碑点评-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<title>商品评论-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
@@ -41,7 +41,7 @@ $(function(){
   <!--左边end-->
   <div class="center_r">
     <div class="center">
-      <div class="center_r_t">您的位置：口碑点评</div>
+      <div class="center_r_t">您的位置：商品评论</div>
       <div class="center_r_z">
       <form method="get" name="search_form" id="search_form" action=""  >
         <label>是否回复</label>
@@ -50,15 +50,15 @@ $(function(){
             <option value="2" <if condition="$is_hf==2">selected</if> >未回复</option>
             <option value="1" <if condition="$is_hf==1">selected</if> >已回复</option>
         </select>
-        <label>设计</label>
+        <label>商城</label>
         <select id="uid" name="uid" class="choose">
             <option value="">请选择</option>
             <volist id="vo" name="gzlist">
-                <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if> >{$vo.a_name}[{$vo.truename}]</option>
+                <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if> >{$vo.a_name}[{$vo.company}]</option>
             </volist>
         </select>
-            <if condition="!empty($keys)||!empty($uid)">
-                <a href="{:U('Gongzhang/koubeicomment')}">取消查询</a>
+            <if condition="!empty($is_hf)||!empty($uid)">
+                <a href="{:U('Shop/comments')}">取消查询</a>
             </if>
         <input name="sub" type="submit"  value="查询" class="sub1" />
         
@@ -70,11 +70,11 @@ $(function(){
       </div>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
         <tr class="center_t_t">
-          <td class="td1" width="135">编号</td>
-          <td width="135">服务分数</td>
-          <td width="135">品质分数</td>
-          <td width="135">性价比</td>
-          <td width="100">是否好评</td>
+          <td class="td1" >编号</td>
+          <td width="135">客户</td>
+          <td width="135">商家</td>
+          <td width="135">商品</td>
+          <td width="100">标题</td>
           <td width="100">是否回复</td>
           <td width="100">状态</td>
           <td class="td2" width="135">操作</td>
@@ -82,18 +82,18 @@ $(function(){
         <volist id="vo" name="list">
         <tr class="center_t_d">
           <td class="td1" width="135">{$vo.id}</td>
-          <td width="135">{$vo.fwnum}</td>
-          <td width="135">{$vo.pznum}</td>
-          <td width="135">{$vo.xjnum}</td>
-          <td width="100">{$vo.is_good}</td>
+          <td width="135">{$vo.uname}</td>
+          <td width="135">{$vo.company}</td>
+          <td width="135">{$vo.gname}</td>
+          <td width="100">{$vo.title}</td>
           <td width="100">{$vo.is_hf_f}</td>
           <td width="100">{$vo.status_f}</td>
           <td width="135">
-              <a link="{:U('Sheji/status_koubei',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
+              <a link="{:U('Shop/status_gcomment',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="sgdtstatus">修改状态</a><br/>
         <if condition="$vo[is_hf]==0">
-              <a aid="{$vo.a_id}" href="{:U('Sheji/hf',array('id'=>$vo[id]))}" style="cursor:pointer">回复</a>
+              <a aid="{$vo.a_id}" href="{:U('Shop/hf_gcomment',array('id'=>$vo[id]))}" style="cursor:pointer">回复</a>
         </if>
-              <a link="{:U('Sheji/del_koubei',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
+              <a link="{:U('Shop/del_gcomment',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
           </td>
         </tr>
         </volist>
