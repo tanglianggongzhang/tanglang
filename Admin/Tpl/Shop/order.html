@@ -108,8 +108,11 @@ $(function(){
         <if condition='$vo[status]==4'>
             <a href="{:U('Shop/fh',array('id'=>$vo[id]))}">发货</a>
         </if>
-        <if condition='$vo[status]==1'>
-            <a href="{:U('Shop/th',array('id'=>$vo[id]))}">退货</a>
+        <if condition='$vo[status]==2'>
+            <a name="{$vo.ordersn}" link="{:U('Shop/qr_order',array('id'=>$vo[id],'status'=>$vo[status]))}" style="cursor:pointer" class="qr">确认收货</a>
+        </if>
+        <if condition='$vo[status]==3'>
+            <a href="{:U('Shop/th',array('id'=>$vo[id]))}">退货处理</a>
         </if>
              <a name="{$vo.ordersn}" href="{:U('Shop/ins_order',array('id'=>$vo[id]))}" style="cursor:pointer" >查看详情</a> 
               
@@ -136,6 +139,13 @@ $(function(){
     $(".del").click(function(){
         var n=$(this).attr("name");
         if(confirm("您确定要删除会员["+n+"]吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+    
+     $(".qr").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定订单["+n+"]确认收货了吗？")){
             window.location.href=$(this).attr("link");
         }
     });

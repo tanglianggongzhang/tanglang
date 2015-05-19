@@ -1638,6 +1638,33 @@ class ShopAction extends CommonAction {
         import("ORG.Util.Page");
         $list = $M->where($where)->order("o.id desc")->select();
         $this->assign("list", $list);
+        
+        $M1=M("Order");
+        $info=$M1->where("id=".$id)->find();
+        $conf=include'./Common/config2.php';
+        $status=$conf['status'];
+        $info['statusf']=$status[$info['status']];
+        
+        $this->assign("info",$info);
+        #配送类型
+        $info1=M("Peisongtype")->where("id=".$info['pstype'])->field("name")->find();
+        $this->assign("pstypef",$info1['name']);
+        #支付方式
+        $info2=M("Zhifutype")->where("id=".$info['paytype'])->field("name")->find();
+        $this->assign("paytypef",$info2['name']);
+        #会员
+        $info3=M("Member")->where("a_id=".$info['uid'])->field("a_name")->find();
+        $this->assign("uname",$info3['a_name']);
+        $this->assign("addtimef",date("Y-m-d H:i:s",$info['addtime']));
+        #商家$company
+        $info4=M("Dianpu")->where("a_id=".$info['sjid'])->field("company")->find();
+        $this->assign("company",$info4['company']);
+        
+        $this->assign("addtimef",date("Y-m-d H:i:s",$info['addtime']));
+        $this->assign("fhaddtimef",date("Y-m-d H:i:s",$info['fhtime']));
+        
+        
+        
         $this->display();
     }
 
@@ -1659,17 +1686,124 @@ class ShopAction extends CommonAction {
      * 发货
      */
     public function fh(){
+        if(IS_POST){
+            $fhsn=trim($_POST['fhsn']);
+            if(empty($fhsn)){
+                $this->error("发货单号不能为空！"); 
+                exit;
+            }
+            $id=$_POST['id'];
+            if(empty($id)){
+                $this->error("请选择订单！");
+                exit;
+            }
+            $M=M("Order");
+            $rs=$M->where("id=".$id)->save(array("fhsn"=>$fhsn,"fhtime"=>time(),"status"=>2));
+            if($rs)
+                $this->success ("操作成功!",U("Shop/order"));
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
         parent::_initalize();
         $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        $M=M("Order");
+        $info=$M->where("id=".$id)->find();
+        $conf=include'./Common/config2.php';
+        $status=$conf['status'];
+        $info['statusf']=$status[$info['status']];
+        
+        $this->assign("info",$info);
+        #配送类型
+        $info1=M("Peisongtype")->where("id=".$info['pstype'])->field("name")->find();
+        $this->assign("pstypef",$info1['name']);
+        #支付方式
+        $info2=M("Zhifutype")->where("id=".$info['paytype'])->field("name")->find();
+        $this->assign("paytypef",$info2['name']);
+        #会员
+        $info3=M("Member")->where("a_id=".$info['uid'])->field("a_name")->find();
+        $this->assign("uname",$info3['a_name']);
+        $this->assign("addtimef",date("Y-m-d H:i:s",$info['addtime']));
+        #商家$company
+        $info4=M("Dianpu")->where("a_id=".$info['sjid'])->field("company")->find();
+        $this->assign("company",$info4['company']);
+        
+        $this->assign("addtimef",date("Y-m-d H:i:s",$info['addtime']));
+        #商品
+        $M1=D("OrderinsView");
+        $glist=$M1->where("o.orderid=".$id)->select();
+        
+        $this->assign("glist",$glist);
+        
         $this->display();
     }
     /**
      * 退货
      */
     public function th(){
+        
+        if(IS_POST){
+            
+            $id=$_POST['id'];
+            if(empty($id)){
+                $this->error("请选择订单！");
+                exit;
+            }
+            $M=M("Order");
+            $rs=$M->where("id=".$id)->save(array("status"=>5));
+            if($rs)
+                $this->success ("操作成功!",U("Shop/order"));
+            else
+                $this->error ("操作失败！");
+            exit;
+        }
         parent::_initalize();
         $this->assign("systemConfig",$this->systemConfig);
+        $id=$_GET['id'];
+        $M=M("Order");
+        $info=$M->where("id=".$id)->find();
+        $conf=include'./Common/config2.php';
+        $status=$conf['status'];
+        $info['statusf']=$status[$info['status']];
+        $info['fhtimef']=date("Y-m-d H:i:s",$info['fhtime']);
+        $info['thtimef']=date("Y-m-d H:i:s",$info['thtime']);
+        
+        $this->assign("info",$info);
+        #配送类型
+        $info1=M("Peisongtype")->where("id=".$info['pstype'])->field("name")->find();
+        $this->assign("pstypef",$info1['name']);
+        #支付方式
+        $info2=M("Zhifutype")->where("id=".$info['paytype'])->field("name")->find();
+        $this->assign("paytypef",$info2['name']);
+        #会员
+        $info3=M("Member")->where("a_id=".$info['uid'])->field("a_name")->find();
+        $this->assign("uname",$info3['a_name']);
+        $this->assign("addtimef",date("Y-m-d H:i:s",$info['addtime']));
+        #商家$company
+        $info4=M("Dianpu")->where("a_id=".$info['sjid'])->field("company")->find();
+        $this->assign("company",$info4['company']);
+        
+        $this->assign("addtimef",date("Y-m-d H:i:s",$info['addtime']));
+        #商品
+        $M1=D("OrderinsView");
+        $glist=$M1->where("o.orderid=".$id)->select();
+        
+        $this->assign("glist",$glist);
+        
         $this->display();
+    }
+    /**
+     * 确认收货
+     */
+    public function qr_order(){
+        $id=$_GET['id'];
+        $M=M("Order");
+        $rs=$M->where("id=".$id)->save(array("qrtime"=>time(),"status"=>1));
+        if($rs)
+            $this->success ("操作成功！");
+        else
+            $this->error ("操作失败！");
     }
     //----------------------private-------
     /**

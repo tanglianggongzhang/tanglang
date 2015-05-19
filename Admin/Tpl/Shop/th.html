@@ -5,12 +5,338 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<head>
+<title>退货-后台管理-{$systemConfig.SITE_INFO.name_cms}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{$systemConfig.SITE_INFO.description_cms}" />
+<meta name="keywords" content="{$systemConfig.SITE_INFO.keyword_cms}" />
+<script src="__ROOT__/Public/js/tabqh.js"></script>
+<script src="__ROOT__/Public/js/Tab.js"></script>
+<include file="Common:comHead" />
+<link href="__ROOT__/Public/css/main.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/doubleDate.css" rel="stylesheet" />
+<link href="__ROOT__/Public/css/theme.css" rel="stylesheet">
+<script>
+jQuery(document).ready(function($) {
+	$('.theme-login').click(function(){
+		window.location.href="{:U('Shop/add_goods')}";
+	})
+	
+		
+		
+	
+
+})
+function close_win(){
+	$(".theme-popover").html("");
+		
+	$('.theme-popover-mask').fadeOut(100);
+	$('.theme-popover').slideUp(200);
+}
+
+</script>
+<style>
+.fontb{ display:block; float:right; margin-right:56px;}
+</style>
+<script src="__ROOT__/Public/js/jquery.min.js" language="javascript" type="text/javascript"></script>
+
+<script type="text/javascript" src="__ROOT__/Public/js/doubleDate2.0.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.doubledate').kuiDate({
+		className:'doubledate',
+		isDisabled: "1"  // isDisabled为可选参数，“0”表示今日之前不可选，“1”标志今日之前可选
+	});
+});
+</script>
+</head>
+
+<body>
+<div class="wrap"> <include file="Common:head" /> 
+  <!--头部end--> 
+  <include file="Common:left" /> 
+  <!--左边end-->
+  <div class="center_r">
+    <div class="center">
+        <div class="center_r_t">您的位置：<a href="{:U('Shop/order')}" class="a1">订单列表</a> >>退货</div>
+      <div class="center_r_z">
+      
+        <div class="theme-popover">
+          
+        </div>
+        <div class="theme-popover-mask"></div>
+      </div>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+        <tr class="center_t_d">
+          <td class="td1" width="135">订单号：</td>
+          <td colspan='4'>{$info.ordersn}</td>
+        </tr>  
+        <tr class="center_t_d">
+          <td class="td1" width="135">订单总价：</td>
+          <td colspan='4'>{$info.price}</td>
+        </tr>  
+        <tr class="center_t_d">
+          <td class="td1" width="135">配送类型：</td>
+          <td colspan='4'>{$pstypef}</td>
+        </tr>  
+        <tr class="center_t_d">
+          <td class="td1" width="135">配送费用：</td>
+          <td colspan='4'>{$info.psprice}</td>
+        </tr>  
+        
+        <tr class="center_t_d">
+          <td class="td1" width="135">支付方式：</td>
+          <td colspan='4'>{$paytypef}</td>
+        </tr>  
+        <tr class="center_t_d">
+          <td class="td1" width="135">会员：</td>
+          <td colspan='4'>{$uname}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">状态：</td>
+          <td colspan='4'>{$info.statusf}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">创建时间：</td>
+          <td colspan='4'>{$addtimef}</td>
+        </tr>
+        
+        <tr class="center_t_d">
+          <td class="td1" width="135">商家：</td>
+          <td colspan='4'>{$company}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">发货单号：</td>
+          <td colspan='4'>
+              {$info.fhsn}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">发货时间：</td>
+          <td colspan='4'>
+              {$info.fhtimef}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">退货原因：</td>
+          <td colspan='4'>
+              {$info.thyy}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">退货图片：</td>
+          <td colspan='4'>
+              <a href='{$systemConfig.SITE_INFO.url}{$info.thimg}' target='_blank'><img src='__ROOT__/{$info.thimg}' width='100' /></a></td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">退货时间：</td>
+          <td colspan='4'>
+              {$info.thtimef}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">退货处理：</td>
+          <td colspan='4'>
+              <form name='form' id="form" method='post' >
+                  <input type='hidden' id="id" name='id' value='{$info.id}' />
+              <input type='submit' id='sub' name='sub' value='退货处理' />
+              </form>
+          </td>
+        </tr>
+        
+        <tr class="center_t_t">
+          <td class="td1" width="135">编号</td>
+          <td width="135">商品标题</td>
+          <td width="135">价格</td>
+          <td width="135">数目</td>
+          <td width="135">备注</td>
+        
+        </tr>
+        <volist id="vo" name="glist">
+        <tr class="center_t_d">
+          <td class="td1" width="135">{$vo.id}</td>
+          <td width="135">{$vo.gname}</td>
+          <td width="135">{$vo.price}</td>
+          <td width="135">{$vo.num}</td>
+          <td width="135">{$vo.bz}</td>
+          
+        </tr>
+        </volist>
+      </table>
+      <div class="paging">
+        <div class="paging_l">{$page}</div>
+      </div>
+    </div>
+    <div class="foot"> <include file="Common:foot" /> </div>
+  </div>
+</div>
+
+
+<style>
+    .bor{border: 1px solid #005DAD;}
+</style>
+<script>
+//删除
+    $(".del").click(function(){
+        var n=$(this).attr("name");
+        if(confirm("您确定要删除会员["+n+"]吗？")){
+            window.location.href=$(this).attr("link");
+        }
+    });
+	//获取城市
+	  function getcity(proid,cityid){
+		var pid=$("#"+proid).val();
+		
+		$.ajax({
+			data:"fid="+pid,
+			cache:false,
+			url:"{:U('Member/getcity')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				msg=eval("("+msg+")");
+				if(msg.status==1){
+					$("#"+cityid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					for(l=0;l<len;l++){
+						citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+					}
+					
+					
+					$("#"+cityid).append(citystr);
+				}
+				
+			}
+					
+		});
+		
+			
+}
+function getdiqu(proid,cityid,dqid){
+            var pid=document.getElementById(proid).value;
+		var cid=document.getElementById(cityid).value;
+		$.ajax({
+			data:"fid="+pid+"&cid="+cid,
+			cache:false,
+			url:"{:U('Member/getqu')}",
+			type:"POST",
+			dataType:"Json",
+			success: function(msg){
+				msg=eval("("+msg+")");
+				if(msg.status==1){
+					$("#"+dqid).empty();
+					var citystr="";
+					var len=msg.data.length;
+					var l;
+					citystr+="<option value=''>请选择</option>";
+					
+					if(len>0){
+						for(l=0;l<len;l++){
+							citystr+="<option value='"+msg.data[l].region_id+"'>"+msg.data[l].region_name+"</option>";
+						}
+					}
+					$("#"+dqid).append(citystr);
+					
+				}
+				
+			}
+					
+		});
+        }
+
+function updatename(tid,tname){
+    $("#t_"+tid).html("<input type='text' name='name' class='bor' value='"+tname+"' onblur='gbname(this.value,"+tid+")' />");
+}
+//改变商品名称
+function gbname(tname,tid){
+    $.ajax({
+        data:"id="+tid+"&name="+tname,
+        cache:false,
+        datatype:"JSON",
+        url:"{:U('Shop/ajax_gbnme')}",
+        type:"POST",
+        success:function(msg){
+            if(msg==1){
+                $("#t_"+tid).html(tname);
+            }
+        }
+    });
+}
+//更改价格
+function updateprice(tid,price){
+   $("#p_"+tid).html("<input type='text' name='price' size='10' class='bor' value='"+price+"' onblur='updateprice1(this.value,"+tid+")' />");
+}
+//改变价格操作
+function updateprice1(price,tid){
+    $.ajax({
+        data:"id="+tid+"&price="+price,
+        cache:false,
+        datatype:"JSON",
+        url:"{:U('Shop/ajax_updateprice')}",
+        type:"POST",
+        success:function(msg){
+            if(msg==1){
+                $("#p_"+tid).html(price);
+            }
+        }
+    }); 
+}
+
+//更改价格
+function updateckprice(tid,price){
+   $("#c_"+tid).html("<input type='text' name='price' size='10' class='bor' value='"+price+"' onblur='updateckprice1(this.value,"+tid+")' />");
+}
+//改变价格操作
+function updateckprice1(price,tid){
+    $.ajax({
+        data:"id="+tid+"&price="+price,
+        cache:false,
+        datatype:"JSON",
+        url:"{:U('Shop/ajax_updateckprice')}",
+        type:"POST",
+        success:function(msg){
+            if(msg==1){
+                $("#c_"+tid).html(price);
+            }
+        }
+    }); 
+}
+
+//更改库存
+function updatekucun(tid,price){
+   $("#k_"+tid).html("<input type='text' name='price' size='10' class='bor' value='"+price+"' onblur='updateckprice1(this.value,"+tid+")' />");
+}
+//改变库存操作
+function updateckprice1(price,tid){
+    $.ajax({
+        data:"id="+tid+"&price="+price,
+        cache:false,
+        datatype:"JSON",
+        url:"{:U('Shop/ajax_updatekucun')}",
+        type:"POST",
+        success:function(msg){
+            if(msg==1){
+                $("#k_"+tid).html(price);
+            }
+        }
+    }); 
+}
+
+
+
+//当鼠标在文本框中文字隐藏,当离开之后文字显示
+$(".input1").blur(function(){
+	if($(this).val()=="")
+	$(this).val("请输入关键字");
+	});
+$(".input1").focus(function(){
+	$(this).val("");
+	});
+
+
+
+
+    
+</script>
+</body>
 </html>

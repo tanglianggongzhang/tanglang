@@ -43,55 +43,72 @@ $(function(){
     <div class="center">
         <div class="center_r_t">您的位置： <a href="{:U('Shop/order')}" class="a1" > 订单列表</a> >>订单详细</div>
       <div class="center_r_z">
-      <form method="get" name="search_form" id="search_form" action=""  >
-        <label>关键字</label>
-        <input type="text" class="input1" name="keys" value="{$keys}" placeholder="请填写订单号" />
-        <label>商城</label>
-        <select name="uid" id="uid" class="choose">
-            <option value="" >请选择</option>
-            <volist id="vo" name="sclist" key="k">
-                <option value="{$vo.a_id}" <if condition="$uid==$vo[a_id]">selected</if> >{$vo.a_name}[{$vo.company}]</option>
-            </volist>
-        </select>
-         <label>状态</label>
-        <select name="status" id="status" class="choose">
-            <option value="" >请选择</option>
-            <volist id="vo" name="statuslist" key='k'>
-                <option value="{$k}" >{$vo}</option>
-            </volist>
-        </select>
-        
-        
-        
-        <if condition="$is_qx==0">
-            <if condition="!empty($p_id)||!empty($c_id)||!empty($q_id)||!empty($keys)||!empty($istj1)||!empty($uid)">
-                <a href="{:U('Shop/taocan')}">取消查询</a>
-            </if>
-        </if>
-        <if condition="$is_qx==1">
-            <if condition="!empty($q_id)||!empty($keys)||!empty($uid)">
-                <a href="{:U('Shop/taocan')}">取消查询</a>
-            </if>
-        </if>
-        
-        <input name="sub" type="submit"  value="查询" class="sub1" />
-        
-        
-        </form>
         <div class="theme-popover">
           
         </div>
         <div class="theme-popover-mask"></div>
       </div>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="center_t" style="word-break:break-all; word-wrap:break-all;">
+          <tr class="center_t_d">
+          <td class="td1" width="135">订单号：</td>
+          <td colspan='6'>{$info.ordersn}</td>
+        </tr>  
+        <tr class="center_t_d">
+          <td class="td1" width="135">订单总价：</td>
+          <td colspan='6'>{$info.price}</td>
+        </tr>  
+        <tr class="center_t_d">
+          <td class="td1" width="135">配送类型：</td>
+          <td colspan='6'>{$pstypef}</td>
+        </tr>  
+        <tr class="center_t_d">
+          <td class="td1" width="135">配送费用：</td>
+          <td colspan='6'>{$info.psprice}</td>
+        </tr>  
+        
+        <tr class="center_t_d">
+          <td class="td1" width="135">支付方式：</td>
+          <td colspan='6'>{$paytypef}</td>
+        </tr>  
+        <tr class="center_t_d">
+          <td class="td1" width="135">会员：</td>
+          <td colspan='6'>{$uname}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">状态：</td>
+          <td colspan='6'>{$info.statusf}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">创建时间：</td>
+          <td colspan='6'>{$addtimef}</td>
+        </tr>
+        
+        <tr class="center_t_d">
+          <td class="td1" width="135">商家：</td>
+          <td colspan='6'>{$company}</td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">发货单号：</td>
+          <td colspan='6'>
+              {$info.fhsn}
+            </td>
+        </tr>
+        <tr class="center_t_d">
+          <td class="td1" width="135">发货时间：</td>
+          <td colspan='6'>
+              {$fhaddtimef}
+            </td>
+        </tr>
+            
+          
         <tr class="center_t_t">
           <td class="td1" width="135">ID</td>
           <td width="135">订单号</td>
           <td width="135">商品名称</td>
           <td width="80">商品价格</td>
-          <td width="80">备注</td>
-         
-          <td class="td2" width="135">操作</td>
+          <td width="80">数目</td>
+          <td width="135">备注</td>
+          <td class="td2" width="20">操作</td>
         </tr>
         <volist id="vo" name="list">
         <tr class="center_t_d">
@@ -99,11 +116,13 @@ $(function(){
           <td width="135">{$vo.ordersn}</td>
           <td width="135">{$vo.gname}</td>
           <td width="80">{$vo.price}</td>
-          <td width="80">{$vo.bz}</td>
+          <td width="80">{$vo.num}</td>
+          <td width="135">{$vo.bz}</td>
           
-          <td width="135">
+          <td width="20">
+        <if condition='$info[status]==4'>
               <a name="{$vo.ordersn}" link="{:U('Shop/del_insorder',array('id'=>$vo[id]))}" style="cursor:pointer" class="del">删除</a>
-              
+        </if>
               </td>
         </tr>
         </volist>
@@ -124,7 +143,7 @@ $(function(){
 //删除
     $(".del").click(function(){
         var n=$(this).attr("name");
-        if(confirm("您确定要删除会员["+n+"]吗？")){
+        if(confirm("您确定要删除订单["+n+"]吗？")){
             window.location.href=$(this).attr("link");
         }
     });
