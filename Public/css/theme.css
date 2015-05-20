@@ -29,14 +29,14 @@ input.btn{height:29px;}
 .theme-popover{z-index:9999;position:fixed;top:50%;left:60%;width:390px;margin:-200px 0 0 -330px;background-color:#fff;display:none;box-shadow: 0 0 10px #666; height:530px; *height:560px;}
 .theme-poptit{padding:12px;position: relative;}
 .theme-poptit h3{ font-size:16px; font-weight:normal; font-family:"微软雅黑";}
-.theme-popbod{padding:40px 15px;color:#444;height:148px;}
+.theme-popbod{color:#444;height:148px;}
 .theme-popbom{padding:15px;background-color:#f6f6f6;border-top:1px solid #ddd;border-radius:0 0 5px 5px;color:#666}
 .theme-popbom a{margin-left:8px}
 .theme-poptit .close{float:right;color:#999;padding:5px;margin:-2px -5px -5px;font:bold 14px/14px simsun;text-shadow:0 1px 0 #ddd}
 .theme-poptit .close:hover{color:#444;}
 .btn.theme-reg{position: absolute;top: 8px;left: 43%;display: none}
 .inp-gray,.feed-mail-inp{border:1px solid #ccc;background-color:#fdfdfd;width:220px;height:16px;padding:4px;color:#444;margin-right:6px}
-.dform{padding:50px 0px 0px;text-align: center;}
+.dform{text-align: center;overflow:scroll; height: 478px;}
 .dform .ipt_error{background-color:#FFFFCC;border-color:#FFCC66}
 .dform-tip{display:none;background-color:#080;color:#fff;line-height:42px;margin-top:10px;display:;font-size: 14px;}
 .dform-tip-errer{background-color: #CF301A;}

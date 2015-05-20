@@ -71,7 +71,7 @@
 	CURSOR: pointer; HEIGHT: 20px; WIDTH: 20px; RIGHT: 0px; POSITION: absolute; TOP: 20px
 }
 .center_side {
-	HEIGHT: 649px; WIDTH: 140px; BACKGROUND: #404951; FLOAT: left; COLOR: #fff
+	HEIGHT: 800px; WIDTH: 140px; BACKGROUND: #404951; FLOAT: left; COLOR: #fff
 }
 .center_side LI {
 	FONT-SIZE: 14px; HEIGHT: 50px; WIDTH: 120px; VERTICAL-ALIGN: middle; TEXT-ALIGN: left; PADDING-LEFT: 20px; LINE-HEIGHT: 50px
@@ -185,7 +185,7 @@
 	BACKGROUND: #2486d7; COLOR: #fff
 }
 .center_t_d:hover TD A {
-	COLOR: #fff
+	COLOR: #000
 }
 .paging {
 	FONT-SIZE: 12px;  FLOAT: left; MARGIN: 15px 0px 0px 35px
