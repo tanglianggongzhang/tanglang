@@ -50,6 +50,7 @@ class IndexAction extends CommonAction {
         if (IS_POST) {
             $pubmod = new PublicModel();
             $returnLoginInfo = $pubmod->auth();
+            
             if ($returnLoginInfo['status'] == 1) {
                 $map = array();
                 // 支持使用绑定帐号登录
@@ -79,6 +80,9 @@ class IndexAction extends CommonAction {
 
                 $this->success("登录成功", U("Index/index"));
                 exit;
+            }
+            else{
+                $this->error($returnLoginInfo['info']);exit;
             }
         }
         $this->assign("systemConfig", $systemConfig);
