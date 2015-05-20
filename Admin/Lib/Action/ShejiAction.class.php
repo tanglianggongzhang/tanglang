@@ -826,7 +826,15 @@ class ShejiAction extends CommonAction {
         $list = $M->where($where)->field("title")->find();
         return $list['title'];
     }
-
+    /**
+     * 获取客户详细
+     */
+    private function getkehu_ins($aid) {
+        $where = "a_id=" . $aid;
+        $M = M("Kehuview");
+        $info = $M->where($where)->field("a_id,a_name,truename")->find();
+        return $info;
+    }
     //-------------------------------------------------------------------
     /**
      * ajax 
@@ -853,14 +861,6 @@ class ShejiAction extends CommonAction {
         echo json_encode($data);
     }
 
-    /**
-     * 获取客户详细
-     */
-    private function getkehu_ins($aid) {
-        $where = "a_id=" . $aid;
-        $M = M("Kehuview");
-        $info = $M->where($where)->field("a_id,a_name,truename")->find();
-        return $info;
-    }
+    
 
 }

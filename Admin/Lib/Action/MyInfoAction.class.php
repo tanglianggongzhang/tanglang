@@ -95,5 +95,26 @@ class MyInfoAction extends CommonAction {
         }
         $this->display();
     }
-    
+    /**
+     * 地图
+     */
+    public function map(){
+        parent::_initalize();
+        $this->assign("systemConfig",$this->systemConfig);
+        $nodelist = $this->get_menu(1);
+        $str="<ul>";
+        foreach ($nodelist as $K=>$v){
+            $str.="<li><a href='".$v['url']."'>".$v['title']."</a>";
+            $str.="<ul>";
+                $nodelist2 = $this->get_menu($v['id']);
+                foreach($nodelist2 as $k1=>$v1){
+                    $str.="<li><a href='".U(ucfirst($v['name']).'/'.$v1['name'])."'>".$v1['title']."</a></li>";
+                }
+            $str.="</ul>";
+            $str.="</li>";
+        }
+        $str.="</ul>";
+        $this->assign("str",$str);
+        $this->display();
+    }
 }

@@ -109,230 +109,6 @@ class MemberAction extends CommonAction {
     }
 
     /**
-     * ajax
-     * 添加保存
-     */
-    public function addmember() {
-        header("Content-Type:text/html; charset=utf-8");
-        header('Content-Type:application/json; charset=utf-8');
-        $a_name = trim($_POST['a_name']);
-        $pwd = trim($_POST['pwd']);
-        $confpwd = trim($_POST['cof_pwd']);
-        $returnarr = array();
-        if (empty($a_name)) {
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "登录名不能为空";
-            echo json_encode($returnarr);
-            exit;
-        }
-        if ($pwd != $confpwd) {
-
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "两次输入的密码必须一致";
-            echo json_encode($returnarr);
-
-            exit;
-        }
-        //检查登录名是否已经在数据库中存在
-        $memmod = new MemberModel();
-        if ($memmod->check_name($a_name) > 0) {
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "登录名已经存在，请重新命名";
-            echo json_encode($returnarr);
-            exit;
-        }
-
-        $maindata = array(
-            "a_name" => $a_name,
-            "a_pwd" => encrypt($pwd),
-            "a_type" => 1,
-            "status" => 1
-        );
-        $nickname = trim($_POST['nickname']);
-        $truename = trim($_POST['truename']);
-        $sex = trim($_POST['sex']);
-        $email = trim($_POST['email']);
-        $qq = trim($_POST['qq']);
-        $movphone = trim($_POST['telphone']);
-        $birthday = $_POST['year'] . "-" . $_POST['month'] . "-" . $_POST['day'];
-        $cityid = $_POST['cityid'];
-        $proid = $_POST['proid'];
-        if (empty($proid)) {
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "请选择省份";
-            echo json_encode($returnarr);
-            exit;
-        }
-        if (empty($cityid)) {
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "请选择城市";
-            echo json_encode($returnarr);
-            exit;
-        }
-        $fjdata = array(
-            "nickname" => $nickname,
-            "truename" => $truename,
-            "sex" => $sex,
-            "email" => $email,
-            "qq" => $qq,
-            "movphone" => $movphone,
-            "birthday" => $birthday,
-            "city_id" => $cityid,
-            "province_id" => $proid
-        );
-
-
-
-        $res = $memmod->add_member($maindata, $fjdata);
-
-        echo json_encode($res);
-
-        exit;
-    }
-
-    /**
-     * 获取城市
-     */
-    public function getcity() {
-
-        header('Content-Type:application/json; charset=utf-8');
-        $pid = $_POST['fid'];
-        $citymod = new CityModel();
-        $pro_list = $citymod->getprovince($pid);
-        if ($pro_list)
-            echo json_encode(array("status" => 1, "data" => $pro_list));
-        else
-            echo json_encode(array("status" => 0, "data" => array()));
-    }
-
-    /**
-     * 获取地区
-     */
-    public function getqu() {
-
-        header('Content-Type:application/json; charset=utf-8');
-
-        $cid = $_POST['cid'];
-
-        $citymod = new CityModel();
-        $pro_list = $citymod->getqu($cid);
-        if ($pro_list)
-            echo json_encode(array("status" => 1, "data" => $pro_list));
-        else
-            echo json_encode(array("status" => 0, "data" => array()));
-    }
-
-    /**
-     * 获取日期
-     */
-    public function getdays() {
-        header("Content-Type:text/html; charset=utf-8");
-        header('Content-Type:application/json; charset=utf-8');
-        $year = $_POST['year'];
-        $mon = $_POST['mon'];
-        $memmod = new MemberModel();
-        $list = $memmod->getday($year, $mon);
-        echo json_encode($list);
-    }
-
-    /**
-     * 查看
-     */
-    public function getinfo() {
-
-        header('Content-Type:application/json; charset=utf-8');
-
-        $aid = $_POST['aid'];
-        $ptmod = M("Kehuview");
-        $info = $ptmod->where("a_id=" . $aid)->find();
-        $arr = include_once './Common/config2.php';
-        if (!$_POST['is_cl']) {
-            $info['sex'] = ($info['sex'] == 1) ? "男" : "女";
-            if (!empty($info['last_login']))
-                $info['last_login'] = date("Y-m-d", $info['last_login']);
-            else
-                $info['last_login'] = "从未登录";
-            $info['zxjd'] = $arr['zxjd'][$info['zxjd']];
-            $info['status'] = $info['status'] == 1 ? "启用" : "禁用";
-        }
-
-        echo json_encode($info);
-    }
-
-    /**
-     * 编辑
-     */
-    public function edit_user() {
-        header('Content-Type:application/json; charset=utf-8');
-        $aid = $_POST['aid'];
-        $a_name = trim($_POST['a_name']);
-        $pwd = trim($_POST['pwd']);
-        $cof_pwd = trim($_POST['cof_pwd']);
-        $nickname = trim($_POST['nickname']);
-        $truename = trim($_POST['truename']);
-        $sex = trim($_POST['sex']);
-        $email = trim($_POST['email']);
-        $qq = trim($_POST['qq']);
-        $telphone = trim($_POST['telphone']);
-        $year = trim($_POST['year']);
-        $month = trim($_POST['month']);
-        $day = trim($_POST['day']);
-        $proid = trim($_POST['proid']);
-        $cityid = trim($_POST['cityid']);
-        $birthday = $year . "-" . $month . "-" . $day;
-
-
-        $amod = new Admininfo1Model();
-        $ainfo = $amod->getinfo($aid, 0);
-        $data = array();
-        if ($ainfo['a_name'] != $a_name) {
-            //修改账户
-            $data['a_name'] = $a_name;
-        }
-        if ($pwd != "" && $cof_pwd != "" && $pwd == $cof_pwd) {
-            //两次输入的密码一致
-            $data['a_pwd'] = encrypt($pwd);
-        }
-        //编辑登录账户
-        $mod = M("Member");
-        $mod->where(array("a_id" => $aid))->save($data);
-        #echo $mod->getLastSql();
-        $datainfo = array();
-        if ($ainfo['nickname'] != $nickname)
-            $datainfo['nickname'] = $nickname;
-
-        if ($ainfo['truename'] != $truename)
-            $datainfo['truename'] = $truename;
-
-        if ($ainfo['sex'] != $sex)
-            $datainfo['sex'] = $sex;
-
-        if ($ainfo['email'] != $email)
-            $datainfo['email'] = $email;
-
-        if ($ainfo['qq'] != $qq)
-            $datainfo['qq'] = $qq;
-
-        if ($ainfo['movphone'] != $telphone)
-            $datainfo['movphone'] = $telphone;
-
-        if ($ainfo['birthday'] != $birthday)
-            $datainfo['birthday'] = $birthday;
-
-        if ($ainfo['city_id'] != $cityid)
-            $datainfo['city_id'] = $cityid;
-
-        if ($ainfo['province_id'] != $proid)
-            $datainfo['province_id'] = $proid;
-
-        //编辑详情页面
-        $infmod = M("Webmember");
-        $infmod->where(array("a_id" => $aid))->save($datainfo);
-
-        echo json_encode(array("status" => 1, "info" => "操作成功"));
-    }
-
-    /**
      * 删除
      */
     public function del() {
@@ -454,97 +230,6 @@ class MemberAction extends CommonAction {
 
 
         $this->display();
-    }
-
-    /**
-     * 添加明星工长
-     */
-    public function addforeman() {
-        header('Content-Type:application/json; charset=utf-8');
-        $a_name = trim($_POST['a_name']);
-        $pwd = trim($_POST['pwd']);
-        $cof_pwd = trim($_POST['cof_pwd']);
-        $truename = trim($_POST['truename']);
-        $sex = trim($_POST['sex']);
-        $company = trim($_POST['company']);
-        $jibie = trim($_POST['jibie']);
-        $telphone = trim($_POST['telphone']);
-        $phone = trim($_POST['phone']);
-        $email = trim($_POST['email']);
-        $qq = trim($_POST['qq']);
-        $year = trim($_POST['year']);
-        $month = trim($_POST['month']);
-        $day = trim($_POST['day']);
-        $proid = trim($_POST['proid']);
-        $cityid = trim($_POST['cityid']);
-        $address = trim($_POST['address']);
-        $collect = trim($_POST['collect']);
-        $jibie = trim($_POST['jibie']);
-        $addtime = trim($_POST['addtime']);
-        $koubei = trim($_POST['koubei']);
-        if (empty($a_name)) {
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "登录名不能为空";
-            echo json_encode($returnarr);
-            exit;
-        }
-        if ($pwd != $cof_pwd) {
-
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "两次输入的密码必须一致";
-            echo json_encode($returnarr);
-
-            exit;
-        }
-        //检查登录名是否已经在数据库中存在
-        $memmod = new MemberModel();
-        if ($memmod->check_name($a_name) > 0) {
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "登录名已经存在，请重新命名";
-            echo json_encode($returnarr);
-            exit;
-        }
-
-        $maindata = array(
-            "a_name" => $a_name,
-            "a_pwd" => encrypt($pwd),
-            "a_type" => 2,
-            "status" => 1
-        );
-        if (empty($proid)) {
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "请选择省份";
-            echo json_encode($returnarr);
-            exit;
-        }
-        if (empty($cityid)) {
-            $returnarr['status'] = 0;
-            $returnarr['info'] = "请选择城市";
-            echo json_encode($returnarr);
-            exit;
-        }
-        $birthday = $year . "-" . $month . "-" . $day;
-        $fjdata = array(
-            "f_truename" => $truename,
-            "f_company" => $company,
-            "f_collect" => $collect,
-            "f_koubei" => $koubei,
-            "f_jibie" => $jibie,
-            "f_telphone" => $telphone,
-            "f_phone" => $phone,
-            "f_sex" => $sex,
-            "f_email" => $email,
-            "f_birthday" => $birthday,
-            "f_address" => $address,
-            "f_qq" => $qq,
-            "f_addtime" => $addtime,
-            "f_p_id" => $proid,
-            "f_c_id" => $cityid
-        );
-
-        $res = $memmod->add_member($maindata, $fjdata);
-
-        echo json_encode($res);
     }
 
     /**
@@ -706,41 +391,6 @@ class MemberAction extends CommonAction {
     }
 
     /**
-     * ajax
-     * 获取 明星工长
-     */
-    public function getforeman() {
-        $aid = $_POST['aid'];
-        $is_cl = $_POST['is_cl'];
-        header('Content-Type:application/json; charset=utf-8');
-
-        $mod = M("Foremanview");
-        $info = $mod->where("a_id=" . $aid)->find();
-        if (!$is_cl) {
-            $info['sex_1'] = ($info['sex'] == 1) ? "男" : "女";
-        }
-        echo json_encode($info);
-    }
-
-    /**
-     * ajax
-     * 获取申请详情
-     */
-    public function getshenqing() {
-        $aid = $_POST['aid'];
-        $is_cl = $_POST['is_cl'];
-        header('Content-Type:application/json; charset=utf-8');
-
-        $mod = M("Shenqingview");
-        $info = $mod->where("u_id=" . $aid)->find();
-        #echo $mod->getLastSql();
-        if (!$is_cl) {
-            $info['sex_1'] = ($info['sex'] == 1) ? "男" : "女";
-        }
-        echo json_encode($info);
-    }
-
-    /**
      * 删除
      * 明星工厂
      */
@@ -794,21 +444,6 @@ class MemberAction extends CommonAction {
             $this->success("操作成功");
         } else {
             $this->error("操作失败");
-        }
-    }
-
-    /**
-     * 删除申请
-     */
-    public function del_shenqing() {
-        $aid = $_GET['aid'];
-        $m = M("Shenqing");
-        $map = "u_id=" . $aid;
-        $res = $m->where($map)->delete();
-        if ($res) {
-            $this->success("操作成功！");
-        } else {
-            $this->error("操作失败！");
         }
     }
 
@@ -1238,22 +873,6 @@ class MemberAction extends CommonAction {
     }
 
     /**
-     * 获取 店铺管理
-     */
-    public function getdianpu() {
-        $aid = $_POST['aid'];
-        $is_cl = $_POST['is_cl'];
-        header('Content-Type:application/json; charset=utf-8');
-
-        $mod = M("Dianpumember");
-        $info = $mod->where("a_id=" . $aid)->find();
-        if (!$is_cl) {
-            $info['sex_1'] = ($info['sex'] == 1) ? "男" : "女";
-        }
-        echo json_encode($info);
-    }
-
-    /**
      * 编辑
      * 店铺管理
      */
@@ -1401,120 +1020,6 @@ class MemberAction extends CommonAction {
     }
 
     /**
-     * 上传营业执照
-     */
-    public function scimg() {
-        header('Content-Type:application/json; charset=utf-8');
-        $img = $this->upload();
-        echo $img[0]['savename'];
-    }
-
-    /**
-     * 工长 type=2 ,
-     * 材料商 type=3
-     * 设计师 type=4
-     * 
-     * 通过申请
-     * 1、向工长附加表中加入一条信息
-     * 2、修改申请状态为1
-     * 3、修改会员类型为普通2
-     */
-    public function dosh_shenqing() {
-        $aid = $_GET['aid'];
-        $m = M("Shenqingview");
-        $info = $m->where("u_id=" . $aid)->find();
-        $type = $_GET['type'];
-        $type = empty($type) ? "2" : $type;
-        if ($type == 2) {
-            $data = array(
-                "f_id" => $info['u_id'],
-                "f_truename" => $info['truename'],
-                "f_company" => $info['companyname'], //需要申请时候添加
-                "f_telphone" => $info['companyphone'], //公司座机需要申请时候添加
-                "f_phone" => $info['movphone'],
-                "f_sex" => $info['sex'],
-                "f_email" => $info['email'],
-                "f_birthday" => $info['birthday'],
-                "f_address" => $info['address'],
-                "f_qq" => $info['qq'],
-                "f_p_id" => $info['province_id'],
-                "f_c_id" => $info['city_id']
-            );
-            $admod = M("ForemanInfo");
-            $res = $admod->add($data);
-        } elseif ($type == 3) {
-            //材料商
-            $data = array(
-                "f_id" => $info['u_id'],
-                "company" => $info['companyname'],
-                "lxrname" => $info['truename'],
-                "phone" => $info['movphone'],
-                "kefu_phone" => $info['companyphone'],
-                "pro_id" => $info['province_id'],
-                "city_id" => $info['city_id']
-            );
-            $admod = M("Dianpu");
-            $res = $admod->add($data);
-        } elseif ($type == 4) {
-            //设计
-            $data = array(
-                "f_id" => $info['u_id'],
-                "comname" => $info['companyname'],
-                "comphone" => $info['companyphone'],
-                "truename" => $info['truename'],
-                "phonenum" => $info['movphone'],
-                "p_id" => $info['province_id'],
-                "c_id" => $info['city_id']
-            );
-            $sjmod = M("Sheji");
-            $res = $sjmod->add($data);
-        }
-        $res2 = $m->where("u_id=" . $aid)->save(array("status" => 1));
-        $mmod = M("Member");
-        $res3 = $mmod->where("a_id=" . $aid)->save(array("a_type" => $type));
-
-        if ($res && $res2 && $res3) {
-            $this->success("操作成功！");
-        } else {
-            $this->error("操作失败！");
-        }
-    }
-
-    /**
-     * 取消审核
-     * 工长
-     * 1、将工长附加表中的信息删除
-     * 2、修改申请状态为0
-     * 3、修改会员类型为普通1
-     */
-    public function qx_shenqing() {
-        $aid = $_GET['aid'];
-        $type = $_GET['type'];
-        $type = empty($type) ? "2" : $type;
-        $m2 = M("Shenqingview");
-        $m3 = M("Member");
-        if ($type == 2) {
-            $m = M("ForemanInfo");
-            $res1 = $m->where("f_id=" . $aid)->delete();
-        } elseif ($type == 3) {
-            $m = M("Dianpu");
-            $res1 = $m->where("f_id=" . $aid)->delete();
-        } elseif ($type == 4) {
-            //设计师
-            $m = M("Sheji");
-            $res1 = $m->where("f_id=" . $aid)->delete();
-        }
-        $res2 = $m2->where("u_id=" . $aid)->save(array("status" => 0));
-        $res3 = $m3->where("a_id=" . $aid)->save(array("a_type" => 1));
-        if ($res1 && $res2 && $res3) {
-            $this->success("操作成功！");
-        } else {
-
-            $this->success("操作失败！");
-        }
-    }
-
-    /**
      * 设计师
      */
     public function shejishi() {
@@ -1608,74 +1113,6 @@ class MemberAction extends CommonAction {
 
 
         $this->display();
-    }
-
-    /**
-     * 上传头像
-     */
-    public function uploadImg() {
-
-        header('Content-Type:application/json; charset=utf-8');
-
-        import('ORG.Net.UploadFile');
-        $upload = new UploadFile();      // 实例化上传类
-        $upload->maxSize = 1 * 1024 * 1024;     //设置上传图片的大小
-        $upload->allowExts = array('jpg', 'png', 'gif'); //设置上传图片的后缀
-        $upload->uploadReplace = true;     //同名则替换
-        $upload->saveRule = 'uniqid';     //设置上传头像命名规则(临时图片),修改了UploadFile上传类
-        //完整的头像路径
-        $path = './avatar/';
-        $upload->savePath = $path;
-        if (!$upload->upload()) {      // 上传错误提示错误信息
-            #$this->ajaxReturn('', $upload->getErrorMsg(), 0, 'json');
-            #echo json_encode($upload->getErrorMsg());
-        } else {           // 上传成功 获取上传文件信息
-            $info = $upload->getUploadFileInfo();
-            $temp_size = getimagesize($path . $info['0']['savename']);
-            if ($temp_size[0] < 100 || $temp_size[1] < 100) {//判断宽和高是否符合头像要求
-                #$this->ajaxReturn(0, '图片宽或高不得小于100px！', 0, 'json');
-                # echo json_encode("图片宽或高不得小于100px！");
-            }
-            $data['picName'] = $info['0']['savename'];
-            $data['status'] = 1;
-            $data['url'] = __ROOT__ . '/avatar/' . $data['picName'];
-            $data['info'] = $info;
-            #$this->ajaxReturn($data, 'json');
-            echo json_encode($data);
-        }
-    }
-
-    //裁剪并保存用户头像
-    public function cropImg() {
-
-        header('Content-Type:application/json; charset=utf-8');
-
-        //图片裁剪数据
-        $params = $this->_post();      //裁剪参数
-        if (!isset($params) && empty($params)) {
-            return;
-        }
-
-        //头像目录地址
-        $path = './avatar/';
-        //要保存的图片
-        $real_path = $path . $params['picName'];
-        //临时图片地址
-        $pic_path = $path . $params['picName'];
-        import('ORG.Util.Image.ThinkImage');
-        $Think_img = new ThinkImage(THINKIMAGE_GD);
-        //裁剪原图
-        $Think_img->open($pic_path)->crop($params['w'], $params['h'], $params['x'], $params['y'])->save($real_path);
-        //生成缩略图
-        $Think_img->open($real_path)->thumb(100, 100, 1)->save($path . $params['picName'] . '_100.jpg');
-        $Think_img->open($real_path)->thumb(60, 60, 1)->save($path . $params['picName'] . '_60.jpg');
-        $Think_img->open($real_path)->thumb(30, 30, 1)->save($path . $params['picName'] . '_30.jpg');
-        #$this->success('上传头像成功');
-        $data['pic1'] = __ROOT__ . '/avatar/' . $params['picName'] . '_100.jpg';
-        $data['pic2'] = __ROOT__ . '/avatar/' . $params['picName'] . '_60.jpg';
-        $data['pic3'] = __ROOT__ . '/avatar/' . $params['picName'] . '_30.jpg';
-
-        echo json_encode($data);
     }
 
     /**
@@ -2170,23 +1607,6 @@ class MemberAction extends CommonAction {
             exit;
         }
         $this->display();
-    }
-
-    /**
-     * ajax
-     * 获取设计师
-     */
-    public function getsjs() {
-        $aid = $_POST['aid'];
-        $is_cl = $_POST['is_cl'];
-        header('Content-Type:application/json; charset=utf-8');
-
-        $mod = M("Shejiview");
-        $info = $mod->where("a_id=" . $aid)->find();
-        if (!$is_cl) {
-            $info['sex_1'] = ($info['sex'] == 1) ? "男" : "女";
-        }
-        echo json_encode($info);
     }
 
     /**
@@ -2719,5 +2139,181 @@ class MemberAction extends CommonAction {
      */
     function addfirendgx(){
        
+    }
+    //--------------ajax----------------------------------------------
+    /**
+     * 获取城市
+     */
+    public function getcity() {
+
+        header('Content-Type:application/json; charset=utf-8');
+        $pid = $_POST['fid'];
+        $citymod = new CityModel();
+        $pro_list = $citymod->getprovince($pid);
+        if ($pro_list)
+            echo json_encode(array("status" => 1, "data" => $pro_list));
+        else
+            echo json_encode(array("status" => 0, "data" => array()));
+    }
+    /**
+     * 获取地区
+     */
+    public function getqu() {
+
+        header('Content-Type:application/json; charset=utf-8');
+
+        $cid = $_POST['cid'];
+
+        $citymod = new CityModel();
+        $pro_list = $citymod->getqu($cid);
+        if ($pro_list)
+            echo json_encode(array("status" => 1, "data" => $pro_list));
+        else
+            echo json_encode(array("status" => 0, "data" => array()));
+    }
+    /**
+     * 查看
+     */
+    public function getinfo() {
+
+        header('Content-Type:application/json; charset=utf-8');
+
+        $aid = $_POST['aid'];
+        $ptmod = M("Kehuview");
+        $info = $ptmod->where("a_id=" . $aid)->find();
+        $arr = include_once './Common/config2.php';
+        if (!$_POST['is_cl']) {
+            $info['sex'] = ($info['sex'] == 1) ? "男" : "女";
+            if (!empty($info['last_login']))
+                $info['last_login'] = date("Y-m-d", $info['last_login']);
+            else
+                $info['last_login'] = "从未登录";
+            $info['zxjd'] = $arr['zxjd'][$info['zxjd']];
+            $info['status'] = $info['status'] == 1 ? "启用" : "禁用";
+        }
+
+        echo json_encode($info);
+    }
+    /**
+     * ajax
+     * 获取 明星工长
+     */
+    public function getforeman() {
+        $aid = $_POST['aid'];
+        $is_cl = $_POST['is_cl'];
+        header('Content-Type:application/json; charset=utf-8');
+
+        $mod = M("Foremanview");
+        $info = $mod->where("a_id=" . $aid)->find();
+        if (!$is_cl) {
+            $info['sex_1'] = ($info['sex'] == 1) ? "男" : "女";
+        }
+        echo json_encode($info);
+    }
+    
+    /**
+     * 获取 店铺管理
+     */
+    public function getdianpu() {
+        $aid = $_POST['aid'];
+        $is_cl = $_POST['is_cl'];
+        header('Content-Type:application/json; charset=utf-8');
+
+        $mod = M("Dianpumember");
+        $info = $mod->where("a_id=" . $aid)->find();
+        if (!$is_cl) {
+            $info['sex_1'] = ($info['sex'] == 1) ? "男" : "女";
+        }
+        echo json_encode($info);
+    }
+    /**
+     * 上传营业执照
+     */
+    public function scimg() {
+        header('Content-Type:application/json; charset=utf-8');
+        $img = $this->upload();
+        echo $img[0]['savename'];
+    }
+    /**
+     * 上传头像
+     */
+    public function uploadImg() {
+
+        header('Content-Type:application/json; charset=utf-8');
+
+        import('ORG.Net.UploadFile');
+        $upload = new UploadFile();      // 实例化上传类
+        $upload->maxSize = 1 * 1024 * 1024;     //设置上传图片的大小
+        $upload->allowExts = array('jpg', 'png', 'gif'); //设置上传图片的后缀
+        $upload->uploadReplace = true;     //同名则替换
+        $upload->saveRule = 'uniqid';     //设置上传头像命名规则(临时图片),修改了UploadFile上传类
+        //完整的头像路径
+        $path = './avatar/';
+        $upload->savePath = $path;
+        if (!$upload->upload()) {      // 上传错误提示错误信息
+            #$this->ajaxReturn('', $upload->getErrorMsg(), 0, 'json');
+            #echo json_encode($upload->getErrorMsg());
+        } else {           // 上传成功 获取上传文件信息
+            $info = $upload->getUploadFileInfo();
+            $temp_size = getimagesize($path . $info['0']['savename']);
+            if ($temp_size[0] < 100 || $temp_size[1] < 100) {//判断宽和高是否符合头像要求
+                #$this->ajaxReturn(0, '图片宽或高不得小于100px！', 0, 'json');
+                # echo json_encode("图片宽或高不得小于100px！");
+            }
+            $data['picName'] = $info['0']['savename'];
+            $data['status'] = 1;
+            $data['url'] = __ROOT__ . '/avatar/' . $data['picName'];
+            $data['info'] = $info;
+            #$this->ajaxReturn($data, 'json');
+            echo json_encode($data);
+        }
+    }
+    //裁剪并保存用户头像
+    public function cropImg() {
+
+        header('Content-Type:application/json; charset=utf-8');
+
+        //图片裁剪数据
+        $params = $this->_post();      //裁剪参数
+        if (!isset($params) && empty($params)) {
+            return;
+        }
+
+        //头像目录地址
+        $path = './avatar/';
+        //要保存的图片
+        $real_path = $path . $params['picName'];
+        //临时图片地址
+        $pic_path = $path . $params['picName'];
+        import('ORG.Util.Image.ThinkImage');
+        $Think_img = new ThinkImage(THINKIMAGE_GD);
+        //裁剪原图
+        $Think_img->open($pic_path)->crop($params['w'], $params['h'], $params['x'], $params['y'])->save($real_path);
+        //生成缩略图
+        $Think_img->open($real_path)->thumb(100, 100, 1)->save($path . $params['picName'] . '_100.jpg');
+        $Think_img->open($real_path)->thumb(60, 60, 1)->save($path . $params['picName'] . '_60.jpg');
+        $Think_img->open($real_path)->thumb(30, 30, 1)->save($path . $params['picName'] . '_30.jpg');
+        #$this->success('上传头像成功');
+        $data['pic1'] = __ROOT__ . '/avatar/' . $params['picName'] . '_100.jpg';
+        $data['pic2'] = __ROOT__ . '/avatar/' . $params['picName'] . '_60.jpg';
+        $data['pic3'] = __ROOT__ . '/avatar/' . $params['picName'] . '_30.jpg';
+
+        echo json_encode($data);
+    }
+    /**
+     * ajax
+     * 获取设计师
+     */
+    public function getsjs() {
+        $aid = $_POST['aid'];
+        $is_cl = $_POST['is_cl'];
+        header('Content-Type:application/json; charset=utf-8');
+
+        $mod = M("Shejiview");
+        $info = $mod->where("a_id=" . $aid)->find();
+        if (!$is_cl) {
+            $info['sex_1'] = ($info['sex'] == 1) ? "男" : "女";
+        }
+        echo json_encode($info);
     }
 }
